@@ -145,3 +145,34 @@ O produto SICSEC 1.0 visa integrar os sistemas acadêmico (SIGAA), bibliotecári
 | **CSU13** | Fazer atividades             | REQ17, REQ18                                                               | RN12, RN13, RN38 |
 | **CSU14** | Acessar turmas e material associado | REQ10, REQ14, REQ18                                                 | RN02, RN03, RN08, RN36, RN38 |
 | **CSU15** | Acessar e usar a biblioteca  | REQ26, REQ29, REQ30, REQ31, REQ33, REQ34, REQ35                            | RN20, RN23, RN24, RN38, RN40 |
+
+## Atualizações
+
+### 20/10/25
+
+No dia 20/10/25, foram feitas algumas mudanças quanto aos casos de uso. Percebemos que alguns estavam complexos de mais e outros poderiam ser inclusos em CSUs que eram praticamente a mesma coisa ou tinham uma abordagem muito semelhante. Então optamos por dividir alguns em CSUs menores e agrupar outros.
+
+O resultado ficou da seguinte forma:
+
+## Casos de Uso
+
+| Id        | Nome                                       | Requisitos                                                                         | Regra de Negócio |
+|-----------|--------------------------------------------|------------------------------------------------------------------------------------|------------------|
+| **CSU01** | Login e cadastro Auxiliar                  | REQ01, REQ02, REQ05, REQ09, REQ13, REQ17, REQ21, REQ25, REQ29, REQ33, REQ37, REQ43 | RN01, RN37      |
+| **CSU02** | Gestão de matrícula                        | REQ01, REQ02, REQ03, REQ04                                                         | RN05, RN37       |                                                                     |              |
+| **CSU03** | Gestão disciplinas                         | REQ05, REQ06, REQ07, REQ08                                                         | RN02, RN06, RN09, RN37, RN38, RN39 |
+| **CSU04** | Gestão de turma e subturma                 | REQ09, REQ10, REQ11, REQ12                                                         | RN02, RN03, RN07, RN09, RN36, RN37, RN39 |
+| **CSU05** | Gestão de material didático                | REQ13, REQ14, REQ15, REQ16                                                         | RN10, RN11, RN36, RN37 |
+| **CSU06** | Gestão de avaliações                       | REQ17, REQ18, REQ19, REQ20                                                         | RN12, RN14, RN15, RN36, RN37, RN39 |
+| **CSU07** | Gestão de lista de chamada                 | REQ21, REQ22, REQ23, REQ24                                                         | RN16, RN17, RN18, RN19, RN37, RN39 |
+| **CSU08** | Gestão de livros                           | REQ25, REQ26, REQ27, REQ28                                                         | RN21, RN37, RN39 |
+| **CSU09** | Gestão de emprestimos e reservas de livros | REQ29, REQ30, REQ31, REQ32, REQ33, REQ34, REQ35, REQ36                             | RN22, RN23, RN25, RN26, RN36, RN37, RN39 |
+| **CSU10** | Gestão de bolsas                           | REQ37, REQ38, REQ39, REQ40, REQ41, REQ42                                           | RN27, RN28, RN29, RN30, RN37, RN38 |
+| **CSU11** | Gestão de documentos                       | REQ43, REQ44, REQ45, REQ46, REQ47                                                  | RN04, RN31, RN32, RN33, RN34, RN35, RN36, RN38, RN39 |
+| **CSU12** | Acessar boletim                            | REQ18                                                                              | RN14, RN38       |
+| **CSU13** | Fazer atividades/questionários             | REQ17, REQ18                                                                       | RN12, RN13, RN38 |
+| **CSU14** | Acessar turmas e material associado        | REQ10, REQ14, REQ18                                                                | RN02, RN03, RN08, RN36, RN38 |
+| **CSU15** | Acessar e usar a biblioteca                | REQ26, REQ29, REQ30, REQ31, REQ32, REQ33, REQ34, REQ35, REQ36                      | RN20, RN23, RN24, RN38, RN40 |
+| **CSU16** | Gestão de notícias                         | REQ48, REQ49, REQ50, REQ51                                                         | RN20, RN23, RN24, RN38, RN40 |
+| **CSU17** | Gestão de cronogramas                      | REQ52, REQ53, REQ54, REQ55                                                         | RN20, RN23, RN24, RN38, RN40 |
+| **CSU18** | Atribuição de notas                        | REQ26, REQ29, REQ30, REQ31, REQ32, REQ33, REQ34, REQ35, REQ36                      | RN14, RN20, RN23, RN24, RN38, RN40 |
