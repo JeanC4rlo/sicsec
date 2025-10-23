@@ -63,8 +63,9 @@ form label {
     margin-bottom: 0.25rem;
 }
 
-form input,
-form select {
+input,
+select,
+textarea {
     width: 100%;
     padding: 0.6rem 0.8rem;
     border: 2px solid #ccc;
@@ -73,14 +74,14 @@ form select {
     transition: border-color 0.2s ease, background-color 0.2s ease;
 }
 
-form input:focus,
-form select:focus {
+input:focus,
+select:focus,
+textarea:focus {
     outline: none;
     border-color: var(--primary);
     background-color: #eef5ff;
 }
 
-/* ===== Botões de navegação ===== */
 #btn-anterior,
 #btn-proximo {
     background-color: var(--primary);
@@ -100,7 +101,6 @@ form select:focus {
     transform: scale(1.05);
 }
 
-/* ===== Seções ===== */
 section {
     display: none;
     flex-direction: column;
@@ -113,8 +113,12 @@ section {
     max-width: 600px;
 }
 
-section.ativo {
-    display: flex;
+section > div {
+    display: none;
+}
+
+.ativo {
+    display: block;
 }
 
 section label {
@@ -157,6 +161,21 @@ section button:hover {
     border: 1px solid var(--primary);
     border-radius: 0.5rem;
     padding: 1rem;
+}
+
+textarea {
+  resize: none;         
+  width: 100%;          
+  height: 5vh;       
+  box-sizing: border-box;
+  font-size: 1rem;
+  font-family: inherit; 
+  padding: 8px;
+  overflow: hidden;
+}
+
+.campo-obrigatorio:focus {
+    border-color:red;
 }
 
 @media (max-width: 600px) {

@@ -10,7 +10,7 @@
 </head>
 
 <body>
-    <button id="btn-sair" onclick="window.location.href='../homeProfessor.html'">Sair</button>
+    <button id="btn-sair">Sair</button>
     <form action="atividades.html" method="post">
         <label for="">Nome da atividade:</label>
         <input type="text" name="nome"><br>
@@ -20,29 +20,58 @@
             <option value="envTexto">Envio de Texto</option>
             <option value="envArquivo">Envio de Arquivo</option>
         </select><br>
-        <label for="">Valor:</label>
-        <input type="number" name="pontuacao"><br>
+        <label for="">Valor (pontos):</label>
+        <input type="number" name="valor" min="1"><br>
         <label for="">Data de encerramento:</label>
         <input type="date" name="data"><br>
     </form>
     <section id="section-questionario">
-        <label for="">Número de tentativas:</label>
-        <input type="number" name="num-tentativas"><br>
-        <label>Duração:</label>
-        <input type="number" id="horas" min="0" max="24" placeholder="Horas">
-        <input type="number" id="minutos" min="0" max="59" placeholder="Minutos"><br>
-        <button id="add-questao">Adicionar questão</button>
-        <div id="lista-questoes"></div>
+        <div id="questoes">
+            <h3>Questões do questionário</h3>
+            <button id="add-questao">Adicionar questão</button>
+            <div id="lista-questoes"></div>
+        </div>
+        <div id="duracao-e-tentativas">
+            <h3>Numéro de tentativas e duração do questionário</h3>
+            <label for="">Número de tentativas:</label>
+            <input type="number" name="num-tentativas" min="1" value="1"><br>
+            <label>Duração:</label>
+            <input type="number" id="horas" min="0" max="24" placeholder="Horas">
+            <input type="number" id="minutos" min="0" max="59" placeholder="Minutos"><br>
+        </div>
+        <div id="confirmacao">
+            <p class="nome">Nome: </p>
+            <p class="tipo">Tipo: </p>
+            <p class="valor">Valor: </p>
+            <p class="dataEncerramento">Data de encerramento: </p>
+            <p class="numQuestoes">Número de questões: </p>
+        </div>
     </section>
     <section id="section-envTexto">
-        <label for="">Insira o enunciado:</label>
-        <input type="text">
-        <button>Inserir arquivo de consulta</button>
+        <div id="">
+            <label for="">Insira o enunciado:</label>
+            <input type="textarea">
+            <button>Inserir arquivo(s) de consulta?</button>
+        </div>
+        <div id="confirmacao">
+            <p class="nome">Nome: </p>
+            <p class="tipo">Tipo: </p>
+            <p class="valor">Valor: </p>
+            <p class="data-encerramento">Data de encerramento: </p>
+        </div>
     </section>
     <section id="section-envArquivo">
-        <label for="">Insira o enunciado:</label>
-        <input type="text">
-        <button>Inserir arquivo de consulta</button>
+        <div id="">
+            <label for="">Insira o enunciado:</label>
+            <input type="textarea">
+            <button>Inserir arquivo(s) de consulta?</button>
+        </div>
+        <div id="confirmacao">
+            <p class="nome">Nome: </p>
+            <p class="tipo">Tipo: </p>
+            <p class="valor">Valor: </p>
+            <p class="data-encerramento">Data de encerramento: </p>
+        </div>
     </section>
     <button id="btn-anterior">Anterior</button>
     <button id="btn-proximo">Proximo</button>
