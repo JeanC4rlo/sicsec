@@ -2,10 +2,15 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package br.cefetmg.sicsec.Model.Turma;
+package br.cefetmg.sicsec.Model.Curso.Turma;
 
+import br.cefetmg.sicsec.Model.Curso.MaterialDidaticoModel;
+import br.cefetmg.sicsec.Model.Curso.DisciplinaModel;
+import br.cefetmg.sicsec.Model.Curso.Turma.presenca.ListaPresencaModel;
+import br.cefetmg.sicsec.Model.Curso.Turma.Avaliacao.Proposta.AvaliacaoModel;
 import br.cefetmg.sicsec.Model.Usuario.Aluno.AlunoModel;
 import br.cefetmg.sicsec.Model.Usuario.Professor.ProfessorModel;
+import br.cefetmg.sicsec.Model.Util.Enum.TipoTurma;
 import java.util.Date;
 import java.util.List;
 
@@ -15,25 +20,29 @@ import java.util.List;
  */
 public class TurmaModel {
     
-    private Long id;
+    private TipoTurma tipo;
+    private DisciplinaModel disciplina;
     private List<AlunoModel> discentes;
     private List<ProfessorModel> doscentes;
-    private String sala;
-    private Date horario;
     private List<AvaliacaoModel> avaliacoes;
-    private DisciplinaModel disciplina;
     private List<MaterialDidaticoModel> materialDidatico;
     private List<NoticiaModel> noticias;
-    private List<FrequenciaModel> frequencia;
-    private CronogramaModel cronograma;
-    private List<SubTurmaModel> subTurmas;
+    private List<ListaPresencaModel> frequencia;
 
-    public Long getId() {
-        return id;
+    public TipoTurma getTipo() {
+        return tipo;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setTipo(TipoTurma tipo) {
+        this.tipo = tipo;
+    }
+    
+    public DisciplinaModel getDisciplina() {
+        return disciplina;
+    }
+
+    public void setDisciplina(DisciplinaModel disciplina) {
+        this.disciplina = disciplina;
     }
 
     public List<AlunoModel> getDiscentes() {
@@ -44,28 +53,12 @@ public class TurmaModel {
         this.discentes = discentes;
     }
 
-    public List<ProfessorModel> getDoscente() {
+    public List<ProfessorModel> getDoscentes() {
         return doscentes;
     }
 
-    public void setDoscente(List<ProfessorModel> doscentes) {
+    public void setDoscentes(List<ProfessorModel> doscentes) {
         this.doscentes = doscentes;
-    }
-
-    public String getSala() {
-        return sala;
-    }
-
-    public void setSala(String sala) {
-        this.sala = sala;
-    }
-
-    public Date getHorario() {
-        return horario;
-    }
-
-    public void setHorario(Date horario) {
-        this.horario = horario;
     }
 
     public List<AvaliacaoModel> getAvaliacoes() {
@@ -74,14 +67,6 @@ public class TurmaModel {
 
     public void setAvaliacoes(List<AvaliacaoModel> avaliacoes) {
         this.avaliacoes = avaliacoes;
-    }
-
-    public DisciplinaModel getDisciplina() {
-        return disciplina;
-    }
-
-    public void setDisciplina(DisciplinaModel disciplina) {
-        this.disciplina = disciplina;
     }
 
     public List<MaterialDidaticoModel> getMaterialDidatico() {
@@ -100,29 +85,12 @@ public class TurmaModel {
         this.noticias = noticias;
     }
 
-    public List<FrequenciaModel> getFrequencia() {
+    public List<ListaPresencaModel> getFrequencia() {
         return frequencia;
     }
 
-    public void setFrequencia(List<FrequenciaModel> frequencia) {
+    public void setFrequencia(List<ListaPresencaModel> frequencia) {
         this.frequencia = frequencia;
     }
-
-    public CronogramaModel getCronograma() {
-        return cronograma;
-    }
-
-    public void setCronograma(CronogramaModel cronograma) {
-        this.cronograma = cronograma;
-    }
-
-    public List<SubTurmaModel> getSubTurmas() {
-        return subTurmas;
-    }
-
-    public void setSubTurmas(List<SubTurmaModel> subTurmas) {
-        this.subTurmas = subTurmas;
-    }
-    
     
 }

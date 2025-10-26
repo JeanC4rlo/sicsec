@@ -16,5 +16,31 @@ public class UsuarioModel {
     private MatriculaModel matricula;
     private String senha;
     private List<DocumentoModel> documentos;
+
+    public MatriculaModel getMatricula() {
+        return matricula;
+    }
+
+    public void setMatricula(MatriculaModel matricula) {
+        this.matricula = matricula;
+    }
+
+    public String getSenha() {
+        return senha;
+    }
+
+    public void setSenha(String senha) {
+        this.senha = senha;
+    }
+
+    public List<DocumentoModel> getDocumentos() {
+        return documentos;
+    }
+
+    public void setDocumentos(List<DocumentoModel> documentos) {
+        this.documentos = documentos;
+    }
+    
+    
     
 }

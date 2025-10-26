@@ -4,18 +4,28 @@
  */
 package br.cefetmg.sicsec.Model.Usuario;
 
+import br.cefetmg.sicsec.Model.Util.CPF;
+
 /**
  *
  * @author davig
  */
 public class MatriculaModel {
     
+    private CPF cpf;
     private String nome;
     private String email;
     private String telefone;
-    private CPF cpf;
-    private DadosBancariosModel dadosBancarios;
     private Long numeroMatricula;
+    private DadosBancariosModel dadosBancarios;
+
+    public CPF getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(CPF cpf) {
+        this.cpf = cpf;
+    }
 
     public String getNome() {
         return nome;
@@ -41,12 +51,12 @@ public class MatriculaModel {
         this.telefone = telefone;
     }
 
-    public CPF getCpf() {
-        return cpf;
+    public Long getNumeroMatricula() {
+        return numeroMatricula;
     }
 
-    public void setCpf(CPF cpf) {
-        this.cpf = cpf;
+    public void setNumeroMatricula(Long numeroMatricula) {
+        this.numeroMatricula = numeroMatricula;
     }
 
     public DadosBancariosModel getDadosBancarios() {
@@ -55,14 +65,6 @@ public class MatriculaModel {
 
     public void setDadosBancarios(DadosBancariosModel dadosBancarios) {
         this.dadosBancarios = dadosBancarios;
-    }
-
-    public Long getNumeroMatricula() {
-        return numeroMatricula;
-    }
-
-    public void setNumeroMatricula(Long numeroMatricula) {
-        this.numeroMatricula = numeroMatricula;
     }
     
 }

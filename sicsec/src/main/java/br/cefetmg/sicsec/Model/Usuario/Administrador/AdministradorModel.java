@@ -4,7 +4,7 @@
  */
 package br.cefetmg.sicsec.Model.Usuario.Administrador;
 
-import br.cefetmg.sicsec.Model.Enum.CargoAdministrador;
+import br.cefetmg.sicsec.Model.Util.Enum.CargoAdministrador;
 
 /**
  *

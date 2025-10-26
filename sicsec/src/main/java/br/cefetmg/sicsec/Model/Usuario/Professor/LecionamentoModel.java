@@ -4,7 +4,7 @@
  */
 package br.cefetmg.sicsec.Model.Usuario.Professor;
 
-import br.cefetmg.sicsec.Model.Turma.TurmaModel;
+import br.cefetmg.sicsec.Model.Curso.Turma.TurmaModel;
 import java.util.Date;
 
 /**
@@ -16,5 +16,29 @@ class LecionamentoModel {
     private TurmaModel turma;
     private Date inicio;
     private Date fim;
+
+    public TurmaModel getTurma() {
+        return turma;
+    }
+
+    public void setTurma(TurmaModel turma) {
+        this.turma = turma;
+    }
+
+    public Date getInicio() {
+        return inicio;
+    }
+
+    public void setInicio(Date inicio) {
+        this.inicio = inicio;
+    }
+
+    public Date getFim() {
+        return fim;
+    }
+
+    public void setFim(Date fim) {
+        this.fim = fim;
+    }
     
 }

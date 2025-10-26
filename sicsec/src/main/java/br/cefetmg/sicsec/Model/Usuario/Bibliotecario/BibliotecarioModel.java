@@ -4,10 +4,22 @@
  */
 package br.cefetmg.sicsec.Model.Usuario.Bibliotecario;
 
+import br.cefetmg.sicsec.Model.Biblioteca.BibliotecaModel;
+
 /**
  *
  * @author davig
  */
 public class BibliotecarioModel {
+    
+    private BibliotecaModel local;
+
+    public BibliotecaModel getLocal() {
+        return local;
+    }
+
+    public void setLocal(BibliotecaModel local) {
+        this.local = local;
+    }
     
 }
