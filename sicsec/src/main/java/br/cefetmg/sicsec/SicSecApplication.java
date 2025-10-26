@@ -8,6 +8,7 @@ public class SicSecApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(SicSecApplication.class, args);
+                System.out.println("Aplicação em execução");
 	}
 
 }
