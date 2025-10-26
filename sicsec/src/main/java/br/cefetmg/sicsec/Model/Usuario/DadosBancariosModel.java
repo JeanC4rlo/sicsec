@@ -4,6 +4,8 @@
  */
 package br.cefetmg.sicsec.Model.Usuario;
 
+import br.cefetmg.sicsec.Model.Util.CPF;
+
 /**
  *
  * @author davig

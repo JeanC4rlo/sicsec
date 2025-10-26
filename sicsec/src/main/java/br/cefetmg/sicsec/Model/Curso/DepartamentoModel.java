@@ -4,7 +4,6 @@
  */
 package br.cefetmg.sicsec.Model.Curso;
 
-import br.cefetmg.sicsec.Model.Turma.DisciplinaModel;
 import java.util.List;
 
 /**

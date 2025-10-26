@@ -5,7 +5,6 @@
 package br.cefetmg.sicsec.Model.Usuario.Professor;
 
 import br.cefetmg.sicsec.Model.Usuario.ProducaoAcademicaModel;
-import br.cefetmg.sicsec.Model.Enum.Afastamento;
 import br.cefetmg.sicsec.Model.Curso.Turma.TurmaModel;
 import br.cefetmg.sicsec.Model.Usuario.BolsaModel;
 import br.cefetmg.sicsec.Model.Usuario.UsuarioModel;
@@ -19,7 +18,7 @@ public class ProfessorModel extends UsuarioModel {
     
     private List<TurmaModel> turmas;
     private List<LecionamentoModel> historicoLecionamento;
-    private List<Afastamento> historicoAfastamento;
+    private List<AfastamentoModel> historicoAfastamento;
     private List<BolsaModel> bolsas;
     private List<ProducaoAcademicaModel> producoesAcademicas;
 
@@ -39,11 +38,11 @@ public class ProfessorModel extends UsuarioModel {
         this.historicoLecionamento = historicoLecionamento;
     }
 
-    public List<Afastamento> getHistoricoAfastamento() {
+    public List<AfastamentoModel> getHistoricoAfastamento() {
         return historicoAfastamento;
     }
 
-    public void setHistoricoAfastamento(List<Afastamento> historicoAfastamento) {
+    public void setHistoricoAfastamento(List<AfastamentoModel> historicoAfastamento) {
         this.historicoAfastamento = historicoAfastamento;
     }
 

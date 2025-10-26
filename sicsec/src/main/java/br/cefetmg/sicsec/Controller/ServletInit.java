@@ -17,6 +17,7 @@ public class ServletInit extends SpringBootServletInitializer {
 
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+                System.out.println("ServletInit");
 		return application.sources(SicSecApplication.class);
 	}
 
