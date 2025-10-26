@@ -2,14 +2,13 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package br.cefetmg.sicsec.Controller.Tests;
+package br.cefetmg.sicsec.Tests;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -19,21 +18,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 
 @Controller
-@RequestMapping("/teste2")
-public class Test2Controller {
+@RequestMapping("/teste3")
+public class Test3Controller {
 
     @GetMapping
     @ResponseBody
-    public String teste2Get() {
-        System.out.println("Executando Teste 2 GET");
-        return "Teste 2 GET OK!";
-    }
-
-    @PostMapping
-    @ResponseBody
-    public String teste2Post() {
-        System.out.println("Executando Teste 2 POST");
-        return "Teste 2 POST OK!";
+    public String home() {
+        System.out.println("Executando Teste 3");
+        return "Teste 3 OK!";
     }
 }
 

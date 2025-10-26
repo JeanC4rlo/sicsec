@@ -5,6 +5,7 @@
 package br.cefetmg.sicsec.Model.Usuario;
 
 import br.cefetmg.sicsec.Model.DocumentoModel;
+import br.cefetmg.sicsec.Model.Util.Enum.Cargo;
 import java.util.List;
 
 /**
@@ -13,10 +14,19 @@ import java.util.List;
  */
 public class UsuarioModel {
     
+    private Cargo cargo;
     private MatriculaModel matricula;
     private String senha;
     private List<DocumentoModel> documentos;
 
+    public Cargo getCargo() {
+        return cargo;
+    }
+
+    public void setCargo(Cargo cargo) {
+        this.cargo = cargo;
+    }
+    
     public MatriculaModel getMatricula() {
         return matricula;
     }
