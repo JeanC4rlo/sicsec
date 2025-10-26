@@ -34,10 +34,10 @@
         <div id="duracao-e-tentativas">
             <h3>Numéro de tentativas e duração do questionário</h3>
             <label for="">Número de tentativas:</label>
-            <input type="number" name="num-tentativas" min="1" value="1"><br>
+            <input id="num-tentativas" type="number" min="1" value="1"><br>
             <label>Duração:</label>
-            <input type="number" id="horas" min="0" max="24" placeholder="Horas">
-            <input type="number" id="minutos" min="0" max="59" placeholder="Minutos"><br>
+            <input id="num-horas" type="number" id="horas" min="0" max="24" placeholder="Horas">
+            <input id="num-minutos" type="number" id="minutos" min="0" max="59" placeholder="Minutos"><br>
         </div>
         <div id="confirmacao">
             <p class="nome">Nome: </p>
@@ -48,7 +48,7 @@
         </div>
     </section>
     <section id="section-envTexto">
-        <div id="">
+        <div id="elaboracao">
             <label for="">Insira o enunciado:</label>
             <input type="textarea">
             <button>Inserir arquivo(s) de consulta?</button>
@@ -61,7 +61,7 @@
         </div>
     </section>
     <section id="section-envArquivo">
-        <div id="">
+        <div id="elaboracao">
             <label for="">Insira o enunciado:</label>
             <input type="textarea">
             <button>Inserir arquivo(s) de consulta?</button>
@@ -75,6 +75,7 @@
     </section>
     <button id="btn-anterior">Anterior</button>
     <button id="btn-proximo">Proximo</button>
+    <button id="btn-enviar">Enviar</button>
 </body>
 
 </html>

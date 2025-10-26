@@ -9,6 +9,7 @@ let sessao;
 let listaSegmentos;
 let numQuestoes = 0;
 const MAX_NUM_ALTERNATIVAS = 6;
+let btnEnviar;
 
 window.onload = initProdAtividade;
 
@@ -104,12 +105,34 @@ function passarSegmento() {
         case "questionario":
             switch (idxSegmento) {
                 case 0:
-                    if (!validarContainer(document.getElementById("lista-questoes")))
+                    if (numQuestoes < 2) {
+                        alert("Um questionário deve ter pelo menos 2 questões");
+                        return;
+                    }
+                    if (!validarContainer(sessao.querySelector("#lista-questoes")))
                         return;
                     passar();
                     break;
                 case 1:
-                    if (!validarLista(document.getElementById("duracao-e-tentativas"), { selectors: ["input"] }))
+                    if (!validarLista(sessao.querySelector("#duracao-e-tentativas"), { selectors: ["input"] }))
+                        return;
+                    passar();
+                    break;
+            }
+            break;
+        case "envTexto":
+            switch (idxSegmento) {
+                case 0:
+                    if (!validarContainer(sessao.querySelector("#elaboracao")))
+                        return;
+                    passar();
+                    break;
+            }
+            break;
+        case "envArquivo":
+            switch (idxSegmento) {
+                case 0:
+                    if (!validarContainer(sessao.querySelector("#elaboracao")))
                         return;
                     passar();
                     break;
@@ -237,6 +260,77 @@ function expandirTextarea(textarea) {
     })
 }
 
+function enviar() {
+    if (idxSegmento === -1 || idxSegmento < listaSegmentos.length - 1) {
+        alert("Finalize todos os segmentos antes de enviar.");
+        return;
+    }
+
+    // Monta o objeto de dados
+    const dados = {
+        nome: form.nome.value || "",
+        tipo: form.tipo.value || "",
+        valor: form.valor.value || "",
+        dataEncerramento: form.data.value || "",
+        questoes: "[]",          // como string JSON
+        tentativas: "1",
+        tempoDeDuracao: "{\"numHoras\":1,\"numMinutos\":0}" // como string JSON
+    };
+
+    if (form.tipo.value === "questionario") {
+        const listaQuestoes = document.querySelectorAll("#lista-questoes .questao");
+        const questoesArray = [];
+
+        listaQuestoes.forEach(q => {
+            const texto = q.querySelector("textarea:nth-of-type(1)").value || "";
+            const enunciado = q.querySelector("textarea:nth-of-type(2)").value || "";
+            const alternativas = [];
+
+            q.querySelectorAll("#lista-alternativas .alternativa").forEach(a => {
+                alternativas.push({
+                    texto: a.querySelector("textarea").value || "",
+                    correta: a.querySelector("select").value === "true"
+                });
+            });
+
+            questoesArray.push({ texto, enunciado, alternativas });
+        });
+
+        dados.questoes = JSON.stringify(questoesArray);
+
+        const numTentativas = document.querySelector("#num-tentativas");
+        dados.tentativas = numTentativas?.value || "1";
+
+        const numHoras = document.querySelector("#num-horas")?.value || "1";
+        const numMinutos = document.querySelector("#num-minutos")?.value || "0";
+        dados.tempoDeDuracao = JSON.stringify({ numHoras, numMinutos });
+    }
+
+    // Salva no localStorage
+    localStorage.setItem("atividade", JSON.stringify(dados));
+
+    // Envia para o Spring
+    fetch("http://localhost:6060/salvar", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(dados)
+    })
+    .then(response => {
+        if (!response.ok) throw new Error("Erro ao enviar os dados");
+        return response.json();
+    })
+    .then(data => {
+        console.log("Atividade salva:", data);
+        // Redireciona após salvar
+        window.location.href = "../homeProfessor.html";
+    })
+    .catch(err => console.error("Falha no envio:", err));
+}
+
+
+
 function initProdAtividade() {
     idxSegmento = -1;
     btnSair = document.getElementById("btn-sair");
@@ -244,9 +338,11 @@ function initProdAtividade() {
     btnAnterior = document.getElementById("btn-anterior");
     btnProximo = document.getElementById("btn-proximo");
     btnAddQuestao = document.getElementById("add-questao");
+    btnEnviar = document.getElementById("btn-enviar")
 
     btnSair.addEventListener("click", confirmarSaidaDaPag);
     btnProximo.addEventListener("click", passarSegmento);
     btnAnterior.addEventListener("click", voltarSegmento);
     btnAddQuestao.addEventListener("click", adicionarQuestao);
+    btnEnviar.addEventListener("click", enviar);
 }
