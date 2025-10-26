@@ -15,6 +15,7 @@ public class Atividade {
     private String tipo;
     private String valor;
     private String dataEncerramento;
+    private String horaEncerramento;
     private String questoes;
     private String tentativas;
     private String tempoDeDuracao;
@@ -37,6 +38,10 @@ public class Atividade {
 
     public String getDataEncerramento() {
         return dataEncerramento;
+    }
+
+    public String getHoraEncerramento() {
+        return horaEncerramento;
     }
 
     public String getQuestoes() {

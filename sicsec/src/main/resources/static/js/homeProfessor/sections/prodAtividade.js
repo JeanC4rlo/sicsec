@@ -10,6 +10,11 @@ let listaSegmentos;
 let numQuestoes = 0;
 const MAX_NUM_ALTERNATIVAS = 6;
 let btnEnviar;
+const tipos = {
+    "questionario": "Questionário",
+    "envArquivo": "Envio de Arquivo",
+    "envTexto": "Envio de Texto"
+}
 
 window.onload = initProdAtividade;
 
@@ -27,12 +32,16 @@ function definirSessao() {
 
 function validarCampo(campo) {
     if (!campo.value.trim()) {
-        campo.classList.add("campo-obrigatorio");
-        setTimeout(() => campo.classList.remove("campo-obrigatorio"), 2000);
-        campo.focus();
+        destacarCampo(campo);
         return false;
     }
     return true;
+}
+
+function destacarCampo(campo) {
+    campo.classList.add("campo-obrigatorio");
+    setTimeout(() => campo.classList.remove("campo-obrigatorio"), 2000);
+    campo.focus();
 }
 
 function validarLista(container, config) {
@@ -66,6 +75,10 @@ function validarContainer(container) {
     return true;
 }
 
+function validarData(data) {
+    return (new Date(data).getTime() > new Date().getTime());
+}
+
 function validarTempo() {
     const listaInputs = document.querySelectorAll("#duracao-e-tentativas > input");
     for (let input of listaInputs) {
@@ -94,6 +107,11 @@ function passarSegmento() {
             if (!validarCampo(campo))
                 return;
         }
+        if (!validarData(form.data.value)) {
+            alert("A data inserida é inválida")
+            destacarCampo(form.data);
+            return;
+        }
         passar();
         return;
     }
@@ -117,6 +135,7 @@ function passarSegmento() {
                     if (!validarLista(sessao.querySelector("#duracao-e-tentativas"), { selectors: ["input"] }))
                         return;
                     passar();
+                    montarConfirmacao();
                     break;
             }
             break;
@@ -266,18 +285,18 @@ function enviar() {
         return;
     }
 
-    // Monta o objeto de dados
     const dados = {
         nome: form.nome.value || "",
-        tipo: form.tipo.value || "",
+        tipo: tipos[form.tipo.value] || "",
         valor: form.valor.value || "",
         dataEncerramento: form.data.value || "",
-        questoes: "[]",          // como string JSON
+        horaEncerramento: form.horas.value || "",
+        questoes: "[]",
         tentativas: "1",
-        tempoDeDuracao: "{\"numHoras\":1,\"numMinutos\":0}" // como string JSON
+        tempoDeDuracao: "{\"numHoras\":1,\"numMinutos\":0}"
     };
 
-    if (form.tipo.value === "questionario") {
+    if (form.tipo.value === "Questionário") {
         const listaQuestoes = document.querySelectorAll("#lista-questoes .questao");
         const questoesArray = [];
 
@@ -306,10 +325,6 @@ function enviar() {
         dados.tempoDeDuracao = JSON.stringify({ numHoras, numMinutos });
     }
 
-    // Salva no localStorage
-    localStorage.setItem("atividade", JSON.stringify(dados));
-
-    // Envia para o Spring
     fetch("http://localhost:6060/salvar", {
         method: "POST",
         headers: {
@@ -317,19 +332,32 @@ function enviar() {
         },
         body: JSON.stringify(dados)
     })
-    .then(response => {
-        if (!response.ok) throw new Error("Erro ao enviar os dados");
-        return response.json();
-    })
-    .then(data => {
-        console.log("Atividade salva:", data);
-        // Redireciona após salvar
-        window.location.href = "../homeProfessor.html";
-    })
-    .catch(err => console.error("Falha no envio:", err));
+        .then(response => {
+            if (!response.ok) throw new Error("Erro ao enviar os dados");
+            return response.json();
+        })
+        .then(data => {
+            console.log("Atividade salva:", data);
+            window.location.href = "../homeProfessor.html";
+        })
+        .catch(err => console.error("Falha no envio:", err));
 }
 
+function montarConfirmacao() {
+    const nome = sessao.querySelector(".nome");
+    const tipo = sessao.querySelector(".tipo");
+    const valor = sessao.querySelector(".valor");
+    const dataEncerramento = sessao.querySelector(".dataEncerramento");
+    const horaEncerramento = sessao.querySelector(".horaEncerramento");
+    const numQuestoesP = sessao.querySelector(".numQuestoes");
 
+    nome.innerHTML = "Nome: " + form.nome.value;
+    tipo.innerHTML = "Tipo: " + tipos[form.tipo.value];
+    valor.innerHTML = "Valor: " + form.valor.value + " pontos";
+    dataEncerramento.innerHTML = "Data de Encerramento: " + form.data.value;
+    horaEncerramento.innerHTML = "Hora de Encerramento: " + form.horas.value;
+    numQuestoesP.innerHTML = `Número de questões: ${numQuestoes}`;
+}
 
 function initProdAtividade() {
     idxSegmento = -1;

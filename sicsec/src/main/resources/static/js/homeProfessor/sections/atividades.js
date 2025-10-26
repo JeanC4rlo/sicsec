@@ -11,27 +11,64 @@ const input = (placeholder, type = "text", name = "") => {
     return el;
 };
 
-function criarNovaAtividade() {
+function formatarData(data) {
+    let distanciaEmDias = Math.round((new Date(data).getTime() - new Date().getTime()) / (1000 * 3600 * 24));
+    data = data.split("-");
+    let mensagem = `${data[2]}/${data[1]}/${data[0]} (${distanciaEmDias} dia`;
+    mensagem += (distanciaEmDias > 1) ? "s)" : ")";
+    return mensagem
+}
+
+function atividadeAindaDisponivel(data, linha) {
+    if((new Date(data).getTime() - new Date().getTime()) / (1000 * 3600 * 24) <= 0) {
+        linha.classList.add("encerrada");
+        return false;
+    }
+    return true;
+}
+
+function preencherTabelaAtividades(atividade) {
 
     const linha = document.createElement("tr");
     const codigo = document.createElement("td");
     const nome = document.createElement("td");
     const tipo = document.createElement("td");
     const valor = document.createElement("td");
-    const dataExp = document.createElement("td");
+    const dataEnc = document.createElement("td");
     const dataCri = document.createElement("td");
 
-    linha.id = "trem";
+    linha.classList.add("atividade");
 
-    codigo.innerHTML = "CÓDIGO";
-    nome.innerHTML = "NOME";
-    tipo.innerHTML = "TIPO";
-    valor.innerHTML = "VALOR";
-    dataExp.innerHTML = "DATAEXP (x dias)";
+    codigo.innerHTML = atividade.id;
+    nome.innerHTML = atividade.nome;
+    tipo.innerHTML = atividade.tipo;
+    valor.innerHTML = atividade.valor;
+    if(atividadeAindaDisponivel(atividade.dataEncerramento, linha)) {
+        dataEnc.innerHTML = formatarData(atividade.dataEncerramento);
+    }
+    else {
+        dataEnc.innerHTML = "Atividade encerrada";
+    }
     dataCri.innerHTML = "DATACRI";
 
-    linha.append(codigo, nome, valor, tipo, dataExp, dataCri);
+    linha.append(codigo, nome, tipo, valor, dataEnc, dataCri);
     corpoTable.append(linha);
+}
+
+function carregarAtividades() {
+    fetch("http://localhost:6060/atividades")
+    .then(response => {
+        if(!response.ok) throw new Error("Erro ao carregar as atividades");
+        return response.json();
+    })
+    .then(dados => {
+        dados.forEach(atividade => {
+            preencherTabelaAtividades(atividade);
+        });
+    })
+    .catch(err => {
+        console.log("Erro:", err);
+    })
 }
 
 function initAtividades() {
@@ -44,4 +81,6 @@ function initAtividades() {
     btnAddAtividade.addEventListener('click', () => {
         window.location.href = "../homeProfessorSections/prodAtividade.html";
     });
+
+    carregarAtividades();
 }

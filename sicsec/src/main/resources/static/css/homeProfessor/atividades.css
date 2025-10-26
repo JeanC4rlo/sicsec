@@ -1,5 +1,3 @@
-/* ======== Página de Atividades ======== */
-
 #barra-de-pesquisa {
     width: 100%;
     max-width: 400px;
@@ -18,7 +16,6 @@
     color: white;
 }
 
-/* Container principal */
 #atividades-container {
     display: flex;
     flex-direction: column;
@@ -30,7 +27,6 @@
     box-sizing: border-box;
 }
 
-/* Botão de adicionar atividade */
 #add-atividade {
     background-color: var(--primary);
     color: white;
@@ -97,6 +93,11 @@
     max-height: 60vh;
     overflow-y: auto;
     border-radius: 0.5rem;
+}
+
+.encerrada {
+    background-color: grey;
+    color: aliceblue;
 }
 
 @media (max-width: 768px) {
