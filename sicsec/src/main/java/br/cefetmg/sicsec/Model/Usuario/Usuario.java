@@ -57,21 +57,13 @@ public class Usuario {
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     public Cargo getCargo() {
         return cargo;
     }
 
     public void setCargo(Cargo cargo) {
         this.cargo = cargo;
-    }
-    
-    public Matricula getMatricula() {
-        return matricula;
-    }
-
-    public void setMatricula(Matricula matricula) {
-        this.matricula = matricula;
     }
 
     public String getSenha() {
@@ -81,5 +73,31 @@ public class Usuario {
     public void setSenha(String senha) {
         this.senha = senha;
     }
+
+    public Matricula getMatricula() {
+        return matricula;
+    }
+
+    public void setMatricula(Matricula matricula) {
+        this.matricula = matricula;
+    }
+
+    public DadosBancarios getDadosBancarios() {
+        return dadosBancarios;
+    }
+
+    public void setDadosBancarios(DadosBancarios dadosBancarios) {
+        this.dadosBancarios = dadosBancarios;
+    }
+
+    public List<Emprestimo> getEmprestimos() {
+        return emprestimos;
+    }
+
+    public void setEmprestimos(List<Emprestimo> emprestimos) {
+        this.emprestimos = emprestimos;
+    }
+
+    
     
 }

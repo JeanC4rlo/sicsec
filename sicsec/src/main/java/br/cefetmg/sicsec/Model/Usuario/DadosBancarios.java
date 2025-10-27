@@ -5,7 +5,6 @@
 package br.cefetmg.sicsec.Model.Usuario;
 
 import br.cefetmg.sicsec.Model.Util.CPF;
-import br.cefetmg.sicsec.Model.Util.ConverteCPF;
 import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 
@@ -21,7 +20,7 @@ public class DadosBancarios {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Convert(converter = ConverteCPF.class)
+    @Embedded
     private CPF cpf;
     
     private String banco;

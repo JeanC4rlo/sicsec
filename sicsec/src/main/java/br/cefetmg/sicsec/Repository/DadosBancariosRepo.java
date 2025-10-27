@@ -4,10 +4,15 @@
  */
 package br.cefetmg.sicsec.Repository;
 
+import br.cefetmg.sicsec.Model.Usuario.DadosBancarios;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
 /**
  *
  * @author davig
  */
-public class AlunoDAO {
+@Repository
+public interface DadosBancariosRepo extends JpaRepository<DadosBancarios, Long>{
     
 }
