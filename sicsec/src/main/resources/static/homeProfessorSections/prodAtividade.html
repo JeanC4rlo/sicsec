@@ -25,7 +25,7 @@
         <label for="">Data de encerramento:</label>
         <input type="date" name="data"><br>
         <label>Horário do encerramento:</label>
-        <input id="horas" type="time">
+        <input name="horas" type="time">
     </form>
     <section id="section-questionario">
         <div id="questoes">
@@ -41,7 +41,7 @@
             <input id="num-horas" type="number" id="horas" min="0" max="24" placeholder="Horas">
             <input id="num-minutos" type="number" id="minutos" min="0" max="59" placeholder="Minutos"><br>
         </div>
-        <div id="confirmacao">
+        <div class="confirmacao">
             <p class="nome">Nome: </p>
             <p class="tipo">Tipo: </p>
             <p class="valor">Valor: </p>
@@ -51,34 +51,38 @@
         </div>
     </section>
     <section id="section-envTexto">
-        <div id="elaboracao">
+        <div class="elaboracao">
             <label for="">Insira o enunciado:</label>
-            <input type="textarea">
+            <input class="inputEnunciado" type="textarea">
             <button>Inserir arquivo(s) de consulta?</button>
         </div>
-        <div id="confirmacao">
+        <div class="confirmacao">
             <p class="nome">Nome: </p>
             <p class="tipo">Tipo: </p>
             <p class="valor">Valor: </p>
-            <p class="data-encerramento">Data de encerramento: </p>
+            <p class="dataEncerramento">Data de encerramento: </p>
+            <p class="horaEncerramento">Hora de encerramento: </p>
+            <p class="enunciado">Enunciado</p>
         </div>
     </section>
     <section id="section-envArquivo">
-        <div id="elaboracao">
+        <div class="elaboracao">
             <label for="">Insira o enunciado:</label>
-            <input type="textarea">
+            <input class="inputEnunciado" type="textarea">
             <button>Inserir arquivo(s) de consulta?</button>
         </div>
-        <div id="confirmacao">
+        <div class="confirmacao">
             <p class="nome">Nome: </p>
             <p class="tipo">Tipo: </p>
             <p class="valor">Valor: </p>
-            <p class="data-encerramento">Data de encerramento: </p>
+            <p class="dataEncerramento">Data de encerramento: </p>
+            <p class="horaEncerramento">Hora de encerramento: </p>
+            <p class="enunciado">Enunciado</p>
         </div>
     </section>
     <button id="btn-anterior">Anterior</button>
     <button id="btn-proximo">Proximo</button>
-    <button id="btn-enviar">Enviar</button>
+    <button id="btn-enviar" class="inativo  ">Enviar</button>
 </body>
 
 </html>

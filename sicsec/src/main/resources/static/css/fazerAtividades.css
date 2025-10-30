@@ -1,0 +1,76 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background-color: #f7f7f7;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+}
+
+#main-container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.atividade-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.atividade-header span {
+    font-weight: bold;
+    color: #555;
+}
+
+.questao {
+    margin-bottom: 20px;
+    padding: 10px;
+    border-left: 4px solid #007bff;
+    background-color: #f1f8ff;
+    border-radius: 6px;
+}
+
+.enunciado {
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.alternativas label {
+    display: block;
+    margin-bottom: 6px;
+    cursor: pointer;
+}
+
+.btn-enviar {
+    display: block;
+    margin: 20px auto 0;
+    padding: 10px 25px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn-enviar:hover {
+    background-color: #0056b3;
+}
+
+textarea,
+input[type="text"],
+input[type="file"] {
+    width: 100%;
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+    resize: vertical;
+}

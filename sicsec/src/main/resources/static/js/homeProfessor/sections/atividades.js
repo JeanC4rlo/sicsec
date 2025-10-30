@@ -11,10 +11,10 @@ const input = (placeholder, type = "text", name = "") => {
     return el;
 };
 
-function formatarData(data) {
+function formatarDataEHora(data) {
     let distanciaEmDias = Math.round((new Date(data).getTime() - new Date().getTime()) / (1000 * 3600 * 24));
     data = data.split("-");
-    let mensagem = `${data[2]}/${data[1]}/${data[0]} (${distanciaEmDias} dia`;
+    let mensagem = `${data[2]}/${data[1]}/${data[0]}<br>(${distanciaEmDias} dia`;
     mensagem += (distanciaEmDias > 1) ? "s)" : ")";
     return mensagem
 }
@@ -44,7 +44,7 @@ function preencherTabelaAtividades(atividade) {
     tipo.innerHTML = atividade.tipo;
     valor.innerHTML = atividade.valor;
     if(atividadeAindaDisponivel(atividade.dataEncerramento, linha)) {
-        dataEnc.innerHTML = formatarData(atividade.dataEncerramento);
+        dataEnc.innerHTML = formatarDataEHora(atividade.dataEncerramento);
     }
     else {
         dataEnc.innerHTML = "Atividade encerrada";

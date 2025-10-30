@@ -66,22 +66,43 @@ function navegarManual(direcao) {
     atualizarNoticia(indiceAtual);
 }
 
-function formatarData(data) {
-    let distanciaEmDias = Math.round((new Date(data).getTime() - new Date().getTime()) / (1000 * 3600 * 24));
+function calcularDistanciaDias(data) {
+    return Math.round((new Date(data).getTime() - new Date().getTime()) / (1000 * 3600 * 24));
+}
+
+function formatarDataEHora(data, hora) {
+    let distanciaEmDias = calcularDistanciaDias(data);
     data = data.split("-");
-    let mensagem = `${data[2]}/${data[1]}/${data[0]} HORA (${distanciaEmDias} dia`;
-    mensagem += (distanciaEmDias > 1) ? "s)" : ")";
+    let mensagem = `${data[2]}/${data[1]}/${data[0]} ${hora}<br>`;
+    if(distanciaEmDias > 1)
+        mensagem += `(${distanciaEmDias} dia${(distanciaEmDias > 1) ? 's)' : ')'}`
+    else
+        mensagem += "hoje";
     return mensagem
 }
 
+function irParaFazerAtividades(id) {
+    fetch(`/abrir-atividade/${id}`)
+        .then(response => response.json())
+        .then(atividade => {
+            localStorage.setItem("atividade", JSON.stringify(atividade));
+            window.location.href = "./fazerAtividades.html";
+        })
+}
+
 function atualizarAtividades(atividade) {
+    if (calcularDistanciaDias(atividade.dataEncerramento) < 0) {
+        return;
+    }
     const corpoTable = document.querySelector(".minhas-atividades tbody");
     const linha = document.createElement("tr");
     const data = document.createElement("td");
     const infoAtividade = document.createElement("td");
 
+    linha.addEventListener('click', () => irParaFazerAtividades(atividade.id))
+
     data.classList.add("data-col");
-    data.innerHTML = formatarData(atividade.dataEncerramento);
+    data.innerHTML = formatarDataEHora(atividade.dataEncerramento, atividade.horaEncerramento);
 
     const disciplina = document.createElement("span");
     disciplina.classList.add("disciplina");
@@ -89,7 +110,7 @@ function atualizarAtividades(atividade) {
     avaliacao.classList.add("avaliacao");
 
     disciplina.innerHTML = "DISCIPLINA";
-    avaliacao.innerHTML = `${atividade.tipo}: ${atividade.valor} ponto`;
+    avaliacao.innerHTML = `${atividade.nome}<br>${atividade.tipo}: ${atividade.valor} ponto`;
     if (atividade.valor > 1) avaliacao.innerHTML += "s";
 
     infoAtividade.append(disciplina, avaliacao);
@@ -99,7 +120,7 @@ function atualizarAtividades(atividade) {
 }
 
 function carregarAtividades() {
-    fetch("http://localhost:6060/atividades")
+    fetch("http://localhost:6060/home-atividades")
         .then(response => {
             if (!response.ok) throw new Error("Falha ao carregar as atividades");
             return response.json();

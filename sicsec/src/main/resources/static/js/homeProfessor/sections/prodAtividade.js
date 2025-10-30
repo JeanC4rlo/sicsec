@@ -4,12 +4,13 @@ let btnAnterior;
 let btnProximo;
 let idxSegmento;
 let btnAddQuestao;
-const MAX_NUM_CARACTERES = 1500;
 let sessao;
 let listaSegmentos;
 let numQuestoes = 0;
-const MAX_NUM_ALTERNATIVAS = 6;
 let btnEnviar;
+const MAX_NUM_ALTERNATIVAS = 6;
+const MAX_CARACTERES_TXT_PEQUENO = 252;
+const MAX_CARACTERES_TXT_GRANDE = 1500;
 const tipos = {
     "questionario": "Questionário",
     "envArquivo": "Envio de Arquivo",
@@ -142,23 +143,35 @@ function passarSegmento() {
         case "envTexto":
             switch (idxSegmento) {
                 case 0:
-                    if (!validarContainer(sessao.querySelector("#elaboracao")))
+                    if (!validarContainer(sessao.querySelector(".elaboracao")))
                         return;
                     passar();
+                    montarConfirmacao();
                     break;
             }
             break;
         case "envArquivo":
             switch (idxSegmento) {
                 case 0:
-                    if (!validarContainer(sessao.querySelector("#elaboracao")))
+                    if (!validarContainer(sessao.querySelector(".elaboracao")))
                         return;
                     passar();
+                    montarConfirmacao();
                     break;
             }
             break;
     }
 }
+
+function aparecerBotaoEnviar() {
+    btnEnviar.classList.remove("inativo");
+    
+}
+
+/*function desaparecerBotaoEnviar() {
+    btnEnviar.classList.add("inativo");
+    btnProximo.classList.remove("inativo");
+}*/
 
 function voltar() {
     idxSegmento--;
@@ -169,6 +182,7 @@ function voltar() {
     }
     listaSegmentos[idxSegmento + 1].classList.remove("ativo");
     listaSegmentos[idxSegmento].classList.add("ativo");
+    desaparecerBotaoEnviar();
 }
 
 function voltarSegmento() {
@@ -195,40 +209,40 @@ function confirmarSaidaDaPag() {
 function adicionarQuestao() {
     numQuestoes++;
 
-    const CORPO = document.createElement("div");
-    CORPO.classList.add("questao");
-    CORPO.classList.add("ativo");
+    const corpo = document.createElement("div");
+    corpo.classList.add("questao");
+    corpo.classList.add("ativo");
 
-    const NUM_QUESTAO = document.createElement("p");
-    NUM_QUESTAO.innerHTML = `Questão ${numQuestoes}`;
-    NUM_QUESTAO.classList.add("num-questao");
+    const numDaQuestao = document.createElement("p");
+    numDaQuestao.innerHTML = `Questão ${numQuestoes}`;
+    numDaQuestao.classList.add("num-questao");
 
-    const TXT_DA_QUESTAO = document.createElement("textarea");
-    TXT_DA_QUESTAO.placeholder = "Texto da questão";
-    TXT_DA_QUESTAO.maxLength = String(MAX_NUM_CARACTERES);
-    expandirTextarea(TXT_DA_QUESTAO);
+    const txtDaQuestao = document.createElement("textarea");
+    txtDaQuestao.placeholder = "Texto da questão";
+    txtDaQuestao.maxLength = String(MAX_CARACTERES_TXT_GRANDE);
+    expandirTextarea(txtDaQuestao);
 
-    const ENUNCIADO_QUESTAO = document.createElement("textarea");
-    ENUNCIADO_QUESTAO.placeholder = "Enunciado da questão";
-    ENUNCIADO_QUESTAO.style.marginBottom = "0.5rem";
-    expandirTextarea(ENUNCIADO_QUESTAO);
+    const enunciadoQuestao = document.createElement("textarea");
+    enunciadoQuestao.placeholder = "Enunciado da questão";
+    enunciadoQuestao.style.marginBottom = "0.5rem";
+    expandirTextarea(enunciadoQuestao);
 
-    const LISTA_ALTERNATIVAS = document.createElement("div");
-    LISTA_ALTERNATIVAS.id = "lista-alternativas";
+    const listaAlternativas = document.createElement("div");
+    listaAlternativas.id = "lista-alternativas";
 
-    const BTN_ADD_ALTERNATIVA = document.createElement("button");
-    BTN_ADD_ALTERNATIVA.textContent = "Adicionar alternativa";
-    BTN_ADD_ALTERNATIVA.addEventListener("click", () => adicionarAlternativa(LISTA_ALTERNATIVAS));
+    const btnAddAlternativa = document.createElement("button");
+    btnAddAlternativa.textContent = "Adicionar alternativa";
+    btnAddAlternativa.addEventListener("click", () => adicionarAlternativa(listaAlternativas));
 
-    const BTN_RMV_QUESTAO = document.createElement("button");
-    BTN_RMV_QUESTAO.textContent = "Excluir questão";
-    BTN_RMV_QUESTAO.addEventListener("click", () => removerQuestao(CORPO));
+    const btnRmvQuestao = document.createElement("button");
+    btnRmvQuestao.textContent = "Excluir questão";
+    btnRmvQuestao.addEventListener("click", () => removerQuestao(corpo));
 
-    while (LISTA_ALTERNATIVAS.children.length < 2)
-        adicionarAlternativa(LISTA_ALTERNATIVAS);
+    while (listaAlternativas.children.length < 2)
+        adicionarAlternativa(listaAlternativas);
 
-    CORPO.append(NUM_QUESTAO, TXT_DA_QUESTAO, ENUNCIADO_QUESTAO, LISTA_ALTERNATIVAS, BTN_ADD_ALTERNATIVA, BTN_RMV_QUESTAO);
-    document.querySelector("#lista-questoes").appendChild(CORPO, LISTA_ALTERNATIVAS);
+    corpo.append(numDaQuestao, txtDaQuestao, enunciadoQuestao, listaAlternativas, btnAddAlternativa, btnRmvQuestao);
+    document.querySelector("#lista-questoes").appendChild(corpo, listaAlternativas);
 }
 
 function removerQuestao(corpo) {
@@ -237,8 +251,8 @@ function removerQuestao(corpo) {
         return;
     }
     corpo.remove();
-    const LISTA_NUM_QUESTOES = document.querySelectorAll("#lista-questoes .num-questao");
-    LISTA_NUM_QUESTOES.forEach((num, index) => {
+    const listaNumDasQuestoes = document.querySelectorAll("#lista-questoes .num-questao");
+    listaNumDasQuestoes.forEach((num, index) => {
         num.innerHTML = `Questão ${index + 1}`;
     });
 
@@ -252,30 +266,30 @@ function adicionarAlternativa(listaAlternativas) {
         return;
     }
 
-    const CORPO = document.createElement("div");
-    CORPO.classList.add("alternativa");
+    const corpo = document.createElement("div");
+    corpo.classList.add("alternativa");
 
-    const TEXTO = document.createElement("textarea");
-    TEXTO.placeholder = "Texto da alternativa";
-    expandirTextarea(TEXTO);
+    const texto = document.createElement("textarea");
+    texto.placeholder = "Texto da alternativa";
+    expandirTextarea(texto);
 
-    const EH_CORRETA = document.createElement("select");
-    EH_CORRETA.add(new Option("Errada", "false"));
-    EH_CORRETA.add(new Option("Correta", "true"));
+    const ehCorreta = document.createElement("select");
+    ehCorreta.add(new Option("Errada", "false"));
+    ehCorreta.add(new Option("Correta", "true"));
 
-    const BTN_RMV_ALTERNATIVA = document.createElement("button");
-    BTN_RMV_ALTERNATIVA.textContent = "Remover alternativa";
-    BTN_RMV_ALTERNATIVA.addEventListener('click', () => removerAlternativa(CORPO))
+    const btnRmvAlternativa = document.createElement("button");
+    btnRmvAlternativa.textContent = "Remover alternativa";
+    btnRmvAlternativa.addEventListener('click', () => removerAlternativa(corpo))
 
-    CORPO.append(TEXTO, EH_CORRETA);
-    listaAlternativas.appendChild(CORPO);
+    corpo.append(texto, ehCorreta);
+    listaAlternativas.appendChild(corpo);
 }
 
 function expandirTextarea(textarea) {
     textarea.addEventListener("input", function () {
         textarea.style.height = "auto";
         textarea.style.height = textarea.scrollHeight + "px";
-        textarea.maxLength = String(MAX_NUM_CARACTERES);
+        textarea.maxLength = String(MAX_CARACTERES_TXT_GRANDE);
     })
 }
 
@@ -291,12 +305,13 @@ function enviar() {
         valor: form.valor.value || "",
         dataEncerramento: form.data.value || "",
         horaEncerramento: form.horas.value || "",
+        enunciado: "",
         questoes: "[]",
         tentativas: "1",
         tempoDeDuracao: "{\"numHoras\":1,\"numMinutos\":0}"
     };
 
-    if (form.tipo.value === "Questionário") {
+    if (form.tipo.value === "questionario") {
         const listaQuestoes = document.querySelectorAll("#lista-questoes .questao");
         const questoesArray = [];
 
@@ -325,38 +340,53 @@ function enviar() {
         dados.tempoDeDuracao = JSON.stringify({ numHoras, numMinutos });
     }
 
+    else {
+        const inputEnunciado = sessao.querySelector(".inputEnunciado");
+        dados.enunciado = inputEnunciado.value;
+    }
+
     fetch("http://localhost:6060/salvar", {
         method: "POST",
         headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json ; charset=UTF-8"
         },
         body: JSON.stringify(dados)
     })
         .then(response => {
+            console.log(JSON.stringify(dados));
             if (!response.ok) throw new Error("Erro ao enviar os dados");
             return response.json();
         })
         .then(data => {
-            console.log("Atividade salva:", data);
             window.location.href = "../homeProfessor.html";
         })
         .catch(err => console.error("Falha no envio:", err));
 }
 
 function montarConfirmacao() {
+    aparecerBotaoEnviar();
     const nome = sessao.querySelector(".nome");
     const tipo = sessao.querySelector(".tipo");
     const valor = sessao.querySelector(".valor");
     const dataEncerramento = sessao.querySelector(".dataEncerramento");
     const horaEncerramento = sessao.querySelector(".horaEncerramento");
-    const numQuestoesP = sessao.querySelector(".numQuestoes");
 
     nome.innerHTML = "Nome: " + form.nome.value;
     tipo.innerHTML = "Tipo: " + tipos[form.tipo.value];
     valor.innerHTML = "Valor: " + form.valor.value + " pontos";
     dataEncerramento.innerHTML = "Data de Encerramento: " + form.data.value;
     horaEncerramento.innerHTML = "Hora de Encerramento: " + form.horas.value;
-    numQuestoesP.innerHTML = `Número de questões: ${numQuestoes}`;
+
+    if (form.tipo.value === "questionario") {
+        const numQuestoesP = sessao.querySelector(".numQuestoes");
+        numQuestoesP.innerHTML = `Número de questões: ${numQuestoes}`;
+    }
+    else {
+        const enunciado = sessao.querySelector(".enunciado");
+        const inputEnunciado = sessao.querySelector(".inputEnunciado");
+
+        enunciado.innerHTML = `Enunciado: ${inputEnunciado.value}`;
+    }
 }
 
 function initProdAtividade() {

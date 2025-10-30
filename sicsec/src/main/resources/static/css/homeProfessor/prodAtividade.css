@@ -1,66 +1,68 @@
 /* ======== Página: Produção de Atividade ======== */
 :root {
-    /* fallback caso base.css não esteja carregado */
-    --primary: #004aad;
-    --secondary: #0074ff;
-    --bg: #f9f9fb;
-    --text: #333;
+    --primary: #0052cc;
+    --secondary: #2684ff;
+    --accent: #36b37e;
+    --danger: #ff5630;
+    --bg: #f4f6fa;
+    --text: #222;
+    --card-bg: #fff;
+    --shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
 }
 
-/* Reset leve */
+/* Reset e base */
 * {
     box-sizing: border-box;
-    font-family: "Inter", sans-serif;
+    font-family: "Inter", system-ui, sans-serif;
     color: var(--text);
 }
 
 body {
-    background-color: var(--bg);
+    background: linear-gradient(180deg, #f6f9ff 0%, #eef3ff 100%);
     margin: 0;
     padding: 2rem;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1.5rem;
+    gap: 2rem;
     min-height: 100vh;
 }
 
 /* ===== Botão de sair ===== */
 #btn-sair {
     align-self: flex-end;
-    background-color: var(--primary);
+    background-color: var(--danger);
     color: white;
-    font-weight: bold;
+    font-weight: 600;
     border: none;
     border-radius: 0.5rem;
-    padding: 0.5rem 1rem;
+    padding: 0.6rem 1.2rem;
     cursor: pointer;
-    transition: 0.2s ease;
+    transition: all 0.25s ease;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
 }
 #btn-sair:hover {
-    background-color: var(--secondary);
+    transform: translateY(-2px);
+    background-color: #ff2a00;
 }
 
 /* ===== Form principal ===== */
 form {
     display: flex;
     flex-direction: column;
-    gap: .5rem;
-    background-color: white;
-    padding: 1.1rem;
+    gap: 0.75rem;
+    background-color: var(--card-bg);
+    padding: 1.5rem 2rem;
     border-radius: 0.75rem;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    box-shadow: var(--shadow);
     width: 100%;
-    max-width: 600px;
-}
-
-form.inativo {
-    display: none;
+    max-width: 650px;
+    animation: fadeIn 0.4s ease;
 }
 
 form label {
     font-weight: 600;
-    margin-bottom: 0.25rem;
+    font-size: 0.95rem;
 }
 
 input,
@@ -68,7 +70,7 @@ select,
 textarea {
     width: 100%;
     padding: 0.6rem 0.8rem;
-    border: 2px solid #ccc;
+    border: 2px solid #d0d7e2;
     border-radius: 0.5rem;
     font-size: 1rem;
     transition: border-color 0.2s ease, background-color 0.2s ease;
@@ -78,77 +80,80 @@ input:focus,
 select:focus,
 textarea:focus {
     outline: none;
-    border-color: var(--primary);
-    background-color: #eef5ff;
+    border-color: var(--secondary);
+    background-color: #f0f6ff;
+    box-shadow: 0 0 0 3px rgba(38, 132, 255, 0.15);
 }
 
+/* ===== Botões de navegação ===== */
 #btn-anterior,
-#btn-proximo {
+#btn-proximo,
+#btn-enviar {
     background-color: var(--primary);
     color: white;
-    font-weight: bold;
+    font-weight: 600;
     border: none;
     border-radius: 0.5rem;
-    padding: 0.75rem 1.5rem;
+    padding: 0.75rem 1.75rem;
     cursor: pointer;
-    transition: 0.2s ease;
+    transition: 0.25s ease;
     margin: 0.25rem;
+    box-shadow: var(--shadow);
 }
 
 #btn-anterior:hover,
-#btn-proximo:hover {
+#btn-proximo:hover,
+#btn-enviar:hover {
     background-color: var(--secondary);
-    transform: scale(1.05);
+    transform: translateY(-2px);
 }
 
+/* ===== Seções ===== */
 section {
     display: none;
     flex-direction: column;
-    gap: 1rem;
-    background-color: white;
+    gap: 1.5rem;
+    background-color: var(--card-bg);
     padding: 2rem;
-    border-radius: 0.75rem;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    border-radius: 1rem;
+    box-shadow: var(--shadow);
     width: 100%;
-    max-width: 600px;
-}
-
-section > div {
-    display: none;
+    max-width: 650px;
+    animation: fadeIn 0.5s ease;
 }
 
 .ativo {
     display: block;
 }
 
+.inativo {
+    display: none;
+}
+
+section > div {
+    display: none;
+}
+
 section label {
     font-weight: 600;
 }
 
-section input {
-    width: 100%;
-    padding: 0.6rem 0.8rem;
-    border: 2px solid #ccc;
-    border-radius: 0.5rem;
-    font-size: 1rem;
-}
-
 section button {
-    background-color: var(--primary);
+    background-color: var(--accent);
     color: white;
-    font-weight: bold;
+    font-weight: 600;
     border: none;
     border-radius: 0.5rem;
     padding: 0.6rem 1rem;
     cursor: pointer;
-    transition: 0.2s ease;
-    align-self: flex-start;
+    transition: 0.25s ease;
 }
-
 section button:hover {
-    background-color: var(--secondary);
+    background-color: #2ca96d;
+    transform: translateY(-2px);
 }
 
+/* ===== Questões e listas ===== */
 #lista-questoes {
     display: flex;
     flex-direction: column;
@@ -157,27 +162,55 @@ section button:hover {
 }
 
 #lista-questoes > div {
-    background-color: #f0f4ff;
-    border: 1px solid var(--primary);
-    border-radius: 0.5rem;
+    background-color: #f2f7ff;
+    border: 1.5px solid var(--secondary);
+    border-radius: 0.6rem;
     padding: 1rem;
+    transition: 0.25s ease;
+}
+#lista-questoes > div:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(38, 132, 255, 0.1);
 }
 
+/* ===== Textarea ===== */
 textarea {
-  resize: none;         
-  width: 100%;          
-  height: 5vh;       
-  box-sizing: border-box;
-  font-size: 1rem;
-  font-family: inherit; 
-  padding: 8px;
-  overflow: hidden;
+    resize: none;
+    width: 100%;
+    min-height: 6rem;
+    font-size: 1rem;
+    font-family: inherit;
+    padding: 10px;
+    border: 2px solid #d0d7e2;
+    border-radius: 0.5rem;
+    transition: 0.2s ease;
 }
 
+/* ===== Campos obrigatórios ===== */
 .campo-obrigatorio:focus {
-    border-color:red;
+    border-color: var(--danger);
+    box-shadow: 0 0 0 3px rgba(255, 86, 48, 0.2);
 }
 
+/* ===== Confirmação ===== */
+.confirmacao {
+    background-color: #f8fbff;
+    border-left: 5px solid var(--primary);
+    padding: 1rem 1.25rem;
+    border-radius: 0.5rem;
+    line-height: 1.5;
+}
+.confirmacao p {
+    margin: 0.3rem 0;
+}
+
+/* ===== Animações ===== */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== Responsividade ===== */
 @media (max-width: 600px) {
     body {
         padding: 1rem;
@@ -186,11 +219,12 @@ textarea {
     form,
     section {
         width: 100%;
-        padding: 1.5rem;
+        padding: 1.25rem;
     }
 
     #btn-anterior,
-    #btn-proximo {
+    #btn-proximo,
+    #btn-enviar {
         width: 100%;
     }
 }
