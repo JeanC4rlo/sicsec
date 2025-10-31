@@ -5,18 +5,35 @@
 package br.cefetmg.sicsec.Model.Usuario;
 
 import br.cefetmg.sicsec.Model.Util.CPF;
+import jakarta.persistence.*;
 
 /**
  *
  * @author davig
  */
+
+@Entity
+
 public class MatriculaModel {
-    
-    private CPF cpf;
-    private String nome;
-    private String email;
-    private String telefone;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long numeroMatricula;
+    
+    @Embedded
+    private CPF cpf;
+
+    @Column(nullable = false, length=255)
+    private String nome;
+
+    @Column(nullable = false, unique = true, length=255)
+    private String email;
+
+    @Column(length = 15)
+    private String telefone;
+    
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "dados_bancarios_id")
     private DadosBancariosModel dadosBancarios;
 
     public CPF getCpf() {

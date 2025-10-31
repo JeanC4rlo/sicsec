@@ -4,10 +4,14 @@
  */
 package br.cefetmg.sicsec.Model.Util;
 
+import jakarta.persistence.Embeddable;
+
 /**
  *
  * @author davig
  */
+
+@Embeddable
 public class CPF {
     
     private int digitosUnicos;       // digitos em x: xxx.xxx.xx0-00

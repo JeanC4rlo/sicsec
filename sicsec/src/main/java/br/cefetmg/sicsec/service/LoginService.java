@@ -1,13 +1,34 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-package br.cefetmg.sicsec.Service;
+package br.cefetmg.sicsec.service;
 
-/**
- *
- * @author davig
- */
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import br.cefetmg.sicsec.Model.Usuario.UsuarioModel;
+import br.cefetmg.sicsec.Repository.UsuarioDAO;
+
+@Service
 public class LoginService {
-    
+    @Autowired
+    private UsuarioDAO usuarioDAO;
+
+    public UsuarioModel registerUsuario(UsuarioModel usuario) {
+        return usuarioDAO.save(usuario);
+    }
+
+    public UsuarioModel authenticate(Long cpf, String senha) {
+        List<UsuarioModel> usuarios = usuarioDAO.findByMatricula_Cpf(cpf);
+
+        if (usuarios.isEmpty()) {
+            return null;
+        }
+
+        UsuarioModel usuario = usuarios.get(0);
+        if (senha.equals(usuario.getSenha())) {
+            return usuario;
+        }
+
+        return null;
+    }
 }

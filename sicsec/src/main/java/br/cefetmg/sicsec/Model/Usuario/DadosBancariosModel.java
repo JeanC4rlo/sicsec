@@ -5,13 +5,21 @@
 package br.cefetmg.sicsec.Model.Usuario;
 
 import br.cefetmg.sicsec.Model.Util.CPF;
+import jakarta.persistence.*;
 
 /**
  *
  * @author davig
  */
+
+@Entity
+@Table(name="dados_bancarios")
 public class DadosBancariosModel {
     
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     private String banco;
     private String agencia;
     private String conta;
