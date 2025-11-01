@@ -1,30 +1,30 @@
-package br.cefetmg.sicsec.service;
+package br.cefetmg.sicsec.Service;
 
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import br.cefetmg.sicsec.Model.Usuario.UsuarioModel;
-import br.cefetmg.sicsec.Repository.UsuarioDAO;
+import br.cefetmg.sicsec.Model.Usuario.Usuario;
+import br.cefetmg.sicsec.Repository.UsuarioRepo;
 
 @Service
 public class LoginService {
     @Autowired
-    private UsuarioDAO usuarioDAO;
+    private UsuarioRepo usuarioRepo;
 
-    public UsuarioModel registerUsuario(UsuarioModel usuario) {
-        return usuarioDAO.save(usuario);
+    public Usuario registerUsuario(Usuario usuario) {
+        return usuarioRepo.save(usuario);
     }
 
-    public UsuarioModel authenticate(Long cpf, String senha) {
-        List<UsuarioModel> usuarios = usuarioDAO.findByMatricula_Cpf(cpf);
+    public Usuario authenticate(Long cpf, String senha) {
+        List<Usuario> usuarios = usuarioRepo.findByCpf(cpf);
 
         if (usuarios.isEmpty()) {
             return null;
         }
 
-        UsuarioModel usuario = usuarios.get(0);
+        Usuario usuario = usuarios.get(0);
         if (senha.equals(usuario.getSenha())) {
             return usuario;
         }

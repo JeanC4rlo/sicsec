@@ -5,19 +5,27 @@
 package br.cefetmg.sicsec.Model.Util;
 
 import br.cefetmg.sicsec.Model.Util.Enum.Turno;
+import jakarta.persistence.*;
 import java.time.LocalTime;
 
 /**
  *
  * @author davig
  */
+@Embeddable
 public class Horario {
     
     private LocalTime inicio;
     private LocalTime fim;
+    
+    @Enumerated(EnumType.STRING)
     private Turno turno;
+    
+    @Transient
     int subHorario;
 
+    public Horario() {}
+    
     public Horario(LocalTime inicio, LocalTime fim, Turno turno, int subHorario) {
         this.inicio = inicio;
         this.fim = fim;

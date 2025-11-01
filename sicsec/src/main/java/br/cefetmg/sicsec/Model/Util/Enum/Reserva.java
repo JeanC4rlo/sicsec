@@ -10,5 +10,6 @@ package br.cefetmg.sicsec.Model.Util.Enum;
  */
 public enum Reserva {
     EMPRESTIMO, 
-    RESERVA
+    RESERVA,
+    HISTORICO
 }

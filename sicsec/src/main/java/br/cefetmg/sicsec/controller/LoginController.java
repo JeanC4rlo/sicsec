@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
 import jakarta.servlet.http.HttpSession;
 
-import br.cefetmg.sicsec.Model.Usuario.UsuarioModel;
-import br.cefetmg.sicsec.service.LoginService;
+import br.cefetmg.sicsec.Model.Usuario.Usuario;
+import br.cefetmg.sicsec.Service.LoginService;
 
 @Controller
 @RequestMapping("/auth")
@@ -17,7 +17,7 @@ public class LoginController {
 
     @GetMapping("/login")
     public String showLoginView() {
-        return "login";
+        return "auth/login";
     }
 
     @PostMapping("/login")
@@ -27,14 +27,14 @@ public class LoginController {
                         Model model) {
                           if (cpf == null || cpf.trim().isEmpty() || senha == null || senha.isEmpty()) {
                             model.addAttribute("error", "CPF e senha são obrigatórios.");
-                            return "login";
+                            return "auth/login";
                           }
 
                           cpf = cpf.replaceAll("[^0-9]", "");
                           Long cpfFormatado = Long.parseLong(cpf);
 
                           try {
-                            UsuarioModel usuario = loginService.authenticate(cpfFormatado, senha);
+                            Usuario usuario = loginService.authenticate(cpfFormatado, senha);
                             if (usuario != null) {
                                 session.setAttribute("usuario", usuario);
                                 String redirectPage;
@@ -51,11 +51,11 @@ public class LoginController {
                                 return redirectPage;
                             } else {
                                 model.addAttribute("error", "CPF ou senha inválidos.");
-                                return "login";
+                                return "auth/login";
                             }
                           } catch (Exception e) {
                             model.addAttribute("error", "Error ao realizar login.");
-                            return "login";
+                            return "auth/login";
                           }
                         }
 }
