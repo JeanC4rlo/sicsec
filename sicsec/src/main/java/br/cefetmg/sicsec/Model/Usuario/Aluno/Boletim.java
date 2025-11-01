@@ -6,15 +6,49 @@ package br.cefetmg.sicsec.Model.Usuario.Aluno;
 
 import br.cefetmg.sicsec.Model.Curso.Disciplina;
 import br.cefetmg.sicsec.Model.Util.Enum.Aprovacao;
+import br.cefetmg.sicsec.Model.Util.Enum.Situacao;
+import com.fasterxml.jackson.annotation.*;
+import jakarta.persistence.*;
 import java.util.List;
 
 /**
  *
  * @author davig
  */
+@Entity
 public class Boletim {
     
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    @JsonBackReference
+    @ManyToOne
+    @JoinColumn(name = "aluno_id", nullable = false)
+    private Aluno aluno;
+
+    @JsonManagedReference
+    @OneToMany(mappedBy = "boletim", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ComponenteCurricular> componentes;
+
+    @Enumerated(EnumType.STRING)
+    private Situacao situacaoDoAno;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Aluno getAluno() {
+        return aluno;
+    }
+
+    public void setAluno(Aluno aluno) {
+        this.aluno = aluno;
+    }
 
     public List<ComponenteCurricular> getComponentes() {
         return componentes;
@@ -22,58 +56,19 @@ public class Boletim {
 
     public void setComponentes(List<ComponenteCurricular> componentes) {
         this.componentes = componentes;
-    }
-    
-}
-
-class ComponenteCurricular {
-    
-    private Disciplina disciplina;
-    private int[] notas;
-    private int faltas;
-    private int notaFinal;
-    private Aprovacao situacao;
-
-    public Disciplina getDisciplina() {
-        return disciplina;
+        if (componentes != null) {
+            componentes.forEach(c -> c.setBoletim(this));
+        }
     }
 
-    public void setDisciplina(Disciplina disciplina) {
-        this.disciplina = disciplina;
+    public Situacao getSituacaoDoAno() {
+        return situacaoDoAno;
     }
 
-    public int[] getNotas() {
-        return notas;
-    }
-
-    public void setNotas(int[] notas) {
-        this.notas = notas;
-    }
-
-    public int getFaltas() {
-        return faltas;
-    }
-
-    public void setFaltas(int faltas) {
-        this.faltas = faltas;
-    }
-
-    public int getNotaFinal() {
-        return notaFinal;
-    }
-
-    public void setNotaFinal(int notaFinal) {
-        this.notaFinal = notaFinal;
-    }
-
-    public Aprovacao getSituacao() {
-        return situacao;
-    }
-
-    public void setSituacao(Aprovacao situacao) {
-        this.situacao = situacao;
+    public void setSituacaoDoAno(Situacao situacaoDoAno) {
+        this.situacaoDoAno = situacaoDoAno;
     }
     
     
-    
+
 }

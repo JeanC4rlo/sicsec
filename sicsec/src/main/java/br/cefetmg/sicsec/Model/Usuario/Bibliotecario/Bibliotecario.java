@@ -17,7 +17,7 @@ import jakarta.persistence.*;
 @Entity
 public class Bibliotecario extends Usuario{
     
-    @JsonBackReference
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_biblioteca", nullable = false)
     private Biblioteca biblioteca;

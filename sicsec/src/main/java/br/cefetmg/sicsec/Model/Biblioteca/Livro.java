@@ -29,11 +29,15 @@ public class Livro {
     private Long codigo;
     
     @JsonBackReference
-    @ManyToMany(mappedBy = "livros")
-    private List<Biblioteca> disponivel;
+    @ManyToMany(mappedBy = "acervo")
+    private List<Biblioteca> bibliotecas;
     
     @Enumerated(EnumType.STRING)
     private StatusLivro status;
+    
+    @JsonBackReference
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "livro")
+    private List<Emprestimo> historicoEmprestimos;
 
     public Long getId() {
         return id;
@@ -91,12 +95,12 @@ public class Livro {
         this.codigo = codigo;
     }
 
-    public List<Biblioteca> getDisponivel() {
-        return disponivel;
+    public List<Biblioteca> getBibliotecas() {
+        return bibliotecas;
     }
 
-    public void setDisponivel(List<Biblioteca> disponivel) {
-        this.disponivel = disponivel;
+    public void setBibliotecas(List<Biblioteca> bibliotecas) {
+        this.bibliotecas = bibliotecas;
     }
 
     public StatusLivro getStatus() {
@@ -105,6 +109,14 @@ public class Livro {
 
     public void setStatus(StatusLivro status) {
         this.status = status;
+    }
+
+    public List<Emprestimo> getHistoricoEmprestimos() {
+        return historicoEmprestimos;
+    }
+
+    public void setHistoricoEmprestimos(List<Emprestimo> historicoEmprestimos) {
+        this.historicoEmprestimos = historicoEmprestimos;
     }
 
     

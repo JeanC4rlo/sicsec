@@ -5,7 +5,10 @@
 package br.cefetmg.sicsec.Model.Curso;
 
 import br.cefetmg.sicsec.Model.Curso.Curso;
+import br.cefetmg.sicsec.Model.Curso.Turma.Turma;
 import br.cefetmg.sicsec.Model.Util.Enum.Area;
+import com.fasterxml.jackson.annotation.*;
+import jakarta.persistence.*;
 import java.util.List;
 
 /**
@@ -13,22 +16,40 @@ import java.util.List;
  * @author davig
  */
 
+@Entity
 //Baseado nas linhas da seguinte tabela: https://www.decom.cefetmg.br/wp-content/uploads/sites/34/2017/03/matriz_curricular-Informatica.pdf
 public class Disciplina {
     
-    private Curso curso;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    @Enumerated(EnumType.STRING)
     private Area area;
+    
     private String nome;
     private int[] cargaHoraria; //Número de horários da aula por semana.
-    private int cargaHorariaTotal; //Carga horária total ao longo do ano.
-    private double horasAulaTotal; //Carga Horária * 50 / 60
+    
+    @JsonBackReference
+    @OneToMany(fetch = FetchType.LAZY, mappedBy="disciplina")
+    private List<Turma> turmas;
+    
+    @JsonBackReference
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "curso_id", nullable = false)
+    private Curso curso;
+    
+    @JsonBackReference(value = "disciplinaDepartamento")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "departamento_id", nullable = false)
+    private Departamento departamento;
 
-    public Curso getCurso() {
-        return curso;
+    public Long getId() {
+        return id;
     }
 
-    public void setCurso(Curso curso) {
-        this.curso = curso;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Area getArea() {
@@ -55,20 +76,30 @@ public class Disciplina {
         this.cargaHoraria = cargaHoraria;
     }
 
-    public int getCargaHorariaTotal() {
-        return cargaHorariaTotal;
+    public List<Turma> getTurmas() {
+        return turmas;
     }
 
-    public void setCargaHorariaTotal(int cargaHorariaTotal) {
-        this.cargaHorariaTotal = cargaHorariaTotal;
+    public void setTurmas(List<Turma> turmas) {
+        this.turmas = turmas;
     }
 
-    public double getHorasAulaTotal() {
-        return horasAulaTotal;
+    public Curso getCurso() {
+        return curso;
     }
 
-    public void setHorasAulaTotal(double horasAulaTotal) {
-        this.horasAulaTotal = horasAulaTotal;
+    public void setCurso(Curso curso) {
+        this.curso = curso;
     }
+
+    public Departamento getDepartamento() {
+        return departamento;
+    }
+
+    public void setDepartamento(Departamento departamento) {
+        this.departamento = departamento;
+    }
+
+    
     
 }

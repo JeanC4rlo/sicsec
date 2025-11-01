@@ -6,7 +6,7 @@ package br.cefetmg.sicsec.Model.Usuario.Aluno;
 
 import br.cefetmg.sicsec.Model.Curso.Turma.Turma;
 import br.cefetmg.sicsec.Model.Usuario.*;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import java.util.List;
 
@@ -17,32 +17,33 @@ import java.util.List;
 @Entity
 public class Aluno extends Usuario {
     
-    private int boletim;
-    private String turmas;
+    @JsonManagedReference
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "discentes")
+    private List<Turma> turmas;
     
     @JsonManagedReference
-    @ManyToMany (fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "bolsistas")
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "bolsistas")
     private List<Bolsa> bolsas;
     
+    @JsonManagedReference
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "aluno")
+    private List<Boletim> anosEscolares;
+    
     /*
-    private List<Boletim> historicoAcademico;
+    @JsonIgnore
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "usuario")
     private List<Matricula> historicoMatricula;
-    private List<NescessidadeEspecial> nescessidadesEspeciais;
     */
 
-    public int getBoletim() {
-        return boletim;
-    }
+    @JsonManagedReference
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "aluno")
+    private List<NescessidadeEspecial> nescessidadesEspeciais;
 
-    public void setBoletim(int boletim) {
-        this.boletim = boletim;
-    }
-
-    public String getTurmas() {
+    public List<Turma> getTurmas() {
         return turmas;
     }
 
-    public void setTurmas(String turmas) {
+    public void setTurmas(List<Turma> turmas) {
         this.turmas = turmas;
     }
 
@@ -54,5 +55,20 @@ public class Aluno extends Usuario {
         this.bolsas = bolsas;
     }
 
+    public List<Boletim> getAnosEscolares() {
+        return anosEscolares;
+    }
+
+    public void setAnosEscolares(List<Boletim> anosEscolares) {
+        this.anosEscolares = anosEscolares;
+    }
+
+    public List<NescessidadeEspecial> getNescessidadesEspeciais() {
+        return nescessidadesEspeciais;
+    }
+
+    public void setNescessidadesEspeciais(List<NescessidadeEspecial> nescessidadesEspeciais) {
+        this.nescessidadesEspeciais = nescessidadesEspeciais;
+    }
     
 }

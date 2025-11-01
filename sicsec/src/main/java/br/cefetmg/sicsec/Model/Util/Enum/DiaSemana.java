@@ -9,10 +9,11 @@ package br.cefetmg.sicsec.Model.Util.Enum;
  * @author davig
  */
 public enum DiaSemana {
-    SEGUNDA, 
-    TERCA, 
-    QUARTA, 
-    QUINTA,
-    SEXTA,
+    DOMINGO,
+    SEGUNDA_FEIRA, 
+    TERCA_FEIRA, 
+    QUARTA_FEIRA, 
+    QUINTA_FEIRA,
+    SEXTA_FEIRA,
     SABADO
 }

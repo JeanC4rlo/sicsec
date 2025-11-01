@@ -8,8 +8,9 @@ package br.cefetmg.sicsec.Model.Util.Enum;
  *
  * @author davig
  */
-public enum Reserva {
-    EMPRESTIMO, 
-    RESERVA,
-    HISTORICO
+public enum Bimestre {
+    PRIMEIRO,
+    SEGUNDO,
+    TERCEIRO,
+    QUARTO
 }

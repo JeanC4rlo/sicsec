@@ -22,18 +22,22 @@ public class Emprestimo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
+    @Temporal(TemporalType.DATE)
     private Date data;
     private int duracao;
     
+    //Reserva.EMPRESTIMO = empréstimo em curso
+    //Reserva.RESERVA = reserva para empréstimo futuro
+    //Reserva.HISTORICO = empréstimo já terminado
     @Enumerated(EnumType.STRING)
     private Reserva reserva;
     
-    @JsonBackReference
+    @JsonManagedReference
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_usuario", nullable = false)
     private Usuario mortuario; //Quem fez o emprestimo
 
-    @JsonBackReference
+    @JsonManagedReference
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_livro", nullable = false)
     private Livro livro;

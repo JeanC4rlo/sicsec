@@ -14,7 +14,7 @@ import java.util.List;
 
 
 public class Avaliacao {
- 
+
     private Professor docente;
     private int notaTotal;
     private List<IQuestao> bancoQuestoes;

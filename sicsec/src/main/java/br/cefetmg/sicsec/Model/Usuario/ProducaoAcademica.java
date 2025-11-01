@@ -4,7 +4,7 @@
  */
 package br.cefetmg.sicsec.Model.Usuario;
 
-import java.time.LocalDate;
+import java.util.Date;
 import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 
@@ -22,11 +22,14 @@ public class ProducaoAcademica {
     
     private String titulo;
     private String tipo;
-    private LocalDate publicacao;
+    private String descricao;
+    
+    @Temporal(TemporalType.DATE)
+    private Date publicacao;
     
     @JsonBackReference
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_usuario", nullable = false)
+    @JoinColumn(name = "id_autor", nullable = false)
     private Usuario autor;
 
     public Long getId() {
@@ -53,11 +56,19 @@ public class ProducaoAcademica {
         this.tipo = tipo;
     }
 
-    public LocalDate getPublicacao() {
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
+
+    public Date getPublicacao() {
         return publicacao;
     }
 
-    public void setPublicacao(LocalDate publicacao) {
+    public void setPublicacao(Date publicacao) {
         this.publicacao = publicacao;
     }
 

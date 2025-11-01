@@ -28,7 +28,7 @@ public class Matricula {
     private String telefone;
     private Long numeroMatricula;
     
-    @JsonManagedReference
+    @JsonBackReference
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "matricula")
     private Usuario usuario;
 
@@ -89,5 +89,5 @@ public class Matricula {
     }
 
     
-
+    
 }

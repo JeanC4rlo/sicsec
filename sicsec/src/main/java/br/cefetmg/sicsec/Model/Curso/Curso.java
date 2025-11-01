@@ -5,18 +5,46 @@
 package br.cefetmg.sicsec.Model.Curso;
 
 import br.cefetmg.sicsec.Model.Curso.Turma.Turma;
+import br.cefetmg.sicsec.Model.Usuario.Administrador.Coordenador;
+import com.fasterxml.jackson.annotation.*;
+import jakarta.persistence.*;
 import java.util.List;
 
 /**
  *
  * @author davig
  */
+@Entity
 public class Curso {
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     
     private String codigo;
     private String nome;
+    
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "coordenador_id")
+    private Coordenador coordenador;
+    
+    @JsonManagedReference
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "curso")
     private List<Disciplina> matrizCurricular;
-    private List<Turma> historicoTurmas;
+    
+    @JsonBackReference
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "departamento_id")
+    private Departamento departamento;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getCodigo() {
         return codigo;
@@ -34,6 +62,14 @@ public class Curso {
         this.nome = nome;
     }
 
+    public Coordenador getCoordenador() {
+        return coordenador;
+    }
+
+    public void setCoordenador(Coordenador coordenador) {
+        this.coordenador = coordenador;
+    }
+
     public List<Disciplina> getMatrizCurricular() {
         return matrizCurricular;
     }
@@ -42,14 +78,14 @@ public class Curso {
         this.matrizCurricular = matrizCurricular;
     }
 
-    public List<Turma> getHistoricoTurmas() {
-        return historicoTurmas;
+    public Departamento getDepartamento() {
+        return departamento;
     }
 
-    public void setHistoricoTurmas(List<Turma> historicoTurmas) {
-        this.historicoTurmas = historicoTurmas;
+    public void setDepartamento(Departamento departamento) {
+        this.departamento = departamento;
     }
     
-    
+                    
     
 }

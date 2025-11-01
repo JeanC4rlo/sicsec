@@ -16,10 +16,7 @@ import jakarta.persistence.*;
 @Entity
 public class ChefeDepartamento extends Administrador {
     
-    /*
-    @JsonBackReference
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_departamento", nullable = false)
+    @OneToOne(mappedBy = "chefe")
     private Departamento departamento;
 
     public Departamento getDepartamento() {
@@ -29,18 +26,5 @@ public class ChefeDepartamento extends Administrador {
     public void setDepartamento(Departamento departamento) {
         this.departamento = departamento;
     }
-    */
-    
-    private String departamento;
-
-    public String getDepartamento() {
-        return departamento;
-    }
-
-    public void setDepartamento(String departamento) {
-        this.departamento = departamento;
-    }
-    
-    
     
 }

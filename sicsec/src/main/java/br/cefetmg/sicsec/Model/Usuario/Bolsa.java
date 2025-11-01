@@ -4,7 +4,7 @@
  */
 package br.cefetmg.sicsec.Model.Usuario;
 
-import java.time.LocalDate;
+import java.util.Date;
 import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import java.util.List;
@@ -22,16 +22,20 @@ public class Bolsa {
     
     private String tipo;
     private double valorMensal;
-    private LocalDate inicio;
-    private LocalDate fim;
     private int vagas;
+    
+    @Temporal(TemporalType.DATE)
+    private Date inicio;
+    
+    @Temporal(TemporalType.DATE)
+    private Date fim;
     
     @JsonBackReference
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "bolsista",
-        joinColumns = @JoinColumn(name = "id_usuario"),
-        inverseJoinColumns = @JoinColumn(name = "id_bolsa")
+        joinColumns = @JoinColumn(name = "id_bolsa"),
+        inverseJoinColumns = @JoinColumn(name = "id_usuario")
     )
     private List<Usuario> bolsistas;
 
@@ -59,28 +63,28 @@ public class Bolsa {
         this.valorMensal = valorMensal;
     }
 
-    public LocalDate getInicio() {
-        return inicio;
-    }
-
-    public void setInicio(LocalDate inicio) {
-        this.inicio = inicio;
-    }
-
-    public LocalDate getFim() {
-        return fim;
-    }
-
-    public void setFim(LocalDate fim) {
-        this.fim = fim;
-    }
-
     public int getVagas() {
         return vagas;
     }
 
     public void setVagas(int vagas) {
         this.vagas = vagas;
+    }
+
+    public Date getInicio() {
+        return inicio;
+    }
+
+    public void setInicio(Date inicio) {
+        this.inicio = inicio;
+    }
+
+    public Date getFim() {
+        return fim;
+    }
+
+    public void setFim(Date fim) {
+        this.fim = fim;
     }
 
     public List<Usuario> getBolsistas() {

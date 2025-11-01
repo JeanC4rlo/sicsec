@@ -16,10 +16,7 @@ import jakarta.persistence.*;
 @Entity
 public class Coordenador extends Administrador {
     
-    /*
-    @JsonBackReference
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_curso", nullable = false)
+    @OneToOne(mappedBy = "coordenador")
     private Curso curso;
 
     public Curso getCurso() {
@@ -27,17 +24,6 @@ public class Coordenador extends Administrador {
     }
 
     public void setCurso(Curso curso) {
-        this.curso = curso;
-    }
-    */
-
-    private String curso;
-
-    public String getCurso() {
-        return curso;
-    }
-
-    public void setCurso(String curso) {
         this.curso = curso;
     }
     

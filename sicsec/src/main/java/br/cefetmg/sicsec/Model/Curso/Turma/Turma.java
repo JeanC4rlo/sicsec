@@ -11,6 +11,8 @@ import br.cefetmg.sicsec.Model.Curso.Turma.Avaliacao.Proposta.Avaliacao;
 import br.cefetmg.sicsec.Model.Usuario.Aluno.Aluno;
 import br.cefetmg.sicsec.Model.Usuario.Professor.Professor;
 import br.cefetmg.sicsec.Model.Util.Enum.TipoTurma;
+import com.fasterxml.jackson.annotation.*;
+import jakarta.persistence.*;
 import java.util.Date;
 import java.util.List;
 
@@ -18,79 +20,56 @@ import java.util.List;
  *
  * @author davig
  */
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Turma {
     
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Enumerated(EnumType.STRING)
     private TipoTurma tipo;
-    private Disciplina disciplina;
-    private List<Aluno> discentes;
-    private List<Professor> doscentes;
-    private List<Avaliacao> avaliacoes;
-    private List<MaterialDidatico> materialDidatico;
-    private List<Noticia> noticias;
-    private List<ListaPresenca> frequencia;
-
-    public TipoTurma getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(TipoTurma tipo) {
-        this.tipo = tipo;
-    }
     
-    public Disciplina getDisciplina() {
-        return disciplina;
-    }
+    @JsonManagedReference
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "disciplina_id", nullable = false)
+    private Disciplina disciplina;
+    
+    @JsonBackReference
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "turma_aluno",
+        joinColumns = @JoinColumn(name = "turma_id"),
+        inverseJoinColumns = @JoinColumn(name = "aluno_id")
+    )
+    private List<Aluno> discentes;
+    
+    @JsonBackReference
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "turma_professor",
+        joinColumns = @JoinColumn(name = "turma_id"),
+        inverseJoinColumns = @JoinColumn(name = "professor_id")
+    )
+    private List<Professor> doscentes;
+    
+    /*
+    @JsonManagedReference
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "turma")
+    private List<Avaliacao> avaliacoes;
+    */
 
-    public void setDisciplina(Disciplina disciplina) {
-        this.disciplina = disciplina;
-    }
-
-    public List<Aluno> getDiscentes() {
-        return discentes;
-    }
-
-    public void setDiscentes(List<Aluno> discentes) {
-        this.discentes = discentes;
-    }
-
-    public List<Professor> getDoscentes() {
-        return doscentes;
-    }
-
-    public void setDoscentes(List<Professor> doscentes) {
-        this.doscentes = doscentes;
-    }
-
-    public List<Avaliacao> getAvaliacoes() {
-        return avaliacoes;
-    }
-
-    public void setAvaliacoes(List<Avaliacao> avaliacoes) {
-        this.avaliacoes = avaliacoes;
-    }
-
-    public List<MaterialDidatico> getMaterialDidatico() {
-        return materialDidatico;
-    }
-
-    public void setMaterialDidatico(List<MaterialDidatico> materialDidatico) {
-        this.materialDidatico = materialDidatico;
-    }
-
-    public List<Noticia> getNoticias() {
-        return noticias;
-    }
-
-    public void setNoticias(List<Noticia> noticias) {
-        this.noticias = noticias;
-    }
-
-    public List<ListaPresenca> getFrequencia() {
-        return frequencia;
-    }
-
-    public void setFrequencia(List<ListaPresenca> frequencia) {
-        this.frequencia = frequencia;
-    }
+    @JsonManagedReference
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "turma")
+    private List<MaterialDidatico> materialDidatico;
+    
+    @JsonManagedReference
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "turma")
+    private List<Noticia> noticias;
+    
+    @JsonManagedReference
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "turma")
+    private List<ListaPresenca> frequencia;
     
 }

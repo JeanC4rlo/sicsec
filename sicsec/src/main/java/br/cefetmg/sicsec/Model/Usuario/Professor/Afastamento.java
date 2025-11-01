@@ -5,16 +5,49 @@
 package br.cefetmg.sicsec.Model.Usuario.Professor;
 
 import java.util.Date;
+import com.fasterxml.jackson.annotation.*;
+import jakarta.persistence.*;
 
 /**
  *
  * @author davig
  */
+
+@Entity
 public class Afastamento {
  
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "professor_id", nullable = false)
+    private Professor professor;
+    
+    @Temporal(TemporalType.DATE)
     private Date dataAfastamento;
+    
+    @Temporal(TemporalType.DATE)
     private Date dataRetorno;
+    
     private String causa;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Professor getProfessor() {
+        return professor;
+    }
+
+    public void setProfessor(Professor professor) {
+        this.professor = professor;
+    }
 
     public Date getDataAfastamento() {
         return dataAfastamento;

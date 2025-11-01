@@ -4,7 +4,6 @@
  */
 package br.cefetmg.sicsec.Model.Biblioteca;
 
-import br.cefetmg.sicsec.Model.Campus;
 import br.cefetmg.sicsec.Model.Usuario.Bibliotecario.Bibliotecario;
 import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
@@ -24,24 +23,21 @@ public class Biblioteca {
     private Long id;
     
     private String nome;
-    
-    @JsonBackReference
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_campus", nullable = false)
-    private Campus campus;
+    private String campus;
+    private String telefone;
 
-    @JsonManagedReference
+    @JsonIgnore
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST, mappedBy = "biblioteca")
     private List<Bibliotecario> bibliotecarios;
     
     @JsonManagedReference
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinTable(
-        name = "livro_biblioteca",
+        name = "biblioteca_livro",
         joinColumns = @JoinColumn(name = "biblioteca_id"),
         inverseJoinColumns = @JoinColumn(name = "livro_id")
     )
-    private List<Livro> livros;
+    private List<Livro> acervo;
 
     public Long getId() {
         return id;
@@ -59,12 +55,20 @@ public class Biblioteca {
         this.nome = nome;
     }
 
-    public Campus getCampus() {
+    public String getCampus() {
         return campus;
     }
 
-    public void setCampus(Campus campus) {
+    public void setCampus(String campus) {
         this.campus = campus;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
     }
 
     public List<Bibliotecario> getBibliotecarios() {
@@ -75,14 +79,14 @@ public class Biblioteca {
         this.bibliotecarios = bibliotecarios;
     }
 
-    public List<Livro> getLivros() {
-        return livros;
+    public List<Livro> getAcervo() {
+        return acervo;
     }
 
-    public void setLivros(List<Livro> livros) {
-        this.livros = livros;
+    public void setAcervo(List<Livro> livros) {
+        this.acervo = livros;
     }
-    
+
     
     
 }

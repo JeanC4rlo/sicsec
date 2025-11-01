@@ -27,7 +27,7 @@ public class DadosBancarios {
     private String agencia;
     private String conta;
     
-    @JsonManagedReference
+    @JsonBackReference
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "dadosBancarios")
     private Usuario usuario;
 
@@ -78,7 +78,5 @@ public class DadosBancarios {
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
     }
-    
-    
     
 }

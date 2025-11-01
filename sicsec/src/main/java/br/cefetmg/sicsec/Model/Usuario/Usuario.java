@@ -5,7 +5,6 @@
 package br.cefetmg.sicsec.Model.Usuario;
 
 import br.cefetmg.sicsec.Model.Biblioteca.Emprestimo;
-import br.cefetmg.sicsec.Model.Documento;
 import br.cefetmg.sicsec.Model.Util.Enum.Cargo;
 import java.util.List;
 
@@ -30,25 +29,23 @@ public class Usuario {
     
     private String senha;
     
-    @JsonBackReference
+    @JsonManagedReference
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_matricula", nullable = false)
     private Matricula matricula;
     
-    @JsonBackReference
+    @JsonManagedReference
     @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_dados_bancarios", nullable = false)
+    @JoinColumn(name = "id_dados", nullable = false)
     private DadosBancarios dadosBancarios;
     
-    @JsonManagedReference
+    @JsonBackReference
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "mortuario")
     private List<Emprestimo> emprestimos;
     
-    /*
-    @JsonManagedReference
+    @JsonIgnore
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "usuario")
-    private List<Documento> documentos;
-    */
+    private List<Assinatura> documentosAssinados;
 
     public Long getId() {
         return id;
@@ -98,6 +95,14 @@ public class Usuario {
         this.emprestimos = emprestimos;
     }
 
+    public List<Assinatura> getDocumentosAssinados() {
+        return documentosAssinados;
+    }
+
+    public void setDocumentosAssinados(List<Assinatura> documentosAssinados) {
+        this.documentosAssinados = documentosAssinados;
+    }
+    
     
     
 }

@@ -4,14 +4,19 @@
  */
 package br.cefetmg.sicsec.Model.Curso.Turma;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.*;
 import java.util.List;
 
 /**
  *
  * @author davig
  */
+@Entity
 public class SuperTurma extends Turma {
 
+    @OneToMany(mappedBy = "superTurma", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<SubTurma> subTurmas;
 
     public List<SubTurma> getSubTurmas() {
@@ -19,7 +24,14 @@ public class SuperTurma extends Turma {
     }
 
     public void setSubTurmas(List<SubTurma> subTurmas) {
+        
+        if (subTurmas != null)
+            for (SubTurma subt : subTurmas) 
+                if (subt.getSuperTurma() != this)
+                    subt.setSuperTurma(this);
+
         this.subTurmas = subTurmas;
+    
     }
     
 }

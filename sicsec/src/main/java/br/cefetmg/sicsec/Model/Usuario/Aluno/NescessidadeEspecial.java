@@ -3,17 +3,45 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package br.cefetmg.sicsec.Model.Usuario.Aluno;
+import com.fasterxml.jackson.annotation.*;
+import jakarta.persistence.*;
 
 /**
  *
  * @author davig
  */
+@Entity
 public class NescessidadeEspecial {
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    @JsonBackReference
+    @ManyToOne
+    @JoinColumn(name = "aluno_id")
+    private Aluno aluno;
     
     private String tipo;
     private String cidr;
     private String descricao;
     private String acomodacao;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Aluno getAluno() {
+        return aluno;
+    }
+
+    public void setAluno(Aluno aluno) {
+        this.aluno = aluno;
+    }
 
     public String getTipo() {
         return tipo;
@@ -46,5 +74,7 @@ public class NescessidadeEspecial {
     public void setAcomodacao(String acomodacao) {
         this.acomodacao = acomodacao;
     }
+
+    
     
 }
