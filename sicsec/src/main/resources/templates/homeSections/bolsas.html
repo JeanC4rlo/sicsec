@@ -1,0 +1,31 @@
+<header>
+    <h2>Acompanhe bolsas</h2>
+    <button data-tab="pesquisa">Pesquisa</button>
+    <button data-tab="minhas-bolsas">Minhas bolsas</button>
+</header>
+<div class="pesquisa">
+    <div class="box-pesquisa">
+        <label>
+            <span class="text">Pesquisar por</span>
+            <select id="campoPesquisa">
+                <option value="todos">Todos os campos</option>
+                <option value="titulo">Título</option>
+                <option value="discente">Aluno/Discente</option>
+                <option value="orientador">Orientador</option>
+                <option value="centro">Centro</option>
+                <option value="departamento">Departamento</option>
+                <option value="tipo_bolsa">Tipo de Bolsa</option>
+                <option value="status">Status</option>
+                <option value="codigo">Código</option>
+            </select>
+        </label>
+        <label>
+            <span class="text">Conteúdo</span>
+            <input type="text" id="textoPesquisa">
+        </label>
+        <button class="pesquisar" id="btnPesquisar">Pesquisar</button>
+    </div>
+    <div class="resultado"></div>
+</div>
+<div class="minhas-bolsas"></div>
+<div class="mais"></div>

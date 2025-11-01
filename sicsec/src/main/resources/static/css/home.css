@@ -1,0 +1,1665 @@
+/* Personalização da barra lateral da Home */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Inter;
+}
+
+html,
+body {
+    min-height: 100dvh;
+}
+
+body {
+    display: grid;
+    grid-template-columns: 20rem 5fr;
+}
+
+body>header {
+    position: sticky;
+    background-color: var(--primary);
+    display: grid;
+    grid-template-rows: 10rem 1fr;
+    padding: 2rem;
+}
+
+.logos {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    color: white;
+    user-select: none;
+}
+
+.logos img {
+    max-height: 4rem;
+    object-fit: contain;
+}
+
+.logos h1 {
+    font-size: 1.6rem;
+}
+
+#logo-cefet {
+    filter: brightness(0) invert(1);
+}
+
+nav {
+    flex-direction: column;
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+nav button {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    background-color: transparent;
+    border: none;
+    filter: brightness(0) invert(1);
+    font-size: 1.15rem;
+    transition: 200ms ease all;
+}
+
+nav button img {
+    height: 2rem;
+}
+
+nav button:hover {
+    margin-left: 1rem;
+    cursor: pointer;
+}
+
+nav button.ativo {
+    font-weight: bold;
+}
+
+nav button::before {
+    content: "▶";
+    opacity: 0;
+    transition: 200ms ease all;
+}
+
+nav button.ativo::before {
+    opacity: 1;
+}
+
+.sair {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: bold;
+    background-color: white;
+    color: black;
+    border: none;
+    padding: .5rem 0;
+    border-radius: 4px;
+    transition: 200ms ease all;
+}
+
+.sair:hover {
+    opacity: 0.9;
+    transform: scale(1.05);
+    cursor: pointer;
+}
+
+/* Configurações gerais */
+
+input {
+    border: 2px solid black;
+    border-radius: 0;
+    padding: 1rem;
+    font-size: 1rem;
+    transition: 500ms ease all;
+    width: 100%;
+}
+
+input:focus {
+    outline: none;
+    border: 2px solid var(--primary);
+    background-color: var(--primary);
+    color: white;
+}
+
+select {
+    border: 2px solid black;
+    background-color: transparent;
+    padding: 0 1rem;
+    font-size: 1rem;
+    transition: 500ms ease all;
+}
+
+select:focus {
+    border: 2px solid var(--primary);
+    background-color: var(--primary);
+    color: white;
+}
+
+main > section {
+    height: 100vh;
+    display: none;
+}
+
+main > section.ativo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.wrapper {
+    height: 100%;
+    width: 100%;
+}
+
+/* Personalização da Homepage */
+#homepage .wrapper {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 2rem;
+    padding: 2rem 5vw;
+    height: 100%;
+    width: 100%;
+}
+
+.content {
+    flex-grow: 1;
+    display: flex;
+    gap: 2rem;
+}
+
+.main-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.perfil {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border-radius: .5rem;
+    overflow: hidden;
+}
+
+.section-box {
+    background-color: white;
+    border: 2px solid var(--primary);
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.section-header {
+    background-color: var(--primary);
+    color: white;
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.section-header h2 {
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+.section-header .ano {
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.turmas-vinculadas table,
+.minhas-atividades table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.turmas-vinculadas th, 
+.minhas-atividades th {
+    background-color: var(--secondary);
+    padding: 1rem 1.5rem;
+    text-align: center;
+    color: white;
+    border-right: 1px solid var(--border-color);
+}
+
+.turmas-vinculadas th:last-child,
+.minhas-atividades th:last-child {
+    border-right: none;
+}
+
+.turmas-vinculadas td, 
+.minhas-atividades td {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+}
+
+.turmas-vinculadas tr:last-child td,
+.minhas-atividades tr:last-child td {
+    border-bottom: none;
+}
+
+.minhas-atividades .data-col {
+    width: 12rem;
+}
+
+.minhas-atividades td > span {
+    display: block;
+}
+
+.minhas-atividades .disciplina {
+    font-weight: bold;
+    margin-bottom: 0.25rem;
+    color: #333;
+}
+
+.minhas-atividades .avaliacao,
+.minhas-atividades .questionario {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+/* --- Seção Notícias --- */
+.noticias-content {
+    position: relative;
+    font-size: 0.9rem;
+    padding: 1.5rem;
+    min-height: 8rem;
+}
+
+.titulo-noticia {
+    color: var(--secondary);
+    font-weight: bold;
+    margin-bottom: 1rem;
+    padding: 0;
+    background-color: transparent;
+    font-size: 1rem;
+}
+
+.detalhe-noticia {
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+.texto-noticia {
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.navegacao-noticias {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    color: var(--primary);
+}
+
+.navegacao-noticias i {
+    font-size: 0.9rem;
+    cursor: pointer;
+    padding: 0.25rem;
+    transition: 200ms ease all;
+}
+
+.navegacao-noticias i:hover {
+    color: var(--secondary);
+    transform: scale(1.1);
+}
+
+.navegacao-noticias span {
+    font-size: 0.8rem;
+    padding: 0.25rem 0.75rem;
+    background-color: var(--primary);
+    color: white;
+    border-radius: 0.25rem;
+    transition: 200ms ease all;
+    cursor: pointer;
+}
+
+.navegacao-noticias span:hover {
+    background-color: var(--secondary);
+}
+
+.navegacao-noticias span.ativo {
+    background-color: var(--secondary);
+}
+
+/* --- Perfil --- */
+.perfil-header {
+    background-color: var(--primary);
+    color: white;
+    padding: 1rem 1.5rem;
+}
+
+.perfil-header h2 {
+    font-size: 1.25rem;
+    font-weight: bold;
+    text-align: center;
+    margin: 0;
+}
+
+.perfil-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background-color: var(--secondary);
+    border: 2px solid var(--primary);
+    padding: 1.5rem;
+    text-align: center;
+    font-size: 0.9rem;
+    color: white;
+}
+
+.avatar-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: .5rem;
+    border: 4px solid white;
+    border-radius: 50%;
+}
+
+.avatar-placeholder {
+    max-width: 250px;
+    max-height: 250px;
+    min-width: 250px;
+    min-height: 250px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.nome-perfil {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin: 1rem 0;
+    color: white;
+}
+
+.dados-institucionais {
+    text-align: left;
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+}
+
+.dados-institucionais p {
+    margin: 0 0 0.5rem 0;
+}
+
+.dados-institucionais .email {
+    color: white;
+    font-style: italic;
+}
+
+.btn-editar-perfil {
+    background-color: white;
+    color: #333;
+    border: 2px solid white;
+    padding: 0.75rem 2rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+    font-weight: bold;
+    border-radius: 0.25rem;
+    transition: 200ms ease all;
+    width: 100%;
+}
+
+.btn-editar-perfil:hover {
+    opacity: 0.9;
+    transform: scale(1.05);
+}
+
+/* Estados dos botões de navegação */
+#prevNoticia,
+#nextNoticia {
+    cursor: pointer;
+    padding: 0.25rem;
+}
+
+#btnParar.ativo {
+    background-color: var(--secondary);
+}
+
+/* Hover effects para tabelas */
+.turmas-vinculadas tr:hover,
+.minhas-atividades tr:hover {
+    background-color: #f8f9fa;
+}
+
+#boletim .wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 5vw;
+    gap: 2rem;
+    width: 100%;
+    max-width: 1000px;
+}
+
+#boletim table {
+    border: 2px solid var(--primary);
+    border-collapse: collapse;
+    width: 100%;
+    max-width: 100%;
+    background-color: white;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    border-radius: 0.5rem;
+}
+
+#boletim caption {
+    font-size: 24pt;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    color: var(--primary);
+}
+
+#boletim table th,
+td {
+    padding: 10px;
+    text-align: center;
+    font-size: 1rem;
+}
+
+#boletim table th {
+    background-color: var(--primary);
+    border: 1px solid var(--bg-primary);
+    color: white;
+}
+
+#boletim table td {
+    background-color: var(--bg-primary);
+    border: 1px solid black;
+}
+
+#boletim table tr:nth-child(even) td {
+    background-color: var(--bg-secondary);
+}
+
+#boletim table tr:hover {
+    background-color: var(--primary);
+    color: white;
+}
+
+.cabecalho-flex {
+    display: flex;
+    justify-content: space-between;
+    background-color: var(--primary);
+    color: white;
+    padding: 1rem 2rem;
+    width: 100%;
+    border-radius: 0.5rem;
+}
+
+.cabecalho-flex button {
+    background-color: transparent;
+    border: none;
+    color: white;
+    font-size: 1.1rem;
+    font-weight: bold;
+    transition: 200ms ease all;
+    filter: brightness(0) invert(1);
+}
+
+.cabecalho-flex button:hover {
+    cursor: pointer;
+    color: var(--secondary);
+}
+
+.cabecalho-flex button:focus {
+    outline: none;
+}
+
+.cabecalho-flex button.desativado {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+#ano {
+    user-select: none;
+}
+
+#biblioteca .wrapper {
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
+
+#biblioteca header {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    background-color: var(--secondary);
+    color: white;
+    padding: 2rem;
+    justify-content: center;
+}
+
+#biblioteca header h2 {
+    text-wrap: nowrap;
+    margin-bottom: 1rem;
+}
+
+#biblioteca header button {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    background-color: transparent;
+    border: none;
+    color: white;
+    font-size: 1.15rem;
+    filter: brightness(0) invert(1);
+    transition: 200ms ease all;
+}
+
+#biblioteca header button:hover {
+    margin-left: 1rem;
+    cursor: pointer;
+}
+
+#biblioteca header button.ativo {
+    font-weight: bold;
+}
+
+#biblioteca header button::before {
+    content: "▶";
+    opacity: 0;
+    transition: 200ms ease all;
+}
+
+#biblioteca header button.ativo::before {
+    opacity: 1;
+}
+
+#biblioteca .tab {
+    display: none;
+    flex-direction: column;
+    gap: 2rem;
+    padding: 2rem 5vw;
+    height: 100%;
+    width: 100%;
+    overflow-y: auto;
+}
+
+#biblioteca .tab.ativo {
+    display: flex;
+}
+
+#biblioteca #login {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 70vh;
+    padding: 2rem;
+}
+
+#biblioteca #login h1 {
+    margin: 0 0 2rem 0;
+    color: var(--primary);
+    font-size: 2.5rem;
+    text-align: center;
+}
+
+#biblioteca #login form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    width: fit-content;
+    border: 2px solid var(--primary);
+    border-radius: 1rem;
+    padding: 2rem;
+    background: white;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    transition: 200ms ease all;
+}
+
+#biblioteca #login form:hover {
+    box-shadow: 0 12px 35px rgba(0,0,0,0.15);
+}
+
+#biblioteca #login label h2 {
+    margin-bottom: .5rem;
+}
+
+.matricula-wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+.matricula {
+    display: flex;
+    gap: .5rem;
+}
+
+.logar {
+    border: none;
+    background-color: var(--primary);
+    color: white;
+    font-weight: bolder;
+    font-size: 1.1rem;
+    padding: 1rem 2rem;
+    margin-top: 1rem;
+    border-radius: 0.5rem;
+    transition: 200ms ease all;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.logar:hover {
+    background-color: var(--secondary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+.logar:active {
+    transform: translateY(0);
+}
+
+.cards-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+#biblioteca .pesquisa {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    padding: 2rem 5vw;
+    overflow-y: scroll;
+}
+
+#biblioteca .box-pesquisa {
+    position: sticky;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+    max-width: 1000px;
+}
+
+#biblioteca .box-pesquisa label {
+    display: flex;
+    flex-direction: column;
+    font-size: 1rem;
+}
+
+#biblioteca .box-pesquisa label .text {
+    margin-bottom: 0.25rem;
+    font-weight: 600;
+}
+
+#biblioteca .box-pesquisa select,
+#biblioteca .box-pesquisa input {
+    padding: 0.5rem 0.75rem;
+    border: 2px solid black;
+    border-radius: 0;
+    font-size: 1rem;
+    width: 100%;
+}
+
+#biblioteca .box-pesquisa select:focus,
+#biblioteca .box-pesquisa input:focus {
+    outline: none;
+    border: 2px solid var(--primary);
+    background-color: var(--primary);
+    color: white;
+}
+
+#biblioteca .box-pesquisa button.pesquisar {
+    padding: 0.75rem 1.5rem;
+    font-weight: bolder;
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    transition: 200ms ease all;
+    cursor: pointer;
+    height: fit-content;
+}
+
+#biblioteca .box-pesquisa button.pesquisar:hover {
+    background-color: var(--secondary);
+}
+
+.livro-card {
+    background-color: white;
+    border: 2px solid #ddd;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    transition: 200ms ease all;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.livro-card:hover {
+    border-color: var(--primary);
+    box-shadow: 0 6px 10px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+}
+
+.livro-card img {
+    width: 120px;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 0.5rem;
+    align-self: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.livro-card .title {
+    font-size: 1.5rem;
+    margin: 0;
+    color: var(--primary);
+    text-align: center;
+    line-height: 1.3;
+}
+
+.livro-card .info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.livro-card .info p {
+    margin: 0;
+    line-height: 1.4;
+    font-size: 0.95rem;
+}
+
+.livro-card .info strong {
+    color: #333;
+    font-weight: 600;
+}
+
+.livro-card .buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: auto;
+}
+
+.livro-card .buttons button {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    border: none;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 200ms ease all;
+    font-size: 0.9rem;
+}
+
+.livro-card .buttons button:first-child {
+    background-color: var(--primary);
+    color: white;
+}
+
+.livro-card .buttons button:first-child:hover {
+    background-color: var(--secondary);
+    transform: scale(1.03);
+}
+
+.livro-card .buttons button:last-child {
+    background-color: white;
+    color: var(--primary);
+    border: 2px solid var(--primary);
+}
+
+.livro-card .buttons button:last-child:hover {
+    background-color: var(--primary);
+    color: white;
+    transform: scale(1.03);
+}
+
+/* Seção Meus Livros */
+#meusLivros {
+    background: #f8f9fa;
+    min-height: calc(100vh - 120px);
+}
+
+#meusLivros h3 {
+    color: var(--primary);
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--primary);
+}
+
+#reservas, #aDevolver {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    background: white;
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    border: 2px solid #e9ecef;
+}
+
+#reservas > div, #aDevolver > div {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 1.5rem;
+}
+
+/* Cards de Livros - Meus Livros */
+.cardLivro {
+    display: flex;
+    flex-direction: column;
+    background: white;
+    border: 2px solid #e9ecef;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    transition: 200ms ease all;
+    position: relative;
+}
+
+.cardLivro:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.cardLivro img {
+    width: 80px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    flex-shrink: 0;
+}
+
+.cardLivro .info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
+}
+
+.cardLivro .info p {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+
+.cardLivro .info strong {
+    color: #333;
+    font-weight: 600;
+}
+
+.cardLivro .title {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: var(--primary);
+    margin: 0;
+}
+
+.cardLivro button {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 200ms ease all;
+    white-space: nowrap;
+}
+
+#reservas .cardLivro button {
+    background-color: #e74c3c;
+    color: white;
+}
+
+#reservas .cardLivro button:hover {
+    background-color: #c0392b;
+    transform: scale(1.05);
+}
+
+#aDevolver .cardLivro button {
+    background-color: var(--primary);
+    color: white;
+}
+
+#aDevolver .cardLivro button:hover {
+    background-color: var(--secondary);
+    transform: scale(1.05);
+}
+
+#turmas .wrapper {
+    display: flex;
+}
+
+#turmas .wrapper header {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--secondary);
+    color: white;
+    padding: 2rem;
+    gap: 2rem;
+}
+
+#turmas .wrapper section {
+    display: none;
+}
+
+#turmas .wrapper section.ativo {
+    display: flex;
+    flex-direction: column;
+}
+
+.info-turma {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.label-wrapper {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+}
+
+.label-wrapper img {
+    filter: brightness(0) invert(1);
+}
+
+.info {
+    display: flex;
+    flex-direction: column;
+}
+
+.info .label {
+    font-weight: bold;
+}
+
+.info .value {
+    font-style: italic;
+    opacity: 75%;
+}
+
+.lista-turmas {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+    height: 100%;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+.lista-turmas button {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    background-color: transparent;
+    border: none;
+    filter: brightness(0) invert(1);
+    font-size: 1.15rem;
+    transition: 200ms ease all;
+}
+
+.lista-turmas button:hover {
+    margin-left: 1rem;
+    cursor: pointer;
+}
+
+.lista-turmas button.ativo {
+    font-weight: bold;
+}
+
+.lista-turmas button.ativo::before {
+    opacity: 1;
+}
+
+.lista-turmas button::before {
+    content: "▶";
+    opacity: 0;
+    transition: 200ms ease all;
+}
+
+#integrantes-turma {
+    display: flex;
+    flex-direction: column;
+    padding: 2rem 5vw;
+    gap: 2rem;
+    width: 100%;
+
+    max-height: 100vh;
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+
+#integrantes-turma h1 {
+    display: block;
+    margin-bottom: 1rem;
+}
+
+/* Containers internos de membros */
+#docentes,
+#discentes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3rem;
+}
+
+#discentes {
+    justify-content: space-between;
+}
+
+.pessoa .nome {
+    font-weight: bold;
+}
+
+.pessoa *:not(.nome) {
+    opacity: 75%;
+}
+
+.acoes {
+    display: none;
+}
+
+.acoes.visivel {
+    display: block;
+}
+
+.acoes-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.acoes h2 {
+    text-wrap: nowrap;
+    margin-bottom: 1rem;
+}
+
+.acoes button {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    background-color: transparent;
+    border: none;
+    filter: brightness(0) invert(1);
+    font-size: 1.15rem;
+    transition: 200ms ease all;
+}
+
+.acoes button:hover {
+    margin-left: 1rem;
+    cursor: pointer;
+}
+
+.acoes button.ativo {
+    font-weight: bold;
+}
+
+.acoes button.ativo::before {
+    opacity: 1;
+}
+
+.acoes button::before {
+    content: "▶";
+    opacity: 0;
+    transition: 200ms ease all;
+}
+
+.cronograma {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.aula-bloco {
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #ddd; 
+}
+
+.aula-titulo {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: black;
+    margin: 0 0 5px 0;
+}
+
+.aula-data {
+    font-size: 0.9em;
+    color: #4e5455;
+    margin: 0 0 15px 0;
+}
+
+.arquivos-lista {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0 0 0;
+}
+
+.arquivos-lista li {
+    margin-bottom: 8px;
+}
+
+.arquivos-lista a {
+    align-items: center;
+    font-size: 0.95em;
+    color: #0050a5;
+    text-decoration: none;
+    padding: 2px 0;
+    transition: color 0.2s;
+}
+
+.arquivos-lista a:hover {
+    color: #000000;
+}
+
+.frequencia {
+    width: 100%;
+    padding: 2rem;
+}
+
+.frequencia h1 {
+    font-size: 24px;
+    font-weight: normal;
+    color: #013a69;
+    margin-bottom: 0;
+    display: inline-block;
+}
+
+.frequencia .titulo-frequencia {
+    border: none;
+    height: 3px;
+    background-color: #366092;
+    margin-top: 5px;
+    width: 100%;
+}
+
+.frequencia table {
+    border-collapse: collapse;
+    background-color: white;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.frequencia thead th {
+    background-color: #013a69;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    padding: 10px 15px;
+}
+
+.frequencia tbody tr td {
+    padding: 8px 15px;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+    color: #000;
+}
+
+.frequencia tbody tr.odd {
+    background-color: #f9f9f9;
+}
+
+.nao-registrada {
+    color: red;
+}
+
+.noticias {
+    width: 100%;
+    padding: 2rem;
+}
+
+.noticias h1 {
+    font-size: 24px;
+    font-weight: normal;
+    color: #013a69;
+    margin-bottom: 0;
+    display: inline-block;
+}
+
+.noticias .titulo-noticias {
+    border: none;
+    height: 3px;
+    background-color: #366092;
+    margin-top: 5px;
+    width: 100%;
+}
+
+.noticias table {
+    border-collapse: collapse;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.noticias thead th {
+    background-color: #013a69;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    padding: 10px 15px;
+}
+
+.noticias .titulo {
+    width: 70%;
+}
+
+.noticias .data {
+    width: 20%;
+}
+
+.noticias .visualizar {
+    width: 10%;
+}
+
+.noticias tbody tr td {
+    padding: 8px 15px;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+    color: #000;
+}
+
+.noticias tbody tr.odd {
+    background-color: #f9f9f9;
+}
+
+.noticias img {
+    text-align: center;
+    width: 30%;
+    height: 30%;
+}
+
+#bolsas .pesquisa {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    gap: 2rem;
+    padding: 2rem 5vw;
+    flex: 1;
+    overflow-y: auto;
+}
+
+#bolsas .wrapper {
+    display: flex;
+}
+
+#bolsas header {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: var(--secondary);
+    color: white;
+    padding: 2rem;
+    gap: 1rem;
+}
+
+#bolsas .wrapper > div:not(.ativo) {
+    display: none;
+}
+
+#bolsas header h2 {
+    text-wrap: nowrap;
+    margin-bottom: 1rem;
+}
+
+#bolsas header button {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    background-color: transparent;
+    border: none;
+    filter: brightness(0) invert(1);
+    font-size: 1.15rem;
+    transition: 200ms ease all;
+}
+
+#bolsas header button:hover {
+    margin-left: 1rem;
+    cursor: pointer;
+}
+
+#bolsas header button.ativo {
+    font-weight: bold;
+}
+
+#bolsas header button.ativo::before {
+    opacity: 1;
+}
+
+#bolsas header button::before {
+    content: "▶";
+    opacity: 0;
+    transition: 200ms ease all;
+}
+
+#bolsas .pesquisa {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    padding: 2rem 5vw;
+    overflow-y: scroll;
+}
+
+#bolsas .box-pesquisa {
+    position: sticky;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+    max-width: 1000px;
+}
+
+#bolsas .box-pesquisa label {
+    display: flex;
+    flex-direction: column;
+    font-size: 1rem;
+}
+
+#bolsas .box-pesquisa label .text {
+    margin-bottom: 0.25rem;
+    font-weight: 600;
+}
+
+#bolsas .box-pesquisa select,
+#bolsas .box-pesquisa input {
+    padding: 0.5rem 0.75rem;
+    border: 2px solid black;
+    border-radius: 0;
+    font-size: 1rem;
+    width: 100%;
+}
+
+#bolsas .box-pesquisa select:focus,
+#bolsas .box-pesquisa input:focus {
+    outline: none;
+    border: 2px solid var(--primary);
+    background-color: var(--primary);
+    color: white;
+}
+
+#bolsas .box-pesquisa button.pesquisar {
+    padding: 0.75rem 1.5rem;
+    font-weight: bolder;
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    transition: 200ms ease all;
+    cursor: pointer;
+    height: fit-content;
+}
+
+#bolsas .box-pesquisa button.pesquisar:hover {
+    background-color: var(--secondary);
+}
+
+.bolsa-card {
+    background-color: white;
+    border: 2px solid #ddd;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    transition: 200ms ease all;
+}
+
+.bolsa-card:hover {
+    border-color: var(--primary);
+    box-shadow: 0 6px 10px rgba(0,0,0,0.1);
+}
+
+.bolsa-card h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.bolsa-card .subtitulo {
+    font-weight: bold;
+    margin-top: 1rem;
+}
+
+.bolsa-card p,
+.bolsa-card ul {
+    margin: 0.25rem 0 0.75rem 0;
+}
+
+.bolsa-card ul {
+    padding-left: 1.2rem;
+}
+
+.bolsa-card .area {
+    font-style: italic;
+    color: #555;
+    margin-top: 0.5rem;
+}
+
+#bolsas .resultado {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 1000px;
+}
+
+.bolsa-card .informacao-adicional {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1.5rem;
+}
+
+.status {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    font-style: italic;
+}
+
+.status-indicador {
+    display: none;
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 50%;
+}
+
+.status-concluido, .status-andamento,
+.status-cancelado, .status-desconhecido {
+    display: inline-block;
+}
+
+.status-concluido {
+    background-color: seagreen;
+}
+
+.status-andamento {
+    background-color: orange;
+}
+
+.status-cancelado {
+    background-color: red;
+}
+
+.status-desconhecido {
+    background-color: gray;
+}
+
+.bolsa-card .acoes {
+    display: flex;
+    gap: 1rem;
+}
+
+.bolsa-card .acoes button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.25rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: 200ms ease all;
+    cursor: pointer;
+}
+
+.bolsa-card .acoes button img {
+    height: 1.25rem;
+    filter: brightness(0) invert(1);
+}
+
+.bolsa-card .acoes button:hover {
+    background-color: var(--secondary);
+    transform: scale(1.03);
+}
+
+.bolsa-card .acoes .interesse {
+    background-color: white;
+    color: var(--primary);
+    border: 2px solid var(--primary);
+}
+
+.bolsa-card .acoes .interesse img {
+    filter: none;
+}
+
+.bolsa-card .acoes .interesse:hover {
+    background-color: var(--primary);
+    color: white;
+}
+
+.bolsa-card .acoes .interesse:hover img {
+    filter: brightness(0) invert(1);
+}
+
+#bolsas .minhas-bolsas {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    overflow-y: scroll;
+}
+
+.bolsa-card {
+    width: 100%;
+}
+
+#bolsas .mais, #bolsas .minhas-bolsas {
+    width: 100%;
+    height: 100%;
+    padding: 2rem 5vw;
+    overflow-y: auto;
+}
+
+.detalhes-bolsa {
+    max-width: 1000px;
+    margin: 0 auto;
+    background-color: white;
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    border: 2px solid #ddd;
+}
+
+.detalhes-bolsa .voltar {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: transparent;
+    border: 2px solid var(--primary);
+    color: var(--primary);
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    margin-bottom: 2rem;
+    cursor: pointer;
+    transition: 200ms ease all;
+}
+
+.detalhes-bolsa .voltar:hover {
+    background-color: var(--primary);
+    color: white;
+}
+
+.detalhes-bolsa .voltar:hover img {
+    filter: brightness(0) invert(1);
+}
+
+.detalhes-bolsa h2 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    color: #333;
+}
+
+.detalhes-bolsa h3 {
+    font-size: 1.5rem;
+    margin: 2rem 0 1rem 0;
+    color: var(--primary);
+    border-bottom: 2px solid var(--primary);
+    padding-bottom: 0.5rem;
+}
+
+.detalhes-bolsa p {
+    margin: 0.75rem 0;
+    line-height: 1.6;
+}
+
+.detalhes-bolsa strong {
+    color: #333;
+}
+
+.detalhes-bolsa ul {
+    margin: 0.75rem 0;
+    padding-left: 1.5rem;
+}
+
+.detalhes-bolsa li {
+    margin: 0.5rem 0;
+    line-height: 1.5;
+}
+
+.detalhes-bolsa .interesse-detalhes {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-top: 2rem;
+    cursor: pointer;
+    transition: 200ms ease all;
+}
+
+.detalhes-bolsa .interesse-detalhes:hover {
+    background-color: var(--secondary);
+    transform: scale(1.05);
+}
+
+.detalhes-bolsa .interesse-detalhes img {
+    height: 1.5rem;
+    filter: brightness(0) invert(1);
+}
