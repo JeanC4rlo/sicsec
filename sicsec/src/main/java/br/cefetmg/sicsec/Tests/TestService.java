@@ -85,10 +85,6 @@ public class TestService {
         
     }
     
-    public void insereUsuario() {
-        
-    }
-    
 }
 
 class UsuarioRaw {

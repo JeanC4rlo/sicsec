@@ -10,4 +10,6 @@ package br.cefetmg.sicsec.Controller;
  */
 public class LoginController {
     
+    
+    
 }

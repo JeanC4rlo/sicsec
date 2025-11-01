@@ -71,5 +71,69 @@ public class Turma {
     @JsonManagedReference
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "turma")
     private List<ListaPresenca> frequencia;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public TipoTurma getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(TipoTurma tipo) {
+        this.tipo = tipo;
+    }
+
+    public Disciplina getDisciplina() {
+        return disciplina;
+    }
+
+    public void setDisciplina(Disciplina disciplina) {
+        this.disciplina = disciplina;
+    }
+
+    public List<Aluno> getDiscentes() {
+        return discentes;
+    }
+
+    public void setDiscentes(List<Aluno> discentes) {
+        this.discentes = discentes;
+    }
+
+    public List<Professor> getDoscentes() {
+        return doscentes;
+    }
+
+    public void setDoscentes(List<Professor> doscentes) {
+        this.doscentes = doscentes;
+    }
+
+    public List<MaterialDidatico> getMaterialDidatico() {
+        return materialDidatico;
+    }
+
+    public void setMaterialDidatico(List<MaterialDidatico> materialDidatico) {
+        this.materialDidatico = materialDidatico;
+    }
+
+    public List<Noticia> getNoticias() {
+        return noticias;
+    }
+
+    public void setNoticias(List<Noticia> noticias) {
+        this.noticias = noticias;
+    }
+
+    public List<ListaPresenca> getFrequencia() {
+        return frequencia;
+    }
+
+    public void setFrequencia(List<ListaPresenca> frequencia) {
+        this.frequencia = frequencia;
+    }
     
 }
