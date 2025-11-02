@@ -5,6 +5,7 @@
 package br.cefetmg.sicsec.Model.Usuario.Administrador;
 
 import br.cefetmg.sicsec.Model.Usuario.Usuario;
+import br.cefetmg.sicsec.Model.Util.Enum.CargoAdministrador;
 import jakarta.persistence.*;
 
 /**
@@ -14,4 +15,17 @@ import jakarta.persistence.*;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-public class Administrador extends Usuario {}
+public class Administrador extends Usuario {
+
+    @Enumerated(EnumType.STRING)
+    private CargoAdministrador cargoAdministrador;
+
+    public CargoAdministrador getCargoAdministrador() {
+        return cargoAdministrador;
+    }
+
+    public void setCargoAdministrador(CargoAdministrador cargoAdministrador) {
+        this.cargoAdministrador = cargoAdministrador;
+    }
+    
+}

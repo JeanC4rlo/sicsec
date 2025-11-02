@@ -33,6 +33,10 @@ public class Curso {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "curso")
     private List<Disciplina> matrizCurricular;
     
+    @JsonManagedReference
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "curso")
+    private List<Turma> turmas;
+    
     @JsonBackReference
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "departamento_id")
@@ -76,6 +80,14 @@ public class Curso {
 
     public void setMatrizCurricular(List<Disciplina> matrizCurricular) {
         this.matrizCurricular = matrizCurricular;
+    }
+
+    public List<Turma> getTurmas() {
+        return turmas;
+    }
+
+    public void setTurmas(List<Turma> turmas) {
+        this.turmas = turmas;
     }
 
     public Departamento getDepartamento() {

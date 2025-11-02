@@ -28,7 +28,7 @@ public class Disciplina {
     private Area area;
     
     private String nome;
-    private int[] cargaHoraria; //Número de horários da aula por semana.
+    private int cargaHoraria; //Número de horários da aula por semana.
     
     @JsonBackReference
     @OneToMany(fetch = FetchType.LAZY, mappedBy="disciplina")
@@ -68,11 +68,11 @@ public class Disciplina {
         this.nome = nome;
     }
 
-    public int[] getCargaHoraria() {
+    public int getCargaHoraria() {
         return cargaHoraria;
     }
 
-    public void setCargaHoraria(int[] cargaHoraria) {
+    public void setCargaHoraria(int cargaHoraria) {
         this.cargaHoraria = cargaHoraria;
     }
 

@@ -4,8 +4,14 @@
  */
 package br.cefetmg.sicsec.Model.Curso.Turma;
 
+import br.cefetmg.sicsec.Model.Curso.Curso;
+import br.cefetmg.sicsec.Model.Curso.Disciplina;
+import br.cefetmg.sicsec.Model.Usuario.Aluno.Aluno;
+import br.cefetmg.sicsec.Model.Usuario.Professor.Professor;
+import br.cefetmg.sicsec.Model.Util.Enum.TipoTurma;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,6 +25,20 @@ public class SuperTurma extends Turma {
     @JsonManagedReference
     private List<SubTurma> subTurmas;
 
+    public SuperTurma() {
+        
+    }
+    
+    public SuperTurma(String nome, Disciplina disciplina, Curso curso, List<Aluno> discentes, List<Professor> doscentes) {
+        super(nome, disciplina, curso, discentes, doscentes);
+        this.setTipo(TipoTurma.SUPERTURMA);
+    }
+    
+    public SuperTurma(String nome, Disciplina disciplina, Curso curso) {
+        super(nome, disciplina, curso);
+        this.setTipo(TipoTurma.SUPERTURMA);
+    }
+    
     public List<SubTurma> getSubTurmas() {
         return subTurmas;
     }

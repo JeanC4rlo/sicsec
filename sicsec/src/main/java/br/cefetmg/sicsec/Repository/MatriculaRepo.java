@@ -17,4 +17,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MatriculaRepo extends JpaRepository<Matricula, Long> {
     
+    @Query("""
+            SELECT m
+            FROM Matricula m
+            WHERE m.cpf.cpf = :cpf
+            """)
+    Matricula findByCpf(@Param("cpf") Long cpf);
+    
 }

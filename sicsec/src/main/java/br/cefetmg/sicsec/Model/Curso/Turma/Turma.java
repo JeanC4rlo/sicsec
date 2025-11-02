@@ -4,16 +4,17 @@
  */
 package br.cefetmg.sicsec.Model.Curso.Turma;
 
+import br.cefetmg.sicsec.Model.Curso.Aula;
+import br.cefetmg.sicsec.Model.Curso.Curso;
 import br.cefetmg.sicsec.Model.Curso.MaterialDidatico;
 import br.cefetmg.sicsec.Model.Curso.Disciplina;
 import br.cefetmg.sicsec.Model.Curso.Turma.presenca.ListaPresenca;
-import br.cefetmg.sicsec.Model.Curso.Turma.Avaliacao.Proposta.Avaliacao;
 import br.cefetmg.sicsec.Model.Usuario.Aluno.Aluno;
 import br.cefetmg.sicsec.Model.Usuario.Professor.Professor;
 import br.cefetmg.sicsec.Model.Util.Enum.TipoTurma;
 import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,14 +28,21 @@ public class Turma {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    
     @Enumerated(EnumType.STRING)
     private TipoTurma tipo;
+    
+    private String nome;
     
     @JsonManagedReference
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "disciplina_id", nullable = false)
     private Disciplina disciplina;
+    
+    @JsonBackReference
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "curso_id", nullable = false)
+    private Curso curso;
     
     @JsonBackReference
     @ManyToMany(fetch = FetchType.LAZY)
@@ -54,6 +62,10 @@ public class Turma {
     )
     private List<Professor> doscentes;
     
+    @JsonManagedReference
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "turma")
+    private List<Aula> aulas;
+    
     /*
     @JsonManagedReference
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "turma")
@@ -72,6 +84,28 @@ public class Turma {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "turma")
     private List<ListaPresenca> frequencia;
 
+    public Turma() {
+        
+    }
+    
+    public Turma(String nome, Disciplina disciplina, Curso curso, List<Aluno> discentes, List<Professor> doscentes) {
+        this.setNome(nome);
+        this.setDisciplina(disciplina);
+        this.setCurso(curso);
+        this.setDiscentes(discentes);
+        this.setDoscentes(doscentes);
+        this.setTipo(TipoTurma.TURMA_UNICA);
+    }
+    
+    public Turma(String nome, Disciplina disciplina, Curso curso) {
+        this.setNome(nome);
+        this.setDisciplina(disciplina);
+        this.setCurso(curso);
+        this.setDiscentes(new ArrayList<Aluno>());
+        this.setDoscentes(new ArrayList<Professor>());
+        this.setTipo(TipoTurma.TURMA_UNICA);
+    }
+    
     public Long getId() {
         return id;
     }
@@ -88,10 +122,26 @@ public class Turma {
         this.tipo = tipo;
     }
 
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+    
     public Disciplina getDisciplina() {
         return disciplina;
     }
 
+    public Curso getCurso() {
+        return curso;
+    }
+
+    public void setCurso(Curso curso) {
+        this.curso = curso;
+    }
+    
     public void setDisciplina(Disciplina disciplina) {
         this.disciplina = disciplina;
     }
@@ -110,6 +160,14 @@ public class Turma {
 
     public void setDoscentes(List<Professor> doscentes) {
         this.doscentes = doscentes;
+    }
+
+    public List<Aula> getAulas() {
+        return aulas;
+    }
+
+    public void setAulas(List<Aula> aulas) {
+        this.aulas = aulas;
     }
 
     public List<MaterialDidatico> getMaterialDidatico() {
