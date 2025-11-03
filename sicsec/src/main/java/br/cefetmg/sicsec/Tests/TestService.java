@@ -40,7 +40,7 @@ public class TestService {
         
         login = login.replaceAll("\\D", "");
         
-        usuario = usuarioRepo.findByCpf(Long.parseLong(login));
+        usuario = usuarioRepo.findByCpf(Long.parseLong(login)).get(0);
         
         if (usuario.getSenha().equals(password)) {
             
