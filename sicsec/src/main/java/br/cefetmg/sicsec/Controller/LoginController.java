@@ -12,50 +12,50 @@ import br.cefetmg.sicsec.Service.LoginService;
 @Controller
 @RequestMapping("")
 public class LoginController {
-    @Autowired
-    private LoginService loginService;
+	@Autowired
+	private LoginService loginService;
 
-    @GetMapping("/login")
-    public String loginView() {
-        return "login";
-    }
+	@GetMapping("/login")
+	public String loginView() {
+		return "login";
+	}
 
-    @PostMapping("/api/login")
-    public String login(@RequestParam String cpf,
-                        @RequestParam String senha,
-                        HttpSession session,
-                        Model model) {
-                          if (cpf == null || cpf.trim().isEmpty() || senha == null || senha.isEmpty()) {
-                            model.addAttribute("error", "CPF e senha são obrigatórios.");
-                            return loginView();
-                          }
+	@PostMapping("/api/login")
+	public String login(@RequestParam String cpf,
+			@RequestParam String senha,
+			HttpSession session,
+			Model model) {
+		if (cpf == null || cpf.trim().isEmpty() || senha == null || senha.isEmpty()) {
+			model.addAttribute("error", "CPF e senha são obrigatórios.");
+			return loginView();
+		}
 
-                          cpf = cpf.replaceAll("[^0-9]", "");
-                          Long cpfFormatado = Long.parseLong(cpf);
+		cpf = cpf.replaceAll("[^0-9]", "");
+		Long cpfFormatado = Long.parseLong(cpf);
 
-                          try {
-                            Usuario usuario = loginService.authenticate(cpfFormatado, senha);
-                            if (usuario != null) {
-                                session.setAttribute("usuario", usuario);
-                                String redirectPage;
-                                switch (usuario.getCargo()) {
-                                    case ADMINISTRADOR:
-                                        redirectPage = "redirect:/homeAdmin";
-                                        break;
-                                    case PROFESSOR:
-                                        redirectPage = "redirect:/homeProfessor";
-                                        break;
-                                    default:
-                                        redirectPage = "redirect:/home";
-                                }
-                                return redirectPage;
-                            } else {
-                                model.addAttribute("error", "CPF ou senha inválidos.");
-                                return loginView();
-                            }
-                          } catch (Exception e) {
-                            model.addAttribute("error", "Error ao realizar login.");
-                            return loginView();
-                          }
-                        }
+		try {
+			Usuario usuario = loginService.authenticate(cpfFormatado, senha);
+			if (usuario != null) {
+				session.setAttribute("usuario", usuario);
+				String redirectPage;
+				switch (usuario.getCargo()) {
+					case ADMINISTRADOR:
+						redirectPage = "redirect:/homeAdmin";
+						break;
+					case PROFESSOR:
+						redirectPage = "redirect:/homeProfessor";
+						break;
+					default:
+						redirectPage = "redirect:/home";
+				}
+				return redirectPage;
+			} else {
+				model.addAttribute("error", "CPF ou senha inválidos.");
+				return loginView();
+			}
+		} catch (Exception e) {
+			model.addAttribute("error", "Error ao realizar login.");
+			return loginView();
+		}
+	}
 }
