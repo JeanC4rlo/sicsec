@@ -40,7 +40,7 @@ public class LoginController {
                                 String redirectPage;
                                 switch (usuario.getCargo()) {
                                     case ADMINISTRADOR:
-                                        redirectPage = "redirect:/homeAdimin";
+                                        redirectPage = "redirect:/homeAdmin";
                                         break;
                                     case PROFESSOR:
                                         redirectPage = "redirect:/homeProfessor";
