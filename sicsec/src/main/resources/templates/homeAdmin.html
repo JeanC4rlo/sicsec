@@ -1,55 +1,48 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="../css/home.css" />
-    <link rel="stylesheet" href="../css/base.css" />
-    <link rel="stylesheet" href="../css/gestao-usuarios.css" />
+    <link th:href="@{/css/home.css}" rel="stylesheet" />
+    <link th:href="@{/css/base.css}" rel="stylesheet" />
+    <link th:href="@{/css/matricula.css}" rel="stylesheet" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Red+Hat+Display:ital,wght@0,300..900;1,300..900&display=swap"
       rel="stylesheet"
     />
-    
-    <script src="../scripts/homeAdmin/homeAdmin.js"></script>
-    <script src="../scripts/homeAdmin/sections/gestaoUsuariosSections.js"></script>
-    <script src="../scripts/homeAdmin/sections/gerarNumMatricula.js"></script>
-
+    <script th:src="@{/js/homeAdmin/inits/initGestao.js}"></script>
+    <script th:src="@{/js/homeAdmin/SectionManager.js}"></script>
     <title>SICSEC</title>
   </head>
-
   <body>
-
     <header>
       <div class="logos">
-        <img id="logo-cefet" src="../imagens/cefet.png" alt="" />
+        <img th:src="@{/images/cefet.png}" alt="" id="logo-cefet"/>
         <h1>SICSEC</h1>
       </div>
       <nav>
         <button data-section="home-admin">
-          <img src="../imagens/home/homepage.svg" alt="" />
+          <img th:src="@{/images/home/homepage.svg}" alt="" />
           Home
         </button>
-        <button data-section="gestao-usuarios">
-          <img src="../imagens/home/turmas.svg" alt="" />
+        <button data-section="matricula">
+          <img th:src="@{/images/home/turmas.svg}" alt="" />
           Gestão de Usuários
         </button>
       </nav>
-      <a href="../index.html" class="sair">Sair</a>
+      <a th:href="@{/auth/login}" class="sair">Sair</a>
     </header>
-
     <main>
-        <section id="home-admin">
-          <div class="wrapper">
-          </div>
-        </section>
-
-        <section id="gestao-usuarios">
-          <div class="wrapper">
-          </div>
-        </section>
+      <section id="home-admin">
+        <div class="wrapper">
+        </div>
+      </section>
+      <section id="matricula">
+        <div class="wrapper">
+        </div>
+      </section>
     </main>
   </body>
 </html>
