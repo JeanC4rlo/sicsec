@@ -10,24 +10,24 @@ import br.cefetmg.sicsec.Model.Usuario.Usuario;
 import br.cefetmg.sicsec.Service.LoginService;
 
 @Controller
-@RequestMapping("/auth")
+@RequestMapping("")
 public class LoginController {
     @Autowired
     private LoginService loginService;
 
     @GetMapping("/login")
-    public String showLoginView() {
-        return "auth/login";
+    public String loginView() {
+        return "login";
     }
 
-    @PostMapping("/login")
+    @PostMapping("/api/login")
     public String login(@RequestParam String cpf,
                         @RequestParam String senha,
                         HttpSession session,
                         Model model) {
                           if (cpf == null || cpf.trim().isEmpty() || senha == null || senha.isEmpty()) {
                             model.addAttribute("error", "CPF e senha são obrigatórios.");
-                            return "auth/login";
+                            return loginView();
                           }
 
                           cpf = cpf.replaceAll("[^0-9]", "");
@@ -51,11 +51,11 @@ public class LoginController {
                                 return redirectPage;
                             } else {
                                 model.addAttribute("error", "CPF ou senha inválidos.");
-                                return "auth/login";
+                                return loginView();
                             }
                           } catch (Exception e) {
                             model.addAttribute("error", "Error ao realizar login.");
-                            return "auth/login";
+                            return loginView();
                           }
                         }
 }

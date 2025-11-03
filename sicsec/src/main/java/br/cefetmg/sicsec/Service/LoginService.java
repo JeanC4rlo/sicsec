@@ -13,7 +13,7 @@ public class LoginService {
     @Autowired
     private UsuarioRepo usuarioRepo;
 
-    public Usuario registerUsuario(Usuario usuario) {
+    public Usuario register(Usuario usuario) {
         return usuarioRepo.save(usuario);
     }
 
