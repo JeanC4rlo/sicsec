@@ -1,4 +1,6 @@
-package br.cefetmg.sicsec.model;
+package br.cefetmg.sicsec.Model;
+
+import java.util.List;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -21,8 +23,9 @@ public class Atividade {
     private String enunciado;
     @Lob
     private String questoes;
-    private String tentativas;
+    private Integer tentativas;
     private String tempoDeDuracao;
+    private List<String> nomesArquivos;
     
     public Long getId() {
         return id;
@@ -88,11 +91,11 @@ public class Atividade {
         this.questoes = questoes;
     }
 
-    public String getTentativas() {
+    public Integer getTentativas() {
         return tentativas;
     }
 
-    public void setTentativas(String tentativas) {
+    public void setTentativas(Integer tentativas) {
         this.tentativas = tentativas;
     }
 
@@ -102,5 +105,13 @@ public class Atividade {
 
     public void setTempoDeDuracao(String tempoDeDuracao) {
         this.tempoDeDuracao = tempoDeDuracao;
+    }
+
+    public List<String> getNomesArquivos() {
+        return nomesArquivos;
+    }
+
+    public void setArquivos(List<String> arquivos) {
+        this.nomesArquivos = arquivos;
     }
 }

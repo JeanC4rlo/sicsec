@@ -1,23 +1,38 @@
-let btnSair;
-let form;
-let btnAnterior;
-let btnProximo;
-let idxSegmento;
-let btnAddQuestao;
+let btnSair, form, btnAnterior, btnProximo, btnAddQuestao, btnEnviar;
 let sessao;
 let listaSegmentos;
+let idxSegmento = -1;
 let numQuestoes = 0;
-let btnEnviar;
+let inputDeArquvios;
+
 const MAX_NUM_ALTERNATIVAS = 6;
 const MAX_CARACTERES_TXT_PEQUENO = 252;
-const MAX_CARACTERES_TXT_GRANDE = 1500;
+const MAX_CARACTERES_TXT_GRANDE = 2000;
+
 const tipos = {
-    "questionario": "Questionário",
-    "envArquivo": "Envio de Arquivo",
-    "envTexto": "Envio de Texto"
-}
+    questionario: "Questionário",
+    envArquivo: "Envio de Arquivo",
+    envTexto: "Envio de Texto"
+};
 
 window.onload = initProdAtividade;
+
+function initProdAtividade() {
+    form = document.querySelector("form");
+    btnSair = document.getElementById("btn-sair");
+    btnAnterior = document.getElementById("btn-anterior");
+    btnProximo = document.getElementById("btn-proximo");
+    btnAddQuestao = document.getElementById("add-questao");
+    btnEnviar = document.getElementById("btn-enviar");
+
+    btnSair.addEventListener("click", confirmarSaidaDaPag);
+    btnProximo.addEventListener("click", passarSegmento);
+    btnAnterior.addEventListener("click", voltarSegmento);
+    btnAddQuestao.addEventListener("click", adicionarQuestao);
+    btnEnviar.addEventListener("click", enviar);
+
+    idxSegmento = -1;
+}
 
 function ativarForm() {
     sessao.classList.remove("ativo");
@@ -25,7 +40,7 @@ function ativarForm() {
 }
 
 function definirSessao() {
-    sessao = document.querySelector(`#section-${form.tipo.value}`)
+    sessao = document.querySelector(`#section-${form.tipo.value}`);
     sessao.classList.add("ativo");
     listaSegmentos = sessao.querySelectorAll(":scope > div");
     form.classList.add("inativo");
@@ -45,9 +60,19 @@ function destacarCampo(campo) {
     campo.focus();
 }
 
+function validarContainer(container) {
+    const campos = container.querySelectorAll("input, textarea, select");
+    for (const campo of campos) {
+        if (!campo.value.trim()) {
+            validarCampo(campo);
+            return false;
+        }
+    }
+    return true;
+}
+
 function validarLista(container, config) {
     const itens = Array.from(container.children);
-
     for (const item of itens) {
         for (const sel of config.selectors) {
             const campos = container.querySelectorAll(`:scope > ${sel}`);
@@ -59,25 +84,13 @@ function validarLista(container, config) {
             }
         }
     }
-
-    return true;
-}
-
-function validarContainer(container) {
-    const campos = container.querySelectorAll('input, textarea, select');
-
-    for (const campo of campos) {
-        if (!campo.value.trim()) {
-            validarCampo(campo);
-            return false;
-        }
-    }
-
     return true;
 }
 
 function validarData(data) {
-    return (new Date(data).getTime() > new Date().getTime());
+    const [ano, mes, dia] = data.split("-").map(Number);
+    const dataObj = new Date(ano, mes - 1, dia);
+    return dataObj.getTime() > Date.now();
 }
 
 function validarTempo() {
@@ -93,32 +106,33 @@ function validarTempo() {
 
 function passar() {
     idxSegmento++;
-    if (idxSegmento == 0) {
+    if (idxSegmento === 0) {
         definirSessao();
         listaSegmentos[idxSegmento].classList.add("ativo");
         return;
     }
+
     listaSegmentos[idxSegmento - 1].classList.remove("ativo");
     listaSegmentos[idxSegmento].classList.add("ativo");
 }
 
 function passarSegmento() {
-    if (idxSegmento == -1) {
+    if (idxSegmento === -1) {
         for (let campo of form.elements) {
-            if (!validarCampo(campo))
-                return;
+            if (!validarCampo(campo)) return;
         }
+
         if (!validarData(form.data.value)) {
-            alert("A data inserida é inválida")
+            alert("A data inserida é inválida");
             destacarCampo(form.data);
             return;
         }
         passar();
+        if (form.tipo.value == "envTexto" || form.tipo.value == "envArquivo") enviarArquivo();
         return;
     }
 
-    if (idxSegmento >= listaSegmentos.length - 1)
-        return;
+    if (idxSegmento >= listaSegmentos.length - 1) return;
 
     switch (form.tipo.value) {
         case "questionario":
@@ -128,66 +142,28 @@ function passarSegmento() {
                         alert("Um questionário deve ter pelo menos 2 questões");
                         return;
                     }
-                    if (!validarContainer(sessao.querySelector("#lista-questoes")))
-                        return;
+                    if (!validarContainer(sessao.querySelector("#lista-questoes"))) return;
                     passar();
+                    montarConfirmacao();
                     break;
                 case 1:
-                    if (!validarLista(sessao.querySelector("#duracao-e-tentativas"), { selectors: ["input"] }))
-                        return;
+                    if (!validarLista(sessao.querySelector("#duracao-e-tentativas"), { selectors: ["input"] })) return;
                     passar();
                     montarConfirmacao();
                     break;
             }
             break;
         case "envTexto":
-            switch (idxSegmento) {
-                case 0:
-                    if (!validarContainer(sessao.querySelector(".elaboracao")))
-                        return;
-                    passar();
-                    montarConfirmacao();
-                    break;
-            }
-            break;
         case "envArquivo":
-            switch (idxSegmento) {
-                case 0:
-                    if (!validarContainer(sessao.querySelector(".elaboracao")))
-                        return;
-                    passar();
-                    montarConfirmacao();
-                    break;
-            }
+            if (!validarContainer(sessao.querySelector(".elaboracao"))) return;
+            passar();
+            montarConfirmacao();
             break;
     }
-}
-
-function aparecerBotaoEnviar() {
-    btnEnviar.classList.remove("inativo");
-    
-}
-
-/*function desaparecerBotaoEnviar() {
-    btnEnviar.classList.add("inativo");
-    btnProximo.classList.remove("inativo");
-}*/
-
-function voltar() {
-    idxSegmento--;
-    if (idxSegmento == -1) {
-        listaSegmentos[idxSegmento + 1].classList.remove("ativo");
-        ativarForm();
-        return
-    }
-    listaSegmentos[idxSegmento + 1].classList.remove("ativo");
-    listaSegmentos[idxSegmento].classList.add("ativo");
-    desaparecerBotaoEnviar();
 }
 
 function voltarSegmento() {
-    if (idxSegmento < 0)
-        return;
+    if (idxSegmento < 0) return;
 
     if (idxSegmento > 0) {
         listaSegmentos[idxSegmento].classList.remove("ativo");
@@ -200,18 +176,38 @@ function voltarSegmento() {
     }
 }
 
-function confirmarSaidaDaPag() {
-    if (confirm("Tem certeza que deseja sair da página? Os dados da atividade serão perdidos?")) {
-        window.location.href = "../homeProfessor.html";
-    }
+function enviarArquivo() {
+    inputDeArquvios = document.createElement("input");
+    inputDeArquvios.type = "file";
+    inputDeArquvios.style.display = "none";
+    inputDeArquvios.id = "fileInput";
+    inputDeArquvios.multiple = true;
+    inputDeArquvios.accept = "application/zip,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain";
+    sessao.appendChild(inputDeArquvios);
+
+    let listaArquivos = document.createElement("ul");
+    listaArquivos.id = "lista-arquivos";
+    sessao.appendChild(listaArquivos);
+
+    const btnEnvArquivo = sessao.querySelector(".btn-enviar-arquivo");
+    btnEnvArquivo.addEventListener("click", () => inputDeArquvios.click());
+
+    inputDeArquvios.addEventListener("change", () => {
+        listaArquivos.innerHTML = "";
+        for (let i = 0; i < inputDeArquvios.files.length; i++) {
+            let li = document.createElement("li");
+            li.textContent = inputDeArquvios.files[i].name;
+            listaArquivos.appendChild(li);
+        }
+    });
 }
+
 
 function adicionarQuestao() {
     numQuestoes++;
 
     const corpo = document.createElement("div");
-    corpo.classList.add("questao");
-    corpo.classList.add("ativo");
+    corpo.classList.add("questao", "ativo");
 
     const numDaQuestao = document.createElement("p");
     numDaQuestao.innerHTML = `Questão ${numQuestoes}`;
@@ -219,7 +215,7 @@ function adicionarQuestao() {
 
     const txtDaQuestao = document.createElement("textarea");
     txtDaQuestao.placeholder = "Texto da questão";
-    txtDaQuestao.maxLength = String(MAX_CARACTERES_TXT_GRANDE);
+    txtDaQuestao.maxLength = MAX_CARACTERES_TXT_GRANDE;
     expandirTextarea(txtDaQuestao);
 
     const enunciadoQuestao = document.createElement("textarea");
@@ -238,11 +234,10 @@ function adicionarQuestao() {
     btnRmvQuestao.textContent = "Excluir questão";
     btnRmvQuestao.addEventListener("click", () => removerQuestao(corpo));
 
-    while (listaAlternativas.children.length < 2)
-        adicionarAlternativa(listaAlternativas);
+    while (listaAlternativas.children.length < 2) adicionarAlternativa(listaAlternativas);
 
     corpo.append(numDaQuestao, txtDaQuestao, enunciadoQuestao, listaAlternativas, btnAddAlternativa, btnRmvQuestao);
-    document.querySelector("#lista-questoes").appendChild(corpo, listaAlternativas);
+    document.querySelector("#lista-questoes").appendChild(corpo);
 }
 
 function removerQuestao(corpo) {
@@ -252,16 +247,13 @@ function removerQuestao(corpo) {
     }
     corpo.remove();
     const listaNumDasQuestoes = document.querySelectorAll("#lista-questoes .num-questao");
-    listaNumDasQuestoes.forEach((num, index) => {
-        num.innerHTML = `Questão ${index + 1}`;
-    });
-
+    listaNumDasQuestoes.forEach((num, index) => num.innerHTML = `Questão ${index + 1}`);
     numQuestoes--;
 }
 
 function adicionarAlternativa(listaAlternativas) {
-    let numAlternativas = listaAlternativas.children.length;
-    if (numAlternativas == MAX_NUM_ALTERNATIVAS) {
+    const numAlternativas = listaAlternativas.children.length;
+    if (numAlternativas >= MAX_NUM_ALTERNATIVAS) {
         alert("Uma questão pode ter no máximo 6 alternativas");
         return;
     }
@@ -279,18 +271,17 @@ function adicionarAlternativa(listaAlternativas) {
 
     const btnRmvAlternativa = document.createElement("button");
     btnRmvAlternativa.textContent = "Remover alternativa";
-    btnRmvAlternativa.addEventListener('click', () => removerAlternativa(corpo))
+    btnRmvAlternativa.addEventListener("click", () => corpo.remove());
 
-    corpo.append(texto, ehCorreta);
+    corpo.append(texto, ehCorreta, btnRmvAlternativa);
     listaAlternativas.appendChild(corpo);
 }
 
 function expandirTextarea(textarea) {
-    textarea.addEventListener("input", function () {
+    textarea.addEventListener("input", () => {
         textarea.style.height = "auto";
         textarea.style.height = textarea.scrollHeight + "px";
-        textarea.maxLength = String(MAX_CARACTERES_TXT_GRANDE);
-    })
+    });
 }
 
 function enviar() {
@@ -308,7 +299,7 @@ function enviar() {
         enunciado: "",
         questoes: "[]",
         tentativas: "1",
-        tempoDeDuracao: "{\"numHoras\":1,\"numMinutos\":0}"
+        tempoDeDuracao: JSON.stringify({ numHoras: 1, numMinutos: 0 })
     };
 
     if (form.tipo.value === "questionario") {
@@ -331,29 +322,43 @@ function enviar() {
         });
 
         dados.questoes = JSON.stringify(questoesArray);
-
-        const numTentativas = document.querySelector("#num-tentativas");
-        dados.tentativas = numTentativas?.value || "1";
+        dados.tentativas = document.querySelector("#num-tentativas")?.value || "1";
 
         const numHoras = document.querySelector("#num-horas")?.value || "1";
         const numMinutos = document.querySelector("#num-minutos")?.value || "0";
         dados.tempoDeDuracao = JSON.stringify({ numHoras, numMinutos });
     }
-
     else {
         const inputEnunciado = sessao.querySelector(".inputEnunciado");
         dados.enunciado = inputEnunciado.value;
     }
 
+    const formData = new FormData();
+    formData.append("atividade", new Blob([JSON.stringify(dados)], { type: "application/json" }));
+
+    if (form.tipo.value != "questionario" && inputDeArquvios && inputDeArquvios.files.length > 0) {
+        for (const file of inputDeArquvios.files) {
+            if (file.size > 5 * 1024 * 1024) {
+                alert(`Arquivo muito grande: ${file.name}`);
+                return;
+            }
+            const extensoesPermitidas = [".txt", ".pdf", ".docx", ".zip"];
+            const nome = file.name.toLowerCase();
+            if (!extensoesPermitidas.some(ext => nome.endsWith(ext))) {
+                alert(`Tipo de arquivo não permitido: ${file.name}`);
+                return;
+            }
+        }
+        for (const file of inputDeArquvios.files) {
+            formData.append("arquivos", file);
+        }
+    }
+
     fetch("http://localhost:6060/salvar", {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json ; charset=UTF-8"
-        },
-        body: JSON.stringify(dados)
+        body: formData
     })
         .then(response => {
-            console.log(JSON.stringify(dados));
             if (!response.ok) throw new Error("Erro ao enviar os dados");
             return response.json();
         })
@@ -363,8 +368,10 @@ function enviar() {
         .catch(err => console.error("Falha no envio:", err));
 }
 
+
 function montarConfirmacao() {
-    aparecerBotaoEnviar();
+    btnEnviar.classList.remove("inativo");
+
     const nome = sessao.querySelector(".nome");
     const tipo = sessao.querySelector(".tipo");
     const valor = sessao.querySelector(".valor");
@@ -378,29 +385,16 @@ function montarConfirmacao() {
     horaEncerramento.innerHTML = "Hora de Encerramento: " + form.horas.value;
 
     if (form.tipo.value === "questionario") {
-        const numQuestoesP = sessao.querySelector(".numQuestoes");
-        numQuestoesP.innerHTML = `Número de questões: ${numQuestoes}`;
-    }
-    else {
+        sessao.querySelector(".numQuestoes").innerHTML = `Número de questões: ${numQuestoes}`;
+    } else {
         const enunciado = sessao.querySelector(".enunciado");
         const inputEnunciado = sessao.querySelector(".inputEnunciado");
-
         enunciado.innerHTML = `Enunciado: ${inputEnunciado.value}`;
     }
 }
 
-function initProdAtividade() {
-    idxSegmento = -1;
-    btnSair = document.getElementById("btn-sair");
-    form = document.querySelector("form");
-    btnAnterior = document.getElementById("btn-anterior");
-    btnProximo = document.getElementById("btn-proximo");
-    btnAddQuestao = document.getElementById("add-questao");
-    btnEnviar = document.getElementById("btn-enviar")
-
-    btnSair.addEventListener("click", confirmarSaidaDaPag);
-    btnProximo.addEventListener("click", passarSegmento);
-    btnAnterior.addEventListener("click", voltarSegmento);
-    btnAddQuestao.addEventListener("click", adicionarQuestao);
-    btnEnviar.addEventListener("click", enviar);
+function confirmarSaidaDaPag() {
+    if (confirm("Tem certeza que deseja sair da página? Os dados da atividade serão perdidos?")) {
+        window.location.href = "../homeProfessor.html";
+    }
 }
