@@ -10,4 +10,6 @@ public interface StatusAtividadeRepository extends JpaRepository<StatusAtividade
     long countByAtividade_Id(Long atividadeId);
 
     Optional<StatusAtividade> findTopByAtividade_IdOrderByNumTentativaDesc(Long atividadeId);
+
+    Optional<StatusAtividade> findByAtividadeIdAndAbertaTrue(Long atividadeId);
 }

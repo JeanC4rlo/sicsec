@@ -9,7 +9,6 @@ let listaContainers = [];
 let temporizador;
 let tentativasFeitas;
 let statusAtividade;
-let enviada = false;
 const LIMITE_CARACTERES = 2000;
 
 function formatarData(data) {
@@ -32,6 +31,43 @@ function checkQuestaoMarcada() {
     return true;
 }
 
+async function carregarOuCriarTentativa() {
+    try {
+        let response = await fetch(`/atividade/${atividade.id}/tentativa-aberta`);
+        if (!response.ok) throw new Error("Erro ao verificar tentativa aberta");
+
+        const text = await response.text();
+        const tentativa = text && text.trim().length > 0 ? JSON.parse(text) : null;
+
+        if (tentativa && tentativa.id && tentativa.tempoRestante > 0) {
+            statusAtividade = tentativa;
+            console.log("Tentativa aberta encontrada:", tentativa);
+        } else {
+            const dados = {
+                atividade: { id: atividade.id },
+                horarioInicio: new Date().toISOString(),
+                tempoRestante: converterTempoDaAtividade(),
+                numTentativa: tentativasFeitas + 1,
+                aberta: true
+            }
+            response = await fetch("/salvar-status-atividade", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(dados)
+            });
+
+            if (!response.ok) throw new Error("Erro ao criar nova tentativa");
+
+            statusAtividade = await response.json();
+            console.log("Nova tentativa criada:", statusAtividade);
+        }
+        tempoTotal = statusAtividade.tempoRestante || converterTempoDaAtividade();
+    } catch (err) {
+        console.error(err);
+        alert("Não foi possível carregar a tentativa");
+    }
+}
+
 function AddBotaoEnviar() {
     btnEnviar.classList.remove("inativo");
     btnProximo.classList.add("inativo");
@@ -43,12 +79,6 @@ function RemoverBotaoEnviar() {
 }
 
 function criarTimer(timer) {
-    if(statusAtividade)
-        tempoTotal = statusAtividade.tempoRestante;
-    else
-        tempoTotal = (Number(atividade.tempoDeDuracao.numHoras) * 3600 +
-            Number(atividade.tempoDeDuracao.numMinutos) * 60);
-
     temporizador = setInterval(() => {
         let horas = Math.floor(tempoTotal / 3600);
         let minutos = Math.floor((tempoTotal % 3600) / 60);
@@ -59,6 +89,8 @@ function criarTimer(timer) {
             .padStart(2, "0")}:${segundos.toString().padStart(2, "0")}`;
 
         tempoTotal -= 1;
+
+        if(tempoTotal == -1) timeOut();
     }, 1000);
 }
 
@@ -110,23 +142,32 @@ function navegarEntreQuestoes(sentido) {
     }
 }
 
-function carregarStatusAtividade() {
-    fetch(`/atividade/${atividade.id}/ultima-tentativa`)
-    .then(response => {
-        if(!response.ok) throw new Error("Não foi possível carregar o status da atividade");
-        return response.json();
-    })
-    .then(dados => {
-        statusAtividade = dados;
-        console.log(statusAtividade);
-    })
+function converterTempoParaSegundos(horas = 0, minutos = 0, segundos = 0) {
+    horas *= 3600;
+    minutos *= 60;
+    return horas + minutos + segundos;
+}
+
+function converterTempoDaAtividade() {
+    return converterTempoParaSegundos(Number(atividade.tempoDeDuracao.numHoras), Number(atividade.tempoDeDuracao.numMinutos));
 }
 
 function enviarRespostas() {
     if (!checkQuestaoMarcada()) return;
-    enviada = true;
     alert("Respostas enviadas! (sem backend ainda)");
     window.location.href = "../home.html";
+}
+
+async function timeOut() {
+    clearInterval(temporizador);
+
+    if(statusAtividade && statusAtividade.id){
+        await fecharTentativa();
+    }
+
+    await carregarOuCriarTentativa();
+
+    window.location.reload();
 }
 
 function carregarTelaQuestionario() {
@@ -184,8 +225,8 @@ function carregarTelaEnvioTexto() {
 async function primeiraTela() {
     switch (atividade.tipo) {
         case ("Questionário"):
-            carregarStatusAtividade();
-            await numTentativas();
+            await contarTentativas();
+            carregarOuCriarTentativa();
             carregarTelaQuestionario();
             break;
 
@@ -209,7 +250,7 @@ function formatarDataHora(date) {
     return `${ano}-${mes}-${dia} ${horas}:${minutos}:${segundos}`;
 }
 
-async function numTentativas() {
+async function contarTentativas() {
     await fetch(`/atividade/${atividade.id}/tentativas`)
         .then(response => {
             if (!response.ok) {
@@ -223,16 +264,43 @@ async function numTentativas() {
         .catch(err => console.error("Falha na requisição:", err));
 }
 
+async function fecharTentativa() {
+    try {
+        const response = await fetch(`/atualizar-status-tentativa/${statusAtividade.id}/fechar-tentativa`, {
+            method: "PATCH"
+        });
+        if (!response.ok) throw new Error("Erro ao fechar a tentativa");
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+async function atualizarTempo() {
+    try {
+        const response = await fetch(`/atualizar-status-tentativa/${statusAtividade.id}/atualizar-tempo`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ tempoRestante: tempoTotal })
+        });
+
+        if (!response.ok) throw new Error("Não foi possível atualizar o tempo");
+
+        const tentativaAtualizada = await response.json();
+        console.log("Tentativa atualizada:", tentativaAtualizada);
+    } catch (err) {
+        console.error(err);
+    }
+}
 
 function salvarStatusTentativa() {
     clearInterval(temporizador);
 
     const dados = {
         atividade: atividade.id,
-        horarioInicio: formatarDataHora(new Date()),
+        horarioInicio: new Date().toISOString(),
         tempoRestante: tempoTotal,
         numTentativa: tentativasFeitas + 1,
-        enviada: enviada
+        aberta: true
     };
 
     fetch("/salvar-status-atividade", {
@@ -245,9 +313,11 @@ function salvarStatusTentativa() {
 
 function iniciarTentativa() {
     window.addEventListener("beforeunload", (event) => {
-        if(enviada) return;
+        if(tempoTotal > 0)
+            atualizarTempo();
+        else
+            fecharTentativa();
         event.preventDefault();
-        salvarStatusTentativa();
     });
 
     containerPrincipal.innerHTML = "";

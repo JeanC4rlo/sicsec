@@ -5,5 +5,5 @@ public class StatusAtividadeDTO {
     public String horarioInicio;
     public Long tempoRestante;
     public Integer numTentativa;
-    public Boolean enviada;
+    public Boolean aberta;
 }

@@ -24,9 +24,9 @@ public class StatusAtividade {
     private Aluno aluno;*/
 
     private LocalDateTime horarioInicio;
-    private Long tempoRestante;
+    private Integer tempoRestante;
     private Integer numTentativa;
-    private Boolean enviada;
+    private Boolean aberta;
 
     public Long getId() {
         return id;
@@ -60,11 +60,11 @@ public class StatusAtividade {
         this.horarioInicio = horarioInicio;
     }
     
-    public Long getTempoRestante() {
+    public Integer getTempoRestante() {
         return tempoRestante;
     }
 
-    public void setTempoRestante(Long tempoRestante) {
+    public void setTempoRestante(Integer tempoRestante) {
         this.tempoRestante = tempoRestante;
     }
 
@@ -76,11 +76,11 @@ public class StatusAtividade {
         this.numTentativa = tentativas;
     }
 
-    public Boolean getEnviada() {
-        return enviada;
+    public Boolean getAberta() {
+        return aberta;
     }
 
-    public void setEnviada(Boolean enviada) {
-        this.enviada = enviada;
+    public void setAberta(Boolean aberta) {
+        this.aberta = aberta;
     }
 }
