@@ -21,7 +21,7 @@ import java.util.List;
  */
 
 @Repository
-public interface UsuarioRepo extends JpaRepository<Usuario, String> {
+public interface UsuarioRepo extends JpaRepository<Usuario, Long> {
     //Busca usuários por tipo de matrícula (ESTUDANTE, PROFESSOR, ADMIN)
     List<Usuario> findByCargo(Cargo cargo);
 

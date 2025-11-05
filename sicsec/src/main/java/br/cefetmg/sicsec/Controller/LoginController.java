@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
 import jakarta.servlet.http.HttpSession;
 
-import br.cefetmg.sicsec.Model.Usuario.Usuario;
 import br.cefetmg.sicsec.Service.LoginService;
 
 @Controller
@@ -25,37 +24,7 @@ public class LoginController {
 			@RequestParam String senha,
 			HttpSession session,
 			Model model) {
-		if (cpf == null || cpf.trim().isEmpty() || senha == null || senha.isEmpty()) {
-			model.addAttribute("error", "CPF e senha são obrigatórios.");
-			return loginView();
-		}
 
-		cpf = cpf.replaceAll("[^0-9]", "");
-		Long cpfFormatado = Long.parseLong(cpf);
-
-		try {
-			Usuario usuario = loginService.authenticate(cpfFormatado, senha);
-			if (usuario != null) {
-				session.setAttribute("usuario", usuario);
-				String redirectPage;
-				switch (usuario.getCargo()) {
-					case ADMINISTRADOR:
-						redirectPage = "redirect:/homeAdmin";
-						break;
-					case PROFESSOR:
-						redirectPage = "redirect:/homeProfessor";
-						break;
-					default:
-						redirectPage = "redirect:/home";
-				}
-				return redirectPage;
-			} else {
-				model.addAttribute("error", "CPF ou senha inválidos.");
-				return loginView();
-			}
-		} catch (Exception e) {
-			model.addAttribute("error", "Error ao realizar login.");
-			return loginView();
-		}
+    	return loginService.authenticate(cpf, senha, session, model);
 	}
 }
