@@ -205,7 +205,7 @@ function telaQuestionarioJaFeito() {
   `;
 }
 
-function carregarTelaEnvioTexto() {
+function carregarTelaRedacao() {
     const nome = document.createElement("p");
     const enunciado = document.createElement("p");
     const textarea = document.createElement("textarea");
@@ -228,11 +228,11 @@ async function primeiraTela() {
             carregarTelaQuestionario();
             break;
 
-        case ("Envio de Texto"):
-            carregarTelaEnvioTexto();
+        case ("Redação"):
+            carregarTelaRedacao();
             break;
         case ("Envio de Arquivo"):
-            carregarTelaEnvioTexto();
+            carregarTelaRedacao();
             break;
     }
 }

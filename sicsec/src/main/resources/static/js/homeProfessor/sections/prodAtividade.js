@@ -11,7 +11,7 @@ const MAX_CARACTERES_TXT_GRANDE = 2000;
 
 const tipos = {
     questionario: "Questionário",
-    envArquivo: "Envio de Arquivo",
+    redacao: "Redação",
     envTexto: "Envio de Texto"
 };
 
@@ -128,7 +128,7 @@ function passarSegmento() {
             return;
         }
         passar();
-        if (form.tipo.value == "envTexto" || form.tipo.value == "envArquivo") enviarArquivo();
+        if (form.tipo.value == "redacao" || form.tipo.value == "envArquivo") enviarArquivo();
         return;
     }
 
@@ -153,7 +153,7 @@ function passarSegmento() {
                     break;
             }
             break;
-        case "envTexto":
+        case "redacao":
         case "envArquivo":
             if (!validarContainer(sessao.querySelector(".elaboracao"))) return;
             passar();

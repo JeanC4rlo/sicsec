@@ -1,9 +1,28 @@
 package br.cefetmg.sicsec.Model;
 
-import java.time.LocalDateTime;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 public class QuestionarioEnviado extends AtividadeEnviada {
-    private Integer numDaTentativa;
-    private LocalDateTime horarioEnvio;
+    @ManyToOne
+    @JoinColumn(name = "status_id", nullable = false)
+    private StatusAtividade numDaTentativa;
+
     private String respostas;
+
+    public StatusAtividade getNumDaTentativa() {
+        return numDaTentativa;
+    }
+
+    public void setNumDaTentativa(StatusAtividade numDaTentativa) {
+        this.numDaTentativa = numDaTentativa;
+    }
+
+    public String getRespostas() {
+        return respostas;
+    }
+
+    public void setRespostas(String respostas) {
+        this.respostas = respostas;
+    }
 }

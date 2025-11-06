@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import java.time.LocalDateTime;
 
 @Entity
 public abstract class AtividadeEnviada {
@@ -23,6 +24,8 @@ public abstract class AtividadeEnviada {
     private Aluno aluno;
 
     private Double nota;
+
+    private LocalDateTime horarioEnvio;
 
     public Long getId() {
         return id;
@@ -54,5 +57,13 @@ public abstract class AtividadeEnviada {
 
     public void setNota(Double nota) {
         this.nota = nota;
+    }
+
+    public LocalDateTime getHorarioEnvio() {
+        return horarioEnvio;
+    }
+
+    public void setHorarioEnvio(LocalDateTime horarioEnvio) {
+        this.horarioEnvio = horarioEnvio;
     }
 }
