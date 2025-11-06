@@ -4,10 +4,7 @@
  */
 package br.cefetmg.sicsec.Model.Curso.Turma;
 
-import br.cefetmg.sicsec.Model.Curso.Aula;
-import br.cefetmg.sicsec.Model.Curso.Curso;
-import br.cefetmg.sicsec.Model.Curso.MaterialDidatico;
-import br.cefetmg.sicsec.Model.Curso.Disciplina;
+import br.cefetmg.sicsec.Model.Curso.*;
 import br.cefetmg.sicsec.Model.Curso.Turma.presenca.ListaPresenca;
 import br.cefetmg.sicsec.Model.Usuario.Aluno.Aluno;
 import br.cefetmg.sicsec.Model.Usuario.Professor.Professor;

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
+-->
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+    
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <title>Selecionar alunos (datalist + multi)</title>
+        <style>
+          body{font-family:system-ui,Segoe UI,Roboto,Arial;line-height:1.4;padding:18px}
+          .wrap{max-width:720px;margin:0 auto}
+          .tagbox{display:flex;flex-wrap:wrap;gap:6px;padding:8px;border:1px solid #cfcfcf;border-radius:8px;min-height:48px;align-items:center}
+          .tag{display:inline-flex;align-items:center;background:#eef;padding:6px 8px;border-radius:999px;font-size:14px}
+          .tag .x{display:inline-block;margin-left:8px;cursor:pointer;font-weight:700}
+          input[type="text"]{border:0;outline:0;font-size:15px;min-width:160px;padding:6px}
+          .hint{color:#666;font-size:13px;margin-top:6px}
+          .actions{margin-top:12px}
+          button{padding:8px 12px;border-radius:6px;border:1px solid #888;background:#fafafa;cursor:pointer}
+          .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+        </style>
+    </head>
+    
+    <div>
+        
+        <form method="post" action="/turmas/registrar" th:object="${turma}">
+            
+            <label for="nome"> Nome da Turma: </label>
+            <input type="text" name="nome">
+            
+            <label for="disciplina"> Disciplina: </label>
+            <input list="disciplina-lista" name="disciplina">
+            <datalist id="disciplina-lista">
+                <option value="1"> Programação 1 </option>
+                <option value="2"> Calculo 1 </option>
+            </datalist>
+                
+            <label for="curso"> Curso: </label>
+            <input list ="curso-lista" name="curso">
+            <datalist id="curso-lista">
+                <option value="1"> Computação </option>
+                <option value="2"> Matemática </option>
+            </datalist>
+            
+            <h2>Selecionar alunos (busca por nome ou matrícula)</h2>
+
+            <div class="wrap">
+                <h2>Selecionar alunos (busca por nome ou matrícula)</h2>
+
+                <!-- tag container + input -->
+                <div id="tagContainer" class="tagbox" aria-labelledby="label">
+                    <!-- tags serão injetadas aqui -->
+                    <input id="studentInput" list="studentsDatalist" placeholder="Digite nome ou matrícula e pressione Enter" autocomplete="off" />
+                    <!-- datalist: sugestões visuais (também será populada via JS) -->
+                    <datalist id="studentsDatalist"></datalist>
+                </div>
+
+                <div class="hint">Selecione vários alunos. Para remover, clique no "×" do aluno.</div>
+
+                <div class="actions">
+                    <button id="showSelected">Mostrar selecionados (console)</button>
+                    <button id="clearAll">Limpar tudo</button>
+                </div>
+            </div>
+            
+        </form>
+        
+    </div>
+    
+    <script>
+        /*
+         Funcionamento:
+         - Há um array 'students' (exemplo). Cada aluno tem {id, nome, matricula}.
+         - O datalist recebe opções no formato "Nome | Matrícula" para facilitar busca por ambos.
+         - Ao confirmar (Enter) ou escolher uma opção, o aluno é adicionado como tag.
+         - Também é possível digitar somente a matrícula (ou parte) e pressionar Enter:
+           o primeiro aluno cuja matrícula começa com o texto digitado será selecionado.
+         - Remover tags com o "×".
+         - 'getSelected()' retorna o array de alunos selecionados.
+        */
+
+        // exemplo de alunos
+        const students = [
+          { id: 1, nome: "Ana Silva", matricula: "2023001" },
+          { id: 2, nome: "Bruno Almeida", matricula: "2023002" },
+          { id: 3, nome: "Carla Souza", matricula: "2023003" },
+          { id: 4, nome: "Diego Pereira", matricula: "2023004" },
+          { id: 5, nome: "Eduarda Lima", matricula: "2023005" },
+          { id: 6, nome: "Fernando Costa", matricula: "2023006" }
+        ];
+
+        const tagContainer = document.getElementById('tagContainer');
+        const input = document.getElementById('studentInput');
+        const datalist = document.getElementById('studentsDatalist');
+
+        let selected = []; // array de alunos selecionados (objetos)
+
+        // popula datalist com "Nome | Matrícula" como value
+        function populateDatalist() {
+          datalist.innerHTML = '';
+          students.forEach(s => {
+            const opt = document.createElement('option');
+            // value usado para busca pelo datalist. Inclui nome e matrícula.
+            opt.value = `${s.nome} | ${s.matricula}`;
+            // atributo custom para facilitar identificação posterior
+            opt.dataset.id = s.id;
+            datalist.appendChild(opt);
+          });
+        }
+        populateDatalist();
+
+        // cria tag visual e atualiza selected
+        function addStudent(student) {
+          // evita duplicados por id
+          if (selected.some(s => s.id === student.id)) return;
+
+          selected.push(student);
+
+          const tag = document.createElement('span');
+          tag.className = 'tag';
+          tag.dataset.id = student.id;
+          tag.innerHTML = `${student.nome} <small style="margin-left:6px;opacity:.7">(${student.matricula})</small> <span class="x" title="Remover">×</span>`;
+
+          // insere antes do input
+          tagContainer.insertBefore(tag, input);
+
+          // remover handler
+          tag.querySelector('.x').addEventListener('click', () => {
+            removeStudentById(student.id);
+          });
+        }
+
+        // remove tag e item de selected
+        function removeStudentById(id) {
+          selected = selected.filter(s => s.id !== id);
+          const tag = tagContainer.querySelector(`.tag[data-id="${id}"]`);
+          if (tag) tag.remove();
+        }
+
+        // tenta resolver o texto digitado em um aluno
+        function findStudentByInput(text) {
+          const t = text.trim();
+          if (!t) return null;
+
+          // 1) procura por correspondência exata com "Nome | Matrícula" (quando selecionado via datalist)
+          const exactOption = Array.from(datalist.options).find(o => o.value.toLowerCase() === t.toLowerCase());
+          if (exactOption) {
+            const id = Number(exactOption.dataset.id);
+            return students.find(s => s.id === id) || null;
+          }
+
+          // 2) procura por matrícula exata ou que começa com o texto (priorizar matrícula numérica)
+          const onlyDigits = /^[0-9]+$/.test(t);
+          if (onlyDigits) {
+            const byMatStart = students.find(s => s.matricula.startsWith(t));
+            if (byMatStart) return byMatStart;
+            const byMatExact = students.find(s => s.matricula === t);
+            if (byMatExact) return byMatExact;
+          }
+
+          // 3) busca por nome que contenha o texto (case-insensitive)
+          const byName = students.find(s => s.nome.toLowerCase().includes(t.toLowerCase()));
+          if (byName) return byName;
+
+          return null;
+        }
+
+        // quando o usuário pressiona Enter, tenta adicionar aluno
+        input.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            const text = input.value;
+            const student = findStudentByInput(text);
+            if (student) {
+              addStudent(student);
+              input.value = '';
+            } else {
+              // behaviour opcional: limpar input se não encontrou
+              // input.value = '';
+              // Para feedback mínimo, usamos border temporária
+              input.style.borderBottom = '2px solid #e33';
+              setTimeout(()=> input.style.borderBottom = '', 900);
+            }
+          }
+        });
+
+        // caso o usuário selecione na lista do browser, o evento 'input' receberá o value correspondente.
+        // adiciona se houver correspondência exata.
+        input.addEventListener('input', (e) => {
+          const v = input.value;
+          // se valor corresponde a uma option full, adiciona imediatamente
+          const opt = Array.from(datalist.options).find(o => o.value === v);
+          if (opt) {
+            const id = Number(opt.dataset.id);
+            const student = students.find(s => s.id === id);
+            if (student) {
+              addStudent(student);
+              input.value = '';
+            }
+          }
+        });
+
+        // botões de demonstração
+        document.getElementById('showSelected').addEventListener('click', () => {
+          console.log('Selecionados:', selected);
+          alert('Veja a lista selecionada no console (F12) — também retornamos por getSelected().');
+        });
+        document.getElementById('clearAll').addEventListener('click', () => {
+          selected = [];
+          // remove todas as tags
+          Array.from(tagContainer.querySelectorAll('.tag')).forEach(t => t.remove());
+        });
+
+        // função pública para obter os selecionados (pode ser chamada pelo app)
+        window.getSelected = () => selected.slice(); // cópia
+
+        // Exemplo: se quiser inicializar com alguns selecionados, descomente:
+        // addStudent(students[0]); addStudent(students[2]);
+    </script>
+    
+</html>
