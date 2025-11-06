@@ -4,13 +4,11 @@
  */
 package br.cefetmg.sicsec.Tests;
 
-import br.cefetmg.sicsec.Model.Usuario.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 

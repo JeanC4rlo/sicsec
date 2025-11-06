@@ -4,8 +4,6 @@
  */
 package br.cefetmg.sicsec.Model.Usuario.Aluno;
 
-import br.cefetmg.sicsec.Model.Curso.Disciplina;
-import br.cefetmg.sicsec.Model.Util.Enum.Aprovacao;
 import br.cefetmg.sicsec.Model.Util.Enum.Situacao;
 import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;

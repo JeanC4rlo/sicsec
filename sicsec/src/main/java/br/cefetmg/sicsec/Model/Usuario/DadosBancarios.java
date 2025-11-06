@@ -22,7 +22,7 @@ public class DadosBancarios {
     
     @Embedded
     private CPF cpf;
-    
+
     private String banco;
     private String agencia;
     private String conta;

@@ -4,7 +4,6 @@
  */
 package br.cefetmg.sicsec.Model.Curso;
 
-import br.cefetmg.sicsec.Model.Curso.Curso;
 import br.cefetmg.sicsec.Model.Curso.Turma.Turma;
 import br.cefetmg.sicsec.Model.Util.Enum.Area;
 import com.fasterxml.jackson.annotation.*;
