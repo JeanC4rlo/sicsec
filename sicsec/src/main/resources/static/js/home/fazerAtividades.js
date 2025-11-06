@@ -1,7 +1,7 @@
 let atividade;
 let contador = 0;
 let containerPrincipal;
-let tempoTotal;
+let tempoTotal = 0;
 let btnAnterior;
 let btnProximo;
 let btnEnviar;
@@ -165,9 +165,7 @@ async function timeOut() {
         await fecharTentativa();
     }
 
-    await carregarOuCriarTentativa();
-
-    window.location.reload();
+    alert("O tempo desta tentativa acabou. Reinicie a página para começar uma nova");
 }
 
 function carregarTelaQuestionario() {
@@ -192,6 +190,7 @@ function carregarTelaQuestionario() {
             telaQuestionarioJaFeito();
             return;
         }
+        carregarOuCriarTentativa();
         iniciarTentativa();
     });
 }
@@ -226,7 +225,6 @@ async function primeiraTela() {
     switch (atividade.tipo) {
         case ("Questionário"):
             await contarTentativas();
-            carregarOuCriarTentativa();
             carregarTelaQuestionario();
             break;
 
@@ -311,14 +309,15 @@ function salvarStatusTentativa() {
     });
 }
 
-function iniciarTentativa() {
-    window.addEventListener("beforeunload", (event) => {
-        if(tempoTotal > 0)
+function tratamentoPreFechamentoDaPagina() {
+    if(tempoTotal > 0)
             atualizarTempo();
         else
             fecharTentativa();
-        event.preventDefault();
-    });
+}
+
+function iniciarTentativa() {
+    window.addEventListener("beforeunload", tratamentoPreFechamentoDaPagina);
 
     containerPrincipal.innerHTML = "";
 
