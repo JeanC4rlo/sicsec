@@ -9,7 +9,7 @@ async function loadTabs() {
     }
     
     const tabMeusLivros = document.querySelector(".tab#meusLivros")
-    const resposta = await fetch(`frag/login.html`);
+    const resposta = await fetch(`/html/frag/login.html`);
     const _html = await resposta.text();
     tabMeusLivros.innerHTML = _html;
     tabMeusLivros.classList += " login";

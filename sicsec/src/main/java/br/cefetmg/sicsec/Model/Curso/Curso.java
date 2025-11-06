@@ -4,7 +4,6 @@
  */
 package br.cefetmg.sicsec.Model.Curso;
 
-import br.cefetmg.sicsec.Model.Curso.Turma.Turma;
 import br.cefetmg.sicsec.Model.Usuario.Administrador.Coordenador;
 import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;

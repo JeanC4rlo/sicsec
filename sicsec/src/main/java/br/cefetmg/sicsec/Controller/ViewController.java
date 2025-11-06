@@ -1,23 +1,51 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package br.cefetmg.sicsec.Controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-/**
- *
- * @author davig
- */
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class ViewController {
+    @GetMapping("/home")
+    public String homeView(HttpSession session, RedirectAttributes redirectAttributes) {
+        Object usuario = session.getAttribute("usuario");
+
+        if (usuario == null) {
+            redirectAttributes.addFlashAttribute("error", "Acesse a visão de aluno com um login válido!");
+            return "redirect:/login";
+        }
+
+        return "home";
+    }
 
     @GetMapping("/homeAdmin")
-    public String homeAdminView() {
-        return "admin-turmas";
+    public String homeAdminView(HttpSession session, RedirectAttributes redirectAttributes) {
+        Object usuario = session.getAttribute("usuario");
+
+        if (usuario == null) {
+            redirectAttributes.addFlashAttribute("error", "Acesse a visão de administrador com um login válido!");
+            return "redirect:/login";
+        }
+
+        return "homeAdmin";
     }
-    
+
+    @GetMapping("/homeProfessor")
+    public String homeProfessorView(HttpSession session, RedirectAttributes redirectAttributes) {
+        Object usuario = session.getAttribute("usuario");
+
+        if (usuario == null) {
+            redirectAttributes.addFlashAttribute("error", "Acesse a visão de professor com um login válido!");
+            return "redirect:/login";
+        }
+
+        return "homeProfessor";
+    }
+
+    @GetMapping("/")
+    public String indexView() {
+        return "redirect:/login";
+    }
 }
