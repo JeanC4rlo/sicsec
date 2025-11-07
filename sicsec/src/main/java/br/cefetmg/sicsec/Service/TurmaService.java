@@ -5,18 +5,24 @@
 package br.cefetmg.sicsec.Service;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import br.cefetmg.sicsec.Model.Curso.Aula;
 import br.cefetmg.sicsec.Model.Curso.Curso;
 import br.cefetmg.sicsec.Model.Curso.Disciplina;
-import br.cefetmg.sicsec.Repository.TurmaRepo;
 import br.cefetmg.sicsec.Model.Curso.Turma.Turma;
 import br.cefetmg.sicsec.Model.Usuario.Aluno.Aluno;
 import br.cefetmg.sicsec.Model.Usuario.Professor.Professor;
 import br.cefetmg.sicsec.Model.Usuario.Usuario;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import br.cefetmg.sicsec.Repository.*;
-import java.util.*;
+import br.cefetmg.sicsec.Repository.AulaRepo;
+import br.cefetmg.sicsec.Repository.CursoRepo;
+import br.cefetmg.sicsec.Repository.DisciplinaRepo;
+import br.cefetmg.sicsec.Repository.TurmaRepo;
+import br.cefetmg.sicsec.Repository.UsuarioRepo;
 
 /**
  *
@@ -55,17 +61,17 @@ public class TurmaService {
         Disciplina disciplina = disciplinaRepo.findById(disciplinaId).orElseThrow(() -> new IllegalStateException("Disciplina Invalida"));
         Curso curso = cursoRepo.findById(cursoId).orElseThrow(() -> new IllegalStateException("Curso Invalido"));
         
-        List<Aluno> discentes = new ArrayList<Aluno>();
-        List<Professor> doscentes = new ArrayList<Professor>();
+        List<Aluno> discentes = new ArrayList<>();
+        List<Professor> doscentes = new ArrayList<>();
         
         for(Long cpf : discentesCpf) {
-            Usuario u = usuarioRepo.findByCpf(cpf);
+            Usuario u = (Usuario) usuarioRepo.findByCpf(cpf);
             if (u instanceof Aluno a) discentes.add(a);
             else throw new IllegalStateException("Cpf de Aluno Invalido");
         }
         
         for(Long cpf : doscentesCpf) {
-            Usuario u = usuarioRepo.findByCpf(cpf);
+            Usuario u = (Usuario) usuarioRepo.findByCpf(cpf);
             if (u instanceof Professor p) doscentes.add(p);
             else throw new IllegalStateException("Cpf de Professor Invalido");
         }
@@ -94,7 +100,7 @@ public class TurmaService {
         List<Aluno> discentes = turma.getDiscentes();
         
         for(Long cpf : discentesCpf) {
-            Usuario u = usuarioRepo.findByCpf(cpf);
+            Usuario u = (Usuario) usuarioRepo.findByCpf(cpf);
             if (u instanceof Aluno a)
                 if (!discentes.contains(a))
                     discentes.add(a);
@@ -123,7 +129,7 @@ public class TurmaService {
         
         List<Professor> doscentes = turma.getDoscentes();
         
-        Usuario u = usuarioRepo.findByCpf(doscenteCpf);
+        Usuario u = (Usuario) usuarioRepo.findByCpf(doscenteCpf);
         if (u instanceof Professor p)
             if (!doscentes.contains(p))
                 doscentes.add(p);
@@ -151,7 +157,7 @@ public class TurmaService {
         
         List<Aluno> discentes = turma.getDiscentes();
         
-        Usuario u = usuarioRepo.findByCpf(discenteCpf);
+        Usuario u = (Usuario) usuarioRepo.findByCpf(discenteCpf);
         if (u instanceof Aluno a)
             if (!discentes.contains(a))
                 discentes.remove(a);
@@ -179,7 +185,7 @@ public class TurmaService {
         
         List<Professor> doscentes = turma.getDoscentes();
         
-        Usuario u = usuarioRepo.findByCpf(doscenteCpf);
+        Usuario u = (Usuario) usuarioRepo.findByCpf(doscenteCpf);
         if (u instanceof Professor p)
             if (!doscentes.contains(p))
                 doscentes.remove(p);

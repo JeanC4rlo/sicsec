@@ -1,0 +1,105 @@
+<header>
+    <h2>Gerenciar Turmas</h2>
+    <button data-tab="criar-turma" class="ativo">Cadastrar Turma</button>
+    <button data-tab="editar-turma">Editar Turma</button>
+</header>
+
+<section class="criar-turma tab" th:fragment="criar-turma">
+    <form th:action="@{/api/turma}" method="post" th:object="${turma}">
+        <input type="text" th:field="*{nome}" placeholder="Nome da Turma" required />
+
+        <div class="curso-section">
+            <label>Curso:</label>
+            <select id="cursoSelect" th:field="*{curso}" required>
+                <option value="">Selecione um curso</option>
+                <option th:each="curso : ${cursos}"
+                        th:value="${curso.id}"
+                        th:text="${curso.nome}">
+                </option>
+            </select>
+        </div>
+
+        <div class="disciplina-section">
+            <label>Disciplina:</label>
+            <select id="disciplinaSelect" th:field="*{disciplina}" required>
+                <option value="">Selecione uma disciplina</option>
+                <!-- Disciplinas serão filtradas dinamicamente com base no curso -->
+            </select>
+        </div>
+
+        <div class="professor-section">
+            <label>Professor(es):</label>
+            <select id="professorSelect" th:field="*{professores}" multiple required>
+                <!-- Professores serão filtrados dinamicamente com base no departamento da disciplina -->
+            </select>
+        </div>
+
+        <div class="aluno-section">
+            <label>Aluno(s):</label>
+            <select id="alunoSelect" th:field="*{alunos}" multiple required>
+                <!-- Alunos serão filtrados dinamicamente com base no curso selecionado -->
+            </select>
+        </div>
+
+        <button type="submit">Cadastrar Turma</button>
+    </form>
+</section>
+
+<section class="editar-turma tab" th:fragment="editar-turma">
+    <form id="buscarTurmaForm">
+        <input type="text" id="nomeTurmaBuscar" placeholder="Nome da Turma" required />
+        <button type="submit">Buscar</button>
+    </form>
+
+    <form id="editarTurmaForm"
+          th:action="@{/api/turma/{id}(id=${turma.id})}"
+          method="post"
+          style="display:none;"
+          th:object="${turma}">
+        <input type="hidden" id="turmaId" th:field="*{id}" />
+
+        <input type="text" th:field="*{nome}" placeholder="Novo nome da turma" required />
+
+        <div class="curso-section">
+            <label>Curso:</label>
+            <select id="cursoEditarSelect" th:field="*{curso}" required>
+                <option th:each="curso : ${cursos}"
+                        th:value="${curso.id}"
+                        th:text="${curso.nome}">
+                </option>
+            </select>
+        </div>
+
+        <div class="disciplina-section">
+            <label>Disciplina:</label>
+            <select id="disciplinaEditarSelect" th:field="*{disciplina}" required>
+                <option th:each="disciplina : ${disciplinas}"
+                        th:value="${disciplina.id}"
+                        th:text="${disciplina.nome}">
+                </option>
+            </select>
+        </div>
+
+        <div class="professor-section">
+            <label>Professor(es):</label>
+            <select id="professorEditarSelect" th:field="*{professores}" multiple required>
+                <option th:each="professor : ${professores}"
+                        th:value="${professor.id}"
+                        th:text="${professor.nome}">
+                </option>
+            </select>
+        </div>
+
+        <div class="aluno-section">
+            <label>Aluno(s):</label>
+            <select id="alunoEditarSelect" th:field="*{alunos}" multiple required>
+                <option th:each="aluno : ${alunos}"
+                        th:value="${aluno.id}"
+                        th:text="${aluno.nome}">
+                </option>
+            </select>
+        </div>
+
+        <button type="submit">Atualizar Turma</button>
+    </form>
+</section>

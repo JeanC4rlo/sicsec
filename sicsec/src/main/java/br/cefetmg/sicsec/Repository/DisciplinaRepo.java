@@ -6,7 +6,10 @@ package br.cefetmg.sicsec.Repository;
 
 import br.cefetmg.sicsec.Model.Curso.Disciplina;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import java.util.List;
 
 /**
  *
@@ -15,4 +18,12 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface DisciplinaRepo extends JpaRepository<Disciplina, Long> {
     
+
+    @Query("""
+            SELECT d
+            FROM Disciplina d
+            WHERE d.curso.cursoId = :curso_id
+            """)
+    List<Disciplina> findByCursoId(@Param("curso_id") Long cursoId);
+
 }

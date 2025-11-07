@@ -5,6 +5,7 @@
 package br.cefetmg.sicsec.Repository;
 
 import br.cefetmg.sicsec.Model.Usuario.Usuario;
+import br.cefetmg.sicsec.Model.Usuario.Aluno.Aluno;
 import br.cefetmg.sicsec.Model.Util.Enum.Cargo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -39,4 +40,7 @@ public interface UsuarioRepo extends JpaRepository<Usuario, Long> {
     
     //Busca usuários pelo nome contendo algo (LIKE %nome%)
     List<Usuario> findByMatricula_NomeContaining(String nome);
+
+    List<Aluno> findAlunosByCursoId(Long cursoId);
+
 }

@@ -6,6 +6,7 @@
     <link th:href="@{/css/home.css}" rel="stylesheet" />
     <link th:href="@{/css/base.css}" rel="stylesheet" />
     <link th:href="@{/css/matricula.css}" rel="stylesheet" />
+    <link th:href="@{/css/turmas.css}" rel="stylesheet" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -13,6 +14,7 @@
       rel="stylesheet"
     />
     <script th:src="@{/js/homeAdmin/inits/initGestao.js}"></script>
+    <script th:src="@{/js/homeAdmin/inits/initTurmas.js}"></script>
     <script th:src="@{/js/homeAdmin/SectionManager.js}"></script>
     <title>SICSEC</title>
   </head>
@@ -31,6 +33,10 @@
           <img th:src="@{/images/home/turmas.svg}" alt="" />
           Gestão de Usuários
         </button>
+        <button data-section="turmas">
+          <img th:src="@{/images/home/turmas.svg}" alt="" />
+          Gestão de Turmas
+        </button>
       </nav>
       <a th:href="@{/}" class="sair">Sair</a>
     </header>
@@ -40,6 +46,10 @@
         </div>
       </section>
       <section id="matricula">
+        <div class="wrapper">
+        </div>
+      </section>
+      <section id="turmas">
         <div class="wrapper">
         </div>
       </section>

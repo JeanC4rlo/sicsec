@@ -4,6 +4,7 @@
  */
 package br.cefetmg.sicsec.Model.Usuario;
 
+import br.cefetmg.sicsec.Model.Curso.Curso;
 import br.cefetmg.sicsec.Model.Util.CPF;
 import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
@@ -31,6 +32,11 @@ public class Matricula {
     @JsonBackReference
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "matricula")
     private Usuario usuario;
+
+    @JsonBackReference
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "curso_id", nullable = true)
+    private Curso curso;
 
     public Long getId() {
         return id;
@@ -88,6 +94,12 @@ public class Matricula {
         this.usuario = usuario;
     }
 
-    
+    public Curso getCurso() {
+        return curso;
+    }
+
+    public void setCurso(Curso curso) {
+        this.curso = curso;
+    }
     
 }
