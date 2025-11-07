@@ -310,15 +310,16 @@ function enviar() {
             const texto = q.querySelector("textarea:nth-of-type(1)").value || "";
             const enunciado = q.querySelector("textarea:nth-of-type(2)").value || "";
             const alternativas = [];
+            let idxCorreta;
 
-            q.querySelectorAll("#lista-alternativas .alternativa").forEach(a => {
+            q.querySelectorAll("#lista-alternativas .alternativa").forEach((a, idx) => {
                 alternativas.push({
-                    texto: a.querySelector("textarea").value || "",
-                    correta: a.querySelector("select").value === "true"
+                    texto: a.querySelector("textarea").value || ""
                 });
+                if (a.querySelector("select").value === "true") idxCorreta = idx;
             });
 
-            questoesArray.push({ texto, enunciado, alternativas });
+            questoesArray.push({ texto, enunciado, alternativas, idxCorreta });
         });
 
         dados.questoes = JSON.stringify(questoesArray);

@@ -1,11 +1,13 @@
 package br.cefetmg.sicsec.Model;
 
+import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
+@Entity
 public class Resposta {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,7 +22,7 @@ public class Resposta {
     private StatusAtividade statusAtividade;
 
     private Integer numQuestao;
-    private Integer numAlternativa;
+    private Integer alternativaMarcada;
     private Boolean correta;
 
     public Long getId() {
@@ -55,12 +57,12 @@ public class Resposta {
         this.numQuestao = numQuestao;
     }
 
-    public Integer getNumAlternativa() {
-        return numAlternativa;
+    public Integer getAlternativaMarcada() {
+        return alternativaMarcada;
     }
 
-    public void setNumAlternativa(Integer numAlternativa) {
-        this.numAlternativa = numAlternativa;
+    public void setAlternativaMarcada(Integer numAlternativa) {
+        this.alternativaMarcada = numAlternativa;
     }
 
     public Boolean getCorreta() {

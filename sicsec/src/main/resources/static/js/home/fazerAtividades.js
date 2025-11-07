@@ -23,7 +23,7 @@ function carregarAtividade() {
 }
 
 function checkQuestaoMarcada() {
-    const selecionado = listaContainers[contador].querySelector(`input[name="alternativa_idx${contador}"]:checked`);
+    const selecionado = listaContainers[contador].querySelector(`input[name="alternativa_questao_${contador + 1}"]:checked`);
     if (!selecionado) {
         alert("Marque alguma alternativa antes de continuar!");
         return false;
@@ -90,7 +90,7 @@ function criarTimer(timer) {
 
         tempoTotal -= 1;
 
-        if(tempoTotal == -1) timeOut();
+        if (tempoTotal == -1) timeOut();
     }, 1000);
 }
 
@@ -100,7 +100,7 @@ function criarOptions(questao, container) {
         const label = document.createElement("label");
 
         opcao.type = "radio";
-        opcao.name = "alternativa_idx" + listaContainers.length;
+        opcao.name = "alternativa_questao_" + (listaContainers.length + 1);
         opcao.value = idx;
         opcao.id = `alt_${idx}`;
 
@@ -142,6 +142,7 @@ function navegarEntreQuestoes(sentido) {
     }
 }
 
+
 function converterTempoParaSegundos(horas = 0, minutos = 0, segundos = 0) {
     horas *= 3600;
     minutos *= 60;
@@ -152,16 +153,43 @@ function converterTempoDaAtividade() {
     return converterTempoParaSegundos(Number(atividade.tempoDeDuracao.numHoras), Number(atividade.tempoDeDuracao.numMinutos));
 }
 
-function enviarRespostas() {
+async function enviarRespostas() {
     if (!checkQuestaoMarcada()) return;
-    alert("Respostas enviadas! (sem backend ainda)");
-    window.location.href = "../home.html";
+    const alternativasMarcadas = document.querySelectorAll("input:checked");
+    const promessas = Array.from(alternativasMarcadas).map((alternativa, index) => {
+        const respostaAluno = {
+            atividade: { id: atividade.id },
+            statusAtividade: { id: statusAtividade.id },
+            numQuestao: index,
+            alternativaMarcada: alternativa.value,
+            correta: null
+        };
+        return fetch("/salvar/resposta", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(respostaAluno)
+        })
+            .then(resp => {
+                if (!resp.ok) throw new Error("Falha ao salvar resposta");
+                return resp.json();
+            });
+    });
+
+    try {
+        await Promise.all(promessas);
+        alert("Respostas enviadas com sucesso!");
+        window.location.href = "../home.html";
+    } catch (err) {
+        console.error("Erro ao enviar respostas:", err);
+        alert("Ocorreu um erro ao salvar as respostas. Tente novamente.");
+    }
 }
+
 
 async function timeOut() {
     clearInterval(temporizador);
 
-    if(statusAtividade && statusAtividade.id){
+    if (statusAtividade && statusAtividade.id) {
         await fecharTentativa();
     }
 
@@ -310,10 +338,10 @@ function salvarStatusTentativa() {
 }
 
 function tratamentoPreFechamentoDaPagina() {
-    if(tempoTotal > 0)
-            atualizarTempo();
-        else
-            fecharTentativa();
+    if (tempoTotal > 0)
+        atualizarTempo();
+    else
+        fecharTentativa();
 }
 
 function iniciarTentativa() {
