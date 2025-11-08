@@ -22,7 +22,7 @@ public interface DisciplinaRepo extends JpaRepository<Disciplina, Long> {
     @Query("""
             SELECT d
             FROM Disciplina d
-            WHERE d.curso.cursoId = :curso_id
+            WHERE d.curso.id = :curso_id
             """)
     List<Disciplina> findByCursoId(@Param("curso_id") Long cursoId);
 

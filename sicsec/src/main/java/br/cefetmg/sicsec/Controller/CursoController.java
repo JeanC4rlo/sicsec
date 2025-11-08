@@ -16,19 +16,19 @@ public class CursoController {
     private CursoService cursoService;
 
     @PostMapping("/getAll")
-    public @ResponseBody Iterable<Curso> getAllCursos() {
+    public @ResponseBody Object getAllCursos() {
         return cursoService.getAll();
     }
 
     @PostMapping("/departamento/{departamentoId}")
-    public @ResponseBody Iterable<Curso> getCursosByDepartamento(
+    public @ResponseBody Object getCursosByDepartamento(
         @PathVariable Long departamentoId) {
 
         return cursoService.getCursosByDepartamento(departamentoId);
     }
 
     @PostMapping("/{cursoId}")
-    public @ResponseBody Curso getCursoById(
+    public @ResponseBody Object getCursoById(
         @PathVariable Long cursoId) {
         return cursoService.getCursoById(cursoId);
     }

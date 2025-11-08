@@ -19,6 +19,7 @@ import br.cefetmg.sicsec.Model.Usuario.Administrador.Administrador;
 import br.cefetmg.sicsec.Model.Usuario.Administrador.ChefeDepartamento;
 import br.cefetmg.sicsec.Model.Usuario.Administrador.Coordenador;
 import br.cefetmg.sicsec.Model.Util.Enum.Cargo;
+import br.cefetmg.sicsec.Service.AdministradorService;
 import br.cefetmg.sicsec.Service.UsuarioService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -30,6 +31,9 @@ public class UsuarioController {
     
     @Autowired
     private UsuarioService uService;
+
+    @Autowired
+    private AdministradorService admService;
     
     @PostMapping("/atual")
     public Object getUsuarioAtual(HttpSession session) {
@@ -52,33 +56,8 @@ public class UsuarioController {
 
     @PostMapping("/atual/admin")
     public Object getAdminAtual(HttpSession session) {
-        Administrador usuario = (Administrador) session.getAttribute("usuario");
 
-        if (usuario == null || usuario.getCargo() != Cargo.ADMINISTRADOR) {
-            return new org.springframework.http.ResponseEntity<>(
-                java.util.Map.of("erro", "Acesso negado"),
-                org.springframework.http.HttpStatus.FORBIDDEN
-            );
-        }
-
-        Map<String, Object> mapa = java.util.Map.of(
-            "id", usuario.getId(),
-            "nome", usuario.getMatricula().getNome(),
-            "cargo", usuario.getCargoAdministrador().toString()
-        );
-
-        switch (usuario.getCargoAdministrador()) {
-            case CHEFE_DE_DEPARTAMENTO:
-                ChefeDepartamento cdp = (ChefeDepartamento) usuario;
-                return mapa.put("departamento", cdp.getDepartamento());
-            case COORDENADOR:
-                Coordenador crd = (Coordenador) usuario;
-                return mapa.put("curso", crd.getCurso());
-            case ROOT:
-                return mapa;
-            default:
-                return null;
-        }
+        return admService.GetAdministrador((Usuario) session.getAttribute("usuario"));
 
     }
 

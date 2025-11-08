@@ -7,10 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import jakarta.servlet.http.HttpServletRequest;
 
+import br.cefetmg.sicsec.Model.Curso.Curso;
+import br.cefetmg.sicsec.Model.Usuario.Usuario;
 import br.cefetmg.sicsec.Model.Usuario.Aluno.Aluno;
 import br.cefetmg.sicsec.Model.Usuario.Professor.Professor;
-import br.cefetmg.sicsec.Model.Usuario.Usuario;
-import br.cefetmg.sicsec.Repository.UsuarioRepo;
+
+import br.cefetmg.sicsec.Repository.CursoRepo;
+import br.cefetmg.sicsec.Repository.Usuarios.*;
 
 /**
  *
@@ -23,13 +26,32 @@ public class UsuarioService {
     @Autowired
     private UsuarioRepo usuarioRepo;
 
+    @Autowired 
+    private AlunoRepo alunoRepo;
+
+    @Autowired
+    private CursoRepo cursoRepo;
+
+    @Autowired
+    private ProfessorRepo professorRepo;
+
     public Usuario getUsuarioFromSession(HttpServletRequest request) {
         return null;
     }
 
     public Iterable<Aluno> getAlunosByCurso(Long cursoId) {
 
-        return usuarioRepo.findAlunosByCursoId(cursoId);
+        return alunoRepo.findAllByCurso(cursoId);
+    }
+
+    public Iterable<Professor> getProfessoresByDisciplina(Long disciplinaId) {
+
+
+        Curso curso = cursoRepo.findByDisciplina(disciplinaId);
+        List<Professor> professores = professorRepo.findAllByCurso(curso.getId());
+
+        return professores;
+
     }
 
 }

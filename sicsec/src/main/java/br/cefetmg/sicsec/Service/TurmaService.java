@@ -7,8 +7,11 @@ package br.cefetmg.sicsec.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.graphql.GraphQlProperties.Http;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import br.cefetmg.sicsec.Model.Curso.Aula;
@@ -22,7 +25,8 @@ import br.cefetmg.sicsec.Repository.AulaRepo;
 import br.cefetmg.sicsec.Repository.CursoRepo;
 import br.cefetmg.sicsec.Repository.DisciplinaRepo;
 import br.cefetmg.sicsec.Repository.TurmaRepo;
-import br.cefetmg.sicsec.Repository.UsuarioRepo;
+import br.cefetmg.sicsec.Repository.Usuarios.UsuarioRepo;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  *
@@ -56,7 +60,7 @@ public class TurmaService {
         
     }
     
-    public Turma registrarTurma(String nome, Long disciplinaId, Long cursoId, List<Long> discentesCpf, List<Long> doscentesCpf) {
+    public Turma registrarTurma(String nome, Long disciplinaId, Long cursoId, List<Long> discentesId, List<Long> doscentesId) {
         
         Disciplina disciplina = disciplinaRepo.findById(disciplinaId).orElseThrow(() -> new IllegalStateException("Disciplina Invalida"));
         Curso curso = cursoRepo.findById(cursoId).orElseThrow(() -> new IllegalStateException("Curso Invalido"));
@@ -64,16 +68,16 @@ public class TurmaService {
         List<Aluno> discentes = new ArrayList<>();
         List<Professor> doscentes = new ArrayList<>();
         
-        for(Long cpf : discentesCpf) {
-            Usuario u = (Usuario) usuarioRepo.findByCpf(cpf);
+        for(Long id : discentesId) {
+            Usuario u = (Usuario) usuarioRepo.findById(id).orElseThrow(() -> new IllegalStateException("Usuario Invalido"));
             if (u instanceof Aluno a) discentes.add(a);
-            else throw new IllegalStateException("Cpf de Aluno Invalido");
+            else throw new IllegalStateException("Id de Aluno Invalido");
         }
         
-        for(Long cpf : doscentesCpf) {
-            Usuario u = (Usuario) usuarioRepo.findByCpf(cpf);
+        for(Long id : doscentesId) {
+            Usuario u = (Usuario) usuarioRepo.findById(id).orElseThrow(() -> new IllegalStateException("Usuario Invalido"));
             if (u instanceof Professor p) doscentes.add(p);
-            else throw new IllegalStateException("Cpf de Professor Invalido");
+            else throw new IllegalStateException("Id de Professor Invalido");
         }
         
         Turma turma = new Turma(nome, disciplina, curso, discentes, doscentes);
@@ -95,16 +99,16 @@ public class TurmaService {
     
     
     
-    public Turma inserirAlunos(Turma turma, List<Long> discentesCpf) {
+    public Turma inserirAlunos(Turma turma, List<Long> discentesId) {
         
         List<Aluno> discentes = turma.getDiscentes();
         
-        for(Long cpf : discentesCpf) {
-            Usuario u = (Usuario) usuarioRepo.findByCpf(cpf);
+        for(Long id : discentesId) {
+            Usuario u = (Usuario) usuarioRepo.findById(id).orElseThrow(() -> new IllegalStateException("Usuario Invalido"));
             if (u instanceof Aluno a)
                 if (!discentes.contains(a))
                     discentes.add(a);
-            else throw new IllegalStateException("Cpf de Aluno Invalido");
+            else throw new IllegalStateException("Id de Aluno Invalido");
         }
         
         turma.setDiscentes(discentes);
@@ -115,25 +119,25 @@ public class TurmaService {
         
     }
     
-    public Turma inserirAlunos(Long turmaId, List<Long> discentesCpf) {
+    public Turma inserirAlunos(Long turmaId, List<Long> discentesId) {
         
         Turma turma = turmaRepo.findById(turmaId).orElseThrow(() -> new IllegalStateException("Turma Invalida"));
         
-        return inserirAlunos(turma, discentesCpf);
+        return inserirAlunos(turma, discentesId);
         
     }
     
     
     
-    public Turma inserirProfessor(Turma turma, Long doscenteCpf) {
+    public Turma inserirProfessor(Turma turma, Long doscenteId) {
         
         List<Professor> doscentes = turma.getDoscentes();
         
-        Usuario u = (Usuario) usuarioRepo.findByCpf(doscenteCpf);
+        Usuario u = (Usuario) usuarioRepo.findById(doscenteId).orElseThrow(() -> new IllegalStateException("Usuario Invalido"));
         if (u instanceof Professor p)
             if (!doscentes.contains(p))
                 doscentes.add(p);
-        else throw new IllegalStateException("Cpf de Professor Invalido");
+        else throw new IllegalStateException("Id de Professor Invalido");
         
         turma.setDoscentes(doscentes);
         
@@ -143,25 +147,25 @@ public class TurmaService {
         
     }
     
-    public Turma inserirProfessor(Long turmaId, Long doscenteCpf) {
+    public Turma inserirProfessor(Long turmaId, Long doscenteId) {
         
         Turma turma = turmaRepo.findById(turmaId).orElseThrow(() -> new IllegalStateException("Turma Invalida"));
         
-        return inserirProfessor(turma, doscenteCpf);
+        return inserirProfessor(turma, doscenteId);
         
     }
     
     
     
-    public Turma removerAluno(Turma turma, Long discenteCpf) {
+    public Turma removerAluno(Turma turma, Long discenteId) {
         
         List<Aluno> discentes = turma.getDiscentes();
         
-        Usuario u = (Usuario) usuarioRepo.findByCpf(discenteCpf);
+        Usuario u = (Usuario) usuarioRepo.findById(discenteId).orElseThrow(() -> new IllegalStateException("Usuario Invalido"));
         if (u instanceof Aluno a)
             if (!discentes.contains(a))
                 discentes.remove(a);
-        else throw new IllegalStateException("Cpf de Aluno Invalido");
+        else throw new IllegalStateException("Id de Aluno Invalido");
         
         turma.setDiscentes(discentes);
         
@@ -171,25 +175,25 @@ public class TurmaService {
         
     }
     
-    public Turma removerAluno(Long turmaId, Long discenteCpf) {
+    public Turma removerAluno(Long turmaId, Long discenteId) {
         
         Turma turma = turmaRepo.findById(turmaId).orElseThrow(() -> new IllegalStateException("Turma Invalida"));
         
-        return removerAluno(turma, discenteCpf);
+        return removerAluno(turma, discenteId);
         
     }
     
     
     
-    public Turma removerProfessor(Turma turma, Long doscenteCpf) {
+    public Turma removerProfessor(Turma turma, Long doscenteId) {
         
         List<Professor> doscentes = turma.getDoscentes();
         
-        Usuario u = (Usuario) usuarioRepo.findByCpf(doscenteCpf);
+        Usuario u = (Usuario) usuarioRepo.findById(doscenteId).orElseThrow(() -> new IllegalStateException("Usuario Invalido"));
         if (u instanceof Professor p)
             if (!doscentes.contains(p))
                 doscentes.remove(p);
-        else throw new IllegalStateException("Cpf de Professor Invalido");
+        else throw new IllegalStateException("Id de Professor Invalido");
         
         turma.setDoscentes(doscentes);
         
@@ -199,11 +203,11 @@ public class TurmaService {
         
     }
     
-    public Turma removerProfessor(Long turmaId, Long doscenteCpf) {
+    public Turma removerProfessor(Long turmaId, Long doscenteId) {
         
         Turma turma = turmaRepo.findById(turmaId).orElseThrow(() -> new IllegalStateException("Turma Invalida"));
         
-        return removerProfessor(turma, doscenteCpf);
+        return removerProfessor(turma, doscenteId);
         
     }
     
@@ -254,6 +258,125 @@ public class TurmaService {
         Aula aula = aulaRepo.findById(aulaId).orElseThrow(() -> new IllegalStateException("Aula Invalida"));
         
         return removerAula(turma, aula);
+        
+    }
+
+    public List<Object> listarTurmas() {
+
+        List<Turma> turmas = turmaRepo.findAll();
+        List<Object> turmasObj = new ArrayList<>();
+
+        for(Turma turma : turmas) {
+            turmasObj.add(Map.of(
+                "id", turma.getId(),
+                "nome", turma.getNome(),
+                "disciplina", Map.of(
+                    "id", turma.getDisciplina().getId(),
+                    "nome", turma.getDisciplina().getNome()
+                ),
+                "curso", Map.of(
+                    "id", turma.getCurso().getId(),
+                    "nome", turma.getCurso().getNome()
+                )
+            ));
+        }
+
+        return turmasObj;
+
+    }
+
+    public Object obterTurmaPorId(Long turmaId) {
+
+        Turma turma = turmaRepo.findById(turmaId).orElseThrow(() -> new IllegalStateException("Turma Invalida"));
+
+        return Map.of(
+            "id", turma.getId(),
+            "nome", turma.getNome(),
+            "disciplina", Map.of(
+                "id", turma.getDisciplina().getId(),
+                "nome", turma.getDisciplina().getNome()
+            ),
+            "curso", Map.of(
+                "id", turma.getCurso().getId(),
+                "nome", turma.getCurso().getNome()
+            )
+        );
+
+    }
+    
+    public List<Object> listarTurmasPorCurso(Long cursoId) {
+
+        Curso curso = cursoRepo.findById(cursoId).orElseThrow(() -> new IllegalStateException("Curso Invalido"));
+        List<Turma> turmas = turmaRepo.findByCurso(curso);
+        List<Object> turmasObj = new ArrayList<>();
+
+        for(Turma turma : turmas) {
+            turmasObj.add(Map.of(
+                "id", turma.getId(),
+                "nome", turma.getNome(),
+                "disciplina", Map.of(
+                    "id", turma.getDisciplina().getId(),
+                    "nome", turma.getDisciplina().getNome()
+                ),
+                "curso", Map.of(
+                    "id", turma.getCurso().getId(),
+                    "nome", turma.getCurso().getNome()
+                )
+            ));
+        }
+        return turmasObj;
+    }
+
+    public List<Object> listarTurmasPorDepartamento(Long departamentoId) {
+
+        List<Turma> turmas = new ArrayList<>();
+        List<Object> turmasObj = new ArrayList<>();
+
+        List<Curso> cursos = cursoRepo.findByDepartamentoId(departamentoId);
+        for(Curso curso : cursos) {
+            turmas.addAll(turmaRepo.findByCurso(curso));
+        }
+
+        for(Turma turma : turmas) {
+            turmasObj.add(Map.of(
+                "id", turma.getId(),
+                "nome", turma.getNome(),
+                "disciplina", Map.of(
+                    "id", turma.getDisciplina().getId(),
+                    "nome", turma.getDisciplina().getNome()
+                ),
+                "curso", Map.of(
+                    "id", turma.getCurso().getId(),
+                    "nome", turma.getCurso().getNome()
+                )
+            ));
+        }
+
+        return turmasObj;
+
+    }
+
+    public List<Object> buscarTurmaPorNome(String nome, HttpServletRequest request) {
+        
+        List<Turma> turmas = turmaRepo.findByNomeContainingIgnoreCase(nome);
+        List<Object> turmasObj = new ArrayList<>();
+
+        for(Turma turma : turmas) {
+            turmasObj.add(Map.of(
+                "id", turma.getId(),
+                "nome", turma.getNome(),
+                "disciplina", Map.of(
+                    "id", turma.getDisciplina().getId(),
+                    "nome", turma.getDisciplina().getNome()
+                ),
+                "curso", Map.of(
+                    "id", turma.getCurso().getId(),
+                    "nome", turma.getCurso().getNome()
+                )
+            ));
+        }
+
+        return turmasObj;
         
     }
     

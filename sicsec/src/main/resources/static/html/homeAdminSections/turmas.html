@@ -4,24 +4,20 @@
     <button data-tab="editar-turma">Editar Turma</button>
 </header>
 
-<section class="criar-turma tab" th:fragment="criar-turma">
-    <form th:action="@{/api/turma}" method="post" th:object="${turma}">
-        <input type="text" th:field="*{nome}" placeholder="Nome da Turma" required />
+<section class="criar-turma tab">
+    <form action="/api/turma/registrar" method="post">
+        <input type="text"  placeholder="Nome da Turma" name="nome" required />
 
         <div class="curso-section">
             <label>Curso:</label>
-            <select id="cursoSelect" th:field="*{curso}" required>
+            <select id="cursoSelect" name="curso" required>
                 <option value="">Selecione um curso</option>
-                <option th:each="curso : ${cursos}"
-                        th:value="${curso.id}"
-                        th:text="${curso.nome}">
-                </option>
             </select>
         </div>
 
         <div class="disciplina-section">
             <label>Disciplina:</label>
-            <select id="disciplinaSelect" th:field="*{disciplina}" required>
+            <select id="disciplinaSelect" name="disciplina" required>
                 <option value="">Selecione uma disciplina</option>
                 <!-- Disciplinas serão filtradas dinamicamente com base no curso -->
             </select>
@@ -29,14 +25,14 @@
 
         <div class="professor-section">
             <label>Professor(es):</label>
-            <select id="professorSelect" th:field="*{professores}" multiple required>
+            <select id="professorSelect" name="professores" multiple required>
                 <!-- Professores serão filtrados dinamicamente com base no departamento da disciplina -->
             </select>
         </div>
 
         <div class="aluno-section">
             <label>Aluno(s):</label>
-            <select id="alunoSelect" th:field="*{alunos}" multiple required>
+            <select id="alunoSelect" name="alunos" multiple required>
                 <!-- Alunos serão filtrados dinamicamente com base no curso selecionado -->
             </select>
         </div>
@@ -45,59 +41,44 @@
     </form>
 </section>
 
-<section class="editar-turma tab" th:fragment="editar-turma">
+<section class="editar-turma tab">
     <form id="buscarTurmaForm">
-        <input type="text" id="nomeTurmaBuscar" placeholder="Nome da Turma" required />
+        <select id="nomeTurmaBuscar" name="termo" required>
+            <option value="">Digite para buscar...</option>
+        </select>
         <button type="submit">Buscar</button>
     </form>
 
     <form id="editarTurmaForm"
-          th:action="@{/api/turma/{id}(id=${turma.id})}"
+          action="/api/turma/atualizar"
           method="post"
-          style="display:none;"
-          th:object="${turma}">
-        <input type="hidden" id="turmaId" th:field="*{id}" />
+          style="display:none;">
+        <input type="hidden" id="turmaId" />
 
-        <input type="text" th:field="*{nome}" placeholder="Novo nome da turma" required />
+        <input type="text" name="nome" required />
 
         <div class="curso-section">
             <label>Curso:</label>
-            <select id="cursoEditarSelect" th:field="*{curso}" required>
-                <option th:each="curso : ${cursos}"
-                        th:value="${curso.id}"
-                        th:text="${curso.nome}">
+            <select id="cursoEditarSelect" name="curso" required>
                 </option>
             </select>
         </div>
 
         <div class="disciplina-section">
             <label>Disciplina:</label>
-            <select id="disciplinaEditarSelect" th:field="*{disciplina}" required>
-                <option th:each="disciplina : ${disciplinas}"
-                        th:value="${disciplina.id}"
-                        th:text="${disciplina.nome}">
-                </option>
+            <select id="disciplinaEditarSelect" name="disciplina" required>
+                
             </select>
         </div>
 
         <div class="professor-section">
             <label>Professor(es):</label>
-            <select id="professorEditarSelect" th:field="*{professores}" multiple required>
-                <option th:each="professor : ${professores}"
-                        th:value="${professor.id}"
-                        th:text="${professor.nome}">
-                </option>
-            </select>
+            <select id="professorEditarSelect" name="professores" multiple required></select>
         </div>
 
         <div class="aluno-section">
             <label>Aluno(s):</label>
-            <select id="alunoEditarSelect" th:field="*{alunos}" multiple required>
-                <option th:each="aluno : ${alunos}"
-                        th:value="${aluno.id}"
-                        th:text="${aluno.nome}">
-                </option>
-            </select>
+            <select id="alunoEditarSelect" name="alunos" multiple required></select>
         </div>
 
         <button type="submit">Atualizar Turma</button>

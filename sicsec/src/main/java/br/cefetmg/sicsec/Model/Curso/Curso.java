@@ -56,7 +56,7 @@ public class Curso {
 
     @JsonManagedReference
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "curso")
-    private List<Matricula> MatriculasVinculadas;
+    private List<Matricula> matriculasVinculadas;
 
     public Long getId() {
         return id;

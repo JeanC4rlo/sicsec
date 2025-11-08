@@ -5,9 +5,6 @@ class SectionManager {
         this.sections = document.querySelectorAll(sectionSelector);
         this.activeSectionId = localStorage.getItem("secaoAtiva") || (this.sections[0]?.id || null);
         this.initSections = ["matricula", "turmas"];
-        console.log("SectionManager initialized.");
-        console.log(`Active section: ${this.activeSectionId}`);
-        console.log(`Section to init: ${this.initSections[this.activeSectionId]}`);
     }
 
     init() {
@@ -46,9 +43,6 @@ class SectionManager {
     }
 
     runInit(id) {
-
-        console.log(`Iniciando seção: ${id}`);
-        
         switch (id) {
             case "matricula":
                 initGestao();

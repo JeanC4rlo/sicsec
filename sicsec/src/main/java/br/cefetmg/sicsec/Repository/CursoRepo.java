@@ -24,8 +24,16 @@ public interface CursoRepo extends JpaRepository<Curso, Long> {
     @Query("""
             SELECT c
             FROM Curso c
-            WHERE c.departamento.departamentoId = :departamento_id
+            WHERE c.id = :departamento_id
             """)
     List<Curso> findByDepartamentoId(@Param("departamento_id") Long departamentoId);
+
+    @Query("""
+            SELECT c
+            FROM Curso c
+            JOIN c.matrizCurricular mc
+            WHERE mc.id = :disciplina_id
+            """)
+    Curso findByDisciplina(@Param("disciplina_id") Long disciplinaId);
 
 }

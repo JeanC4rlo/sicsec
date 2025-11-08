@@ -4,23 +4,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
-import br.cefetmg.sicsec.Model.Usuario.Aluno.*;
-
 import br.cefetmg.sicsec.Service.UsuarioService;
 
+
 @Controller
-@RequestMapping("api/aluno")
-public class AlunoController {
+@RequestMapping("api/professor")
+public class ProfessorController {
     
     @Autowired
     private UsuarioService usuarioService;
+    
+    //`/api/professor/disciplina/${disciplinaId}`
 
-    @PostMapping("/curso/{cursoId}")
-    public @ResponseBody Iterable<Aluno> getAlunosByCurso(
-        @PathVariable Long cursoId) {
-        return usuarioService.getAlunosByCurso(cursoId);
+    @PostMapping("/disciplina/{disciplinaId}")
+    public @ResponseBody Iterable<br.cefetmg.sicsec.Model.Usuario.Professor.Professor> getProfessoresByDisciplina(
+        @org.springframework.web.bind.annotation.PathVariable Long disciplinaId) {
+        
+        return usuarioService.getProfessoresByDisciplina(disciplinaId);
+        
     }
 
 }

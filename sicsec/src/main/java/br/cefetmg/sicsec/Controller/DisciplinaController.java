@@ -13,10 +13,9 @@ public class DisciplinaController {
         
     @Autowired
     private DisciplinaService disciplinaService;
-
-    @PostMapping("/curso/${cursoId}")
-    public @ResponseBody Iterable<Disciplina> getDisciplinasByCurso(
-        @PathVariable Long cursoId) {
+    
+    @PostMapping("/curso/{cursoId}")
+    public @ResponseBody Iterable<Disciplina> getDisciplinasByCurso(@PathVariable Long cursoId) {
         return disciplinaService.getByCursoId(cursoId);
     }
 
