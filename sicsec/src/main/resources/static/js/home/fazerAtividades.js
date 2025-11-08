@@ -8,6 +8,7 @@ let btnEnviar;
 let listaContainers = [];
 let temporizador;
 let tentativasFeitas;
+let tempoAcabou = false;
 let statusAtividade;
 const LIMITE_CARACTERES = 2000;
 
@@ -155,8 +156,11 @@ function converterTempoDaAtividade() {
 
 async function enviarRespostas() {
     if (!checkQuestaoMarcada()) return;
+    if (tempoAcabou) window.location.reload();
+
     const alternativasMarcadas = document.querySelectorAll("input:checked");
-    const promessas = Array.from(alternativasMarcadas).map((alternativa, index) => {
+
+    const promessas = Array.from(alternativasMarcadas).map(async (alternativa, index) => {
         const respostaAluno = {
             atividade: { id: atividade.id },
             statusAtividade: { id: statusAtividade.id },
@@ -164,27 +168,42 @@ async function enviarRespostas() {
             alternativaMarcada: alternativa.value,
             correta: null
         };
-        return fetch("/salvar/resposta", {
+
+        const resposta = await fetch("/salvar/resposta", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(respostaAluno)
-        })
-            .then(resp => {
-                if (!resp.ok) throw new Error("Falha ao salvar resposta");
-                return resp.json();
-            });
+        });
+
+        if (!resposta.ok)
+            throw new Error(erro.message || "Erro desconhecido do servidor");
+        const texto = await resposta.text();
+        return texto ? JSON.parse(texto) : null;
     });
 
     try {
         await Promise.all(promessas);
         alert("Respostas enviadas com sucesso!");
-        window.location.href = "../home.html";
+        fecharTentativa();
+        montarPaginaResultado(await resgatarNota());
     } catch (err) {
         console.error("Erro ao enviar respostas:", err);
         alert("Ocorreu um erro ao salvar as respostas. Tente novamente.");
     }
 }
 
+async function resgatarNota() {
+    const resposta = await fetch(`/conferir-nota/${atividade.id}/${statusAtividade.id}`);
+    const valor = await resposta.json();
+    return Number(valor);
+}
+
+function montarPaginaResultado(nota) {
+    containerPrincipal.innerHTML = `
+    <h1>Resposta enviada</h1>
+    <p>Nota: ${nota}</p>
+    `
+}
 
 async function timeOut() {
     clearInterval(temporizador);
@@ -194,6 +213,8 @@ async function timeOut() {
     }
 
     alert("O tempo desta tentativa acabou. Reinicie a página para começar uma nova");
+
+    tempoAcabou = true;
 }
 
 function carregarTelaQuestionario() {

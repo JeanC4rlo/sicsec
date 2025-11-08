@@ -2,7 +2,6 @@ package br.cefetmg.sicsec.Model;
 
 import java.util.List;
 
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -17,7 +16,7 @@ public class Atividade {
 
     private String nome;
     private String tipo;
-    private String valor;
+    private Double valor;
     private String dataEncerramento;
     private String horaEncerramento;
     @Lob
@@ -51,11 +50,11 @@ public class Atividade {
         this.tipo = tipo;
     }
 
-    public String getValor() {
+    public Double getValor() {
         return valor;
     }
 
-    public void setValor(String valor) {
+    public void setValor(Double valor) {
         this.valor = valor;
     }
 

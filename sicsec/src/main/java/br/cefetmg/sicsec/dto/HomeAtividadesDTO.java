@@ -4,11 +4,11 @@ public class HomeAtividadesDTO {
     private Long id;
     private String nome;
     private String tipo;
-    private String valor;
+    private Double valor;
     private String dataEncerramento;
     private String horaEncerramento;
 
-    public HomeAtividadesDTO(Long id, String nome, String tipo, String valor, String dataEncerramento, String horaEncerramento) {
+    public HomeAtividadesDTO(Long id, String nome, String tipo, Double valor, String dataEncerramento, String horaEncerramento) {
         this.id = id;
         this.nome = nome;
         this.tipo = tipo;
@@ -29,7 +29,7 @@ public class HomeAtividadesDTO {
         return tipo;
     }
 
-    public String getValor() {
+    public Double getValor() {
         return valor;
     }
 
