@@ -1,5 +1,7 @@
 package br.cefetmg.sicsec.Controller;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
 import br.cefetmg.sicsec.Repository.AtividadeRepository;
@@ -94,10 +96,54 @@ public class StatusAtividadeController {
     @PatchMapping("atualizar-status-tentativa/{tentativaId}/fechar-tentativa")
     public StatusAtividade fecharTentativa(@PathVariable Long tentativaId) {
         StatusAtividade tentativa = statusAtividadeRepository.findById(tentativaId)
-        .orElseThrow(() -> new RuntimeException("Tentativa não encontrada"));
+                .orElseThrow(() -> new RuntimeException("Tentativa não encontrada"));
         tentativa.setTempoRestante(0);
         tentativa.setAberta(false);
-        
+
         return statusAtividadeRepository.save(tentativa);
+    }
+
+    @PostMapping("/iniciar-tentativa/{atividadeId}")
+    public ResponseEntity<StatusAtividade> iniciarTentativa(@PathVariable Long atividadeId) {
+        StatusAtividade status = new StatusAtividade();
+        status.setAtividade(atividadeRepository.findById(atividadeId).orElseThrow());
+        status.setAberta(true);
+        status.setHorarioInicio(LocalDateTime.now());
+        statusAtividadeRepository.save(status);
+        return ResponseEntity.ok(status);
+    }
+
+    @PostMapping("/iniciar-tentativa/{atividadeId}/continuo")
+    public ResponseEntity<StatusAtividade> iniciarTentativaContinua(@PathVariable Long atividadeId) {
+        StatusAtividade status = new StatusAtividade();
+        status.setAtividade(atividadeRepository.findById(atividadeId).orElseThrow());
+        status.setAberta(true);
+        status.setHorarioInicio(LocalDateTime.now());
+        status.setTempoRestante(0);
+        statusAtividadeRepository.save(status);
+        return ResponseEntity.ok(status);
+    }
+
+    @GetMapping("/tempo-restante/{statusAtividadeId}")
+    public ResponseEntity<Long> tempoRestante(@PathVariable Long statusAtividadeId) {
+        StatusAtividade status = statusAtividadeRepository.findById(statusAtividadeId)
+                .orElseThrow();
+
+        LocalDateTime agora = LocalDateTime.now();
+        Duration decorrido = Duration.between(status.getHorarioInicio(), agora);
+        long restante = status.getTempoRestante() - decorrido.getSeconds();
+
+        System.out.println("Início: " + status.getHorarioInicio());
+        System.out.println("Agora: " + agora);
+        System.out.println("Decorrido (s): " + decorrido.getSeconds());
+        System.out.println("Tempo restante salvo: " + status.getTempoRestante());
+
+        if (restante <= 0) {
+            status.setAberta(false);
+            statusAtividadeRepository.save(status);
+            restante = 0;
+        }
+
+        return ResponseEntity.ok(restante);
     }
 }

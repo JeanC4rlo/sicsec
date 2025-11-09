@@ -1,4 +1,3 @@
-/* ======== Página: Produção de Atividade ======== */
 :root {
     --primary: #0052cc;
     --secondary: #2684ff;
@@ -10,7 +9,6 @@
     --shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
 }
 
-/* Reset e base */
 * {
     box-sizing: border-box;
     font-family: "Inter", system-ui, sans-serif;
@@ -28,7 +26,6 @@ body {
     min-height: 100vh;
 }
 
-/* ===== Botão de sair ===== */
 #btn-sair {
     align-self: flex-end;
     background-color: var(--danger);
@@ -46,7 +43,6 @@ body {
     background-color: #ff2a00;
 }
 
-/* ===== Form principal ===== */
 form {
     display: flex;
     flex-direction: column;
@@ -85,7 +81,6 @@ textarea:focus {
     box-shadow: 0 0 0 3px rgba(38, 132, 255, 0.15);
 }
 
-/* ===== Botões de navegação ===== */
 #btn-anterior,
 #btn-proximo,
 #btn-enviar {
@@ -108,7 +103,6 @@ textarea:focus {
     transform: translateY(-2px);
 }
 
-/* ===== Seções ===== */
 section {
     display: none;
     flex-direction: column;
@@ -153,7 +147,55 @@ section button:hover {
     transform: translateY(-2px);
 }
 
-/* ===== Questões e listas ===== */
+.tooltip {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  background-color: #007bff;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 180px;
+  background-color: #333;
+  color: #fff;
+  text-align: left;
+  border-radius: 6px;
+  padding: 8px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -90px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  font-size: 13px;
+}
+
+.tooltip .tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #333 transparent transparent transparent;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
 #lista-questoes {
     display: flex;
     flex-direction: column;
@@ -173,20 +215,17 @@ section button:hover {
     box-shadow: 0 4px 8px rgba(38, 132, 255, 0.1);
 }
 
-/* ===== Textarea ===== */
 textarea {
     resize: none;
     min-height: 6rem;
     font-family: inherit;
 }
 
-/* ===== Campos obrigatórios ===== */
 .campo-obrigatorio:focus {
     border-color: var(--danger);
     box-shadow: 0 0 0 3px rgba(255, 86, 48, 0.2);
 }
 
-/* ===== Confirmação ===== */
 .confirmacao {
     background-color: #f8fbff;
     border-left: 5px solid var(--primary);

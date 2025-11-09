@@ -24,6 +24,7 @@ public class Atividade {
     private String questoes;
     private Integer tentativas;
     private String tempoDeDuracao;
+    private String tipoTimer;
     private List<String> nomesArquivos;
 
     public Long getId() {
@@ -106,11 +107,20 @@ public class Atividade {
         this.tempoDeDuracao = tempoDeDuracao;
     }
 
+    public String getTipoTimer() {
+        return tipoTimer;
+    }
+
+    public void setTipoTimer(String tipoTimer) {
+        this.tipoTimer = tipoTimer;
+    }
+
     public List<String> getNomesArquivos() {
         return nomesArquivos;
     }
 
-    public void setArquivos(List<String> arquivos) {
-        this.nomesArquivos = arquivos;
+    public void setNomesArquivos(List<String> nomesArquivos) {
+        this.nomesArquivos = nomesArquivos;
     }
+
 }

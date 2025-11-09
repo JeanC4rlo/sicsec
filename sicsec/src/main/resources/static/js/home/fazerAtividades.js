@@ -42,11 +42,12 @@ async function carregarOuCriarTentativa() {
 
         if (tentativa && tentativa.id && tentativa.tempoRestante > 0) {
             statusAtividade = tentativa;
-            console.log("Tentativa aberta encontrada:", tentativa);
+            console.log("Tentativa aberta encontrada:", statusAtividade);
         } else {
             const dados = {
                 atividade: { id: atividade.id },
-                horarioInicio: new Date().toISOString(),
+                horarioInicio: new Date().toLocaleString("sv-SE",
+                    { timeZone: "America/Sao_Paulo" }).replace(" ", "T") + ".000000",
                 tempoRestante: converterTempoDaAtividade(),
                 numTentativa: tentativasFeitas + 1,
                 aberta: true
@@ -80,18 +81,47 @@ function RemoverBotaoEnviar() {
 }
 
 function criarTimer(timer) {
+    switch (atividade.tipoTimer) {
+        case "continuo":
+            criarTimerContinuo(timer);
+            break;
+        case "interrompivel":
+            criarTimerInterrompivel(timer);
+            break;
+    }
+}
+
+function criarTimerInterrompivel(timer) {
     temporizador = setInterval(() => {
         let horas = Math.floor(tempoTotal / 3600);
         let minutos = Math.floor((tempoTotal % 3600) / 60);
         let segundos = Math.floor((tempoTotal % 60));
 
-        timer.innerHTML = `${horas.toString().padStart(2, "0")}:${minutos
-            .toString()
+        timer.innerHTML = `${horas.toString().padStart(2, "0")}:${minutos.toString()
             .padStart(2, "0")}:${segundos.toString().padStart(2, "0")}`;
 
-        tempoTotal -= 1;
+        tempoTotal--;
 
-        if (tempoTotal == -1) timeOut();
+        if (tempoTotal <= 0) timeOut();
+    }, 1000);
+}
+
+async function criarTimerContinuo(timer) {
+    const resposta = await fetch(`/tempo-restante/${statusAtividade.id}`);
+    let tempoRestante = await resposta.json();
+
+    temporizador = setInterval(() => {
+        if (tempoRestante <= 0) timeOut();
+        else {
+            let horas = Math.floor(tempoRestante / 3600);
+            let minutos = Math.floor((tempoRestante % 3600) / 60);
+            let segundos = Math.floor((tempoRestante % 60));
+
+            timer.innerHTML = `${horas.toString().padStart(2, "0")}:${minutos.toString()
+                .padStart(2, "0")}:${segundos.toString().padStart(2, "0")}`;
+
+            tempoRestante--;
+        }
     }, 1000);
 }
 
@@ -156,7 +186,13 @@ function converterTempoDaAtividade() {
 
 async function enviarRespostas() {
     if (!checkQuestaoMarcada()) return;
-    if (tempoAcabou) window.location.reload();
+
+    if (tempoAcabou) {
+        window.location.reload();
+        return;
+    }
+
+    clearInterval(temporizador);
 
     const alternativasMarcadas = document.querySelectorAll("input:checked");
 
@@ -211,9 +247,7 @@ async function timeOut() {
     if (statusAtividade && statusAtividade.id) {
         await fecharTentativa();
     }
-
     alert("O tempo desta tentativa acabou. Reinicie a página para começar uma nova");
-
     tempoAcabou = true;
 }
 
@@ -234,12 +268,12 @@ function carregarTelaQuestionario() {
   `;
 
     const btnIniciar = document.getElementById("btn-iniciar-tentativa");
-    btnIniciar.addEventListener("click", () => {
-        if (tentativasFeitas > atividade.tentativas) {
+    btnIniciar.addEventListener("click", async () => {
+        if (tentativasFeitas >= atividade.tentativas) {
             telaQuestionarioJaFeito();
             return;
         }
-        carregarOuCriarTentativa();
+        await carregarOuCriarTentativa();
         iniciarTentativa();
     });
 }
@@ -359,7 +393,7 @@ function salvarStatusTentativa() {
 }
 
 function tratamentoPreFechamentoDaPagina() {
-    if (tempoTotal > 0)
+    if (tempoTotal > 0 && atividade.tipoTimer === "interrompivel")
         atualizarTempo();
     else
         fecharTentativa();
