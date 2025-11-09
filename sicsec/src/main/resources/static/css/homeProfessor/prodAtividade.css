@@ -1,6 +1,6 @@
+@import url("../base.css");
+
 :root {
-    --primary: #0052cc;
-    --secondary: #2684ff;
     --accent: #36b37e;
     --danger: #ff5630;
     --bg: #f4f6fa;
@@ -28,7 +28,7 @@ body {
 
 #btn-sair {
     align-self: flex-end;
-    background-color: var(--danger);
+    background-color: var(--primary);
     color: white;
     font-weight: 600;
     border: none;
@@ -48,7 +48,7 @@ form {
     flex-direction: column;
     gap: 0.75rem;
     background-color: var(--card-bg);
-    padding: 1.5rem 2rem;
+    padding: 3rem 2rem;
     border-radius: 0.75rem;
     box-shadow: var(--shadow);
     width: 100%;
@@ -124,8 +124,12 @@ section {
     display: none;
 }
 
-section > div {
+section > div{
     display: none;
+}
+
+#container-botoes {
+    display: flex !important;
 }
 
 section label {

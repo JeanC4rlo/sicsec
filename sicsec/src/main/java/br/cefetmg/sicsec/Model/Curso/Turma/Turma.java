@@ -7,13 +7,11 @@ package br.cefetmg.sicsec.Model.Curso.Turma;
 import br.cefetmg.sicsec.Model.Curso.MaterialDidatico;
 import br.cefetmg.sicsec.Model.Curso.Disciplina;
 import br.cefetmg.sicsec.Model.Curso.Turma.presenca.ListaPresenca;
-import br.cefetmg.sicsec.Model.Curso.Turma.Avaliacao.Proposta.Avaliacao;
 import br.cefetmg.sicsec.Model.Usuario.Aluno.Aluno;
 import br.cefetmg.sicsec.Model.Usuario.Professor.Professor;
 import br.cefetmg.sicsec.Model.Util.Enum.TipoTurma;
 import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
-import java.util.Date;
 import java.util.List;
 
 /**

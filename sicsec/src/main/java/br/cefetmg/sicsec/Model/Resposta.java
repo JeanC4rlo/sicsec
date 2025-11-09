@@ -19,7 +19,7 @@ public class Resposta {
 
     @ManyToOne
     @JoinColumn(name = "status_id", nullable = false)
-    private StatusAtividade statusAtividade;
+    private Tentativa statusAtividade;
 
     private Integer numQuestao;
     private Integer alternativaMarcada;
@@ -41,11 +41,11 @@ public class Resposta {
         this.atividade = atividade;
     }
 
-    public StatusAtividade getStatusAtividade() {
+    public Tentativa getStatusAtividade() {
         return statusAtividade;
     }
 
-    public void setStatusAtividade(StatusAtividade statusAtividade) {
+    public void setStatusAtividade(Tentativa statusAtividade) {
         this.statusAtividade = statusAtividade;
     }
 

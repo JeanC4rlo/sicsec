@@ -358,7 +358,7 @@ function enviar() {
         }
     }
 
-    fetch("http://localhost:6060/salvar", {
+    fetch("/api/atividade/salvar", {
         method: "POST",
         body: formData
     })
@@ -367,7 +367,7 @@ function enviar() {
             return response.json();
         })
         .then(data => {
-            window.location.href = "../homeProfessor.html";
+            window.location.href = "/homeProfessor";
         })
         .catch(err => console.error("Falha no envio:", err));
 }

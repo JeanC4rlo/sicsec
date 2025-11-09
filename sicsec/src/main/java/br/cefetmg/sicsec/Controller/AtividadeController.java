@@ -1,59 +1,59 @@
 package br.cefetmg.sicsec.Controller;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import br.cefetmg.sicsec.Model.Atividade;
 import br.cefetmg.sicsec.Repository.AtividadeRepository;
+import br.cefetmg.sicsec.Service.ArquivoService;
+import br.cefetmg.sicsec.Service.ValidarArquivosService;
 import br.cefetmg.sicsec.dto.HomeAtividadesDTO;
 
 @RestController
+@RequestMapping("/api/atividade")
 @CrossOrigin(origins = "*")
 
 public class AtividadeController {
     @Autowired
     private AtividadeRepository atividadesRepository;
 
-    @PostMapping("/salvar")
-    public ResponseEntity<Atividade> salvarAtividade(@RequestPart("atividade") Atividade atividade,
-            @RequestPart(value = "arquivos", required = false) MultipartFile[] arquivos) {
-        if (arquivos != null && arquivos.length > 0) {
-            for (MultipartFile file : arquivos) {
-                try {
-                    ValidacaoDeArquivosHelper.validar(file);
-                } catch (IOException e) {
-                    return ResponseEntity.badRequest().body(atividade);
-                }
-            }
-            List<String> nomesArquivos = Arrays.stream(arquivos)
-                    .map(MultipartFile::getOriginalFilename)
-                    .toList();
-            atividade.setNomesArquivos(nomesArquivos);
-        } else {
-            atividade.setNomesArquivos(Collections.emptyList());
-        }
+    @Autowired
+    private ArquivoService arquivoService;
 
-        Atividade nova = atividadesRepository.save(atividade);
-        return ResponseEntity.ok(nova);
+    @Autowired
+    private ValidarArquivosService validarArquivosService;
+
+    @PostMapping("/salvar")
+    public ResponseEntity<?> salvarAtividade(
+            @RequestPart("atividade") Atividade atividade,
+            @RequestPart(value = "arquivos", required = false) MultipartFile[] arquivos) {
+
+        try {
+            Atividade nova = validarArquivosService.validarListaArquivos(atividade, arquivos);
+            return ResponseEntity.status(HttpStatus.CREATED).body(nova);
+
+        } catch (IOException e) {
+            Map<String, String> erro = Map.of(
+                    "mensagem", "Erro ao processar arquivos",
+                    "detalhes", e.getMessage());
+            return ResponseEntity.badRequest().body(erro);
+        }
     }
 
-    @GetMapping("/arquivos/{atividadeId}")
+    @GetMapping("/{atividadeId}/arquivos")
     public ResponseEntity<List<String>> listarArquivos(@PathVariable Long atividadeId) {
         return atividadesRepository.findById(atividadeId)
                 .map(atividade -> {
@@ -67,18 +67,14 @@ public class AtividadeController {
 
     @GetMapping("/download/{nomeArquivo}")
     public ResponseEntity<Resource> downloadArquivo(@PathVariable String nomeArquivo) throws IOException {
-        Path path = Path.of("uploads", nomeArquivo);
-        if (!Files.exists(path))
-            return ResponseEntity.notFound().build();
-
-        Resource resource = new UrlResource(path.toUri());
+        Resource resource = arquivoService.carregarArquivo(nomeArquivo);
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + path.getFileName() + "\"")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
                 .body(resource);
     }
 
     @GetMapping("/atividades")
-    public List<Atividade> Listar() {
+    public List<Atividade> ListarAtividades() {
         return atividadesRepository.findAll();
     }
 
@@ -90,7 +86,7 @@ public class AtividadeController {
                 .toList();
     }
 
-    @GetMapping("/abrir-atividade/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Atividade> buscarAtividade(@PathVariable Long id) {
         return atividadesRepository.findById(id)
                 .map(ResponseEntity::ok)

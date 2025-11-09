@@ -5,7 +5,7 @@ function criarCardAcervo(livro) {
     const card = document.createElement("div");
 
     const capa = document.createElement("img");
-    capa.src = `../imagens/livros/${livro.capa}.png`;
+    capa.src = `/images/livros/${livro.capa}.png`;
     card.appendChild(capa);
 
     const titulo = document.createElement("h3");

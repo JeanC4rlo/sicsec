@@ -1,6 +1,5 @@
 @import url("./base.css");
 
-/* ======== Página: Fazer Atividades ======== */
 * {
     margin: 0;
     padding: 0;
@@ -25,6 +24,10 @@ h1 {
     text-align: center;
 }
 
+h2 {
+    margin-bottom: 1.5rem;
+}
+
 #btn-sair {
     align-self: flex-end;
     background-color: var(--primary);
@@ -39,11 +42,10 @@ h1 {
 }
 
 #btn-sair:hover {
-    background-color: var(--secondary);
+    background-color: red;
     transform: scale(1.05);
 }
 
-/* ======== Container Principal ======== */
 #main-container {
     background-color: white;
     border: 2px solid var(--primary);
@@ -54,7 +56,6 @@ h1 {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-/* ======== Primeira Tela do Questionário ======== */
 .first-screen-questionario {
     display: flex;
     flex-direction: column;
@@ -86,7 +87,6 @@ h1 {
     transform: scale(1.05);
 }
 
-/* ======== Questões ======== */
 #main-container p {
     margin-bottom: 1rem;
 }
@@ -106,14 +106,12 @@ label:hover {
     color: var(--secondary);
 }
 
-/* ======== Timer ======== */
 #main-container>p:first-child {
     text-align: right;
     font-weight: bold;
     color: var(--secondary);
 }
 
-/* ======== Botões de Navegação ======== */
 button {
     font-family: "Inter", sans-serif;
 }
@@ -160,7 +158,6 @@ textarea {
     font-family: inherit;
 }
 
-/* ======== Responsividade ======== */
 @media (max-width: 600px) {
     #main-container {
         padding: 1.5rem;

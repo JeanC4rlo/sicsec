@@ -184,7 +184,7 @@ function converterTempoDaAtividade() {
     return converterTempoParaSegundos(Number(atividade.tempoDeDuracao.numHoras), Number(atividade.tempoDeDuracao.numMinutos));
 }
 
-async function enviarRespostas() {
+async function enviarRespostasQuestionario() {
     if (!checkQuestaoMarcada()) return;
 
     if (tempoAcabou) {
@@ -252,17 +252,17 @@ async function timeOut() {
 }
 
 function carregarTelaQuestionario() {
-    console.log(tentativasFeitas, atividade.tentativas);
     containerPrincipal.innerHTML = `
     <div class="first-screen-questionario">
-      <p>Nome: ${atividade.nome}</p>
+      <h2>${atividade.nome}</h2>
       <p>Você está prestes a iniciar o questionário: ${atividade.nome}</p>
-      <p>Valor: ${atividade.valor} ponto${atividade.valor > 1 ? "s" : ""}</p>
-      <p>Número de tentativas: ${atividade.tentativas}</p>
-      <p>Tempo da tentativa: ${atividade.tempoDeDuracao.numHoras} hora${atividade.tempoDeDuracao.numHoras > 1 ? "s" : ""
+      <p>Valor: <strong>${atividade.valor} ponto${atividade.valor > 1 ? "s" : ""}</strong></p>
+      <p>Número máximo de tentativas: ${atividade.tentativas}</p>
+      <p>Tentativas restantes: ${atividade.tentativas - tentativasFeitas}</p>
+      <p>Tempo por tentativa: ${atividade.tempoDeDuracao.numHoras} hora${atividade.tempoDeDuracao.numHoras > 1 ? "s" : ""
         } e ${atividade.tempoDeDuracao.numMinutos} minuto${atividade.tempoDeDuracao.numMinutos > 1 ? "s" : ""
         }</p>
-      <p>Prazo: ${formatarData(atividade.dataEncerramento)}</p>
+      <p>Término: ${formatarData(atividade.dataEncerramento)}</p>
       <button id="btn-iniciar-tentativa">Iniciar tentativa</button>
     </div>
   `;
@@ -436,13 +436,13 @@ function iniciarTentativa() {
 
     btnAnterior.addEventListener("click", () => navegarEntreQuestoes(-1));
     btnProximo.addEventListener("click", () => navegarEntreQuestoes(1));
-    btnEnviar.addEventListener("click", enviarRespostas);
+    btnEnviar.addEventListener("click", enviarRespostasQuestionario);
 
     containerPrincipal.append(btnAnterior, btnProximo, btnEnviar);
 }
 
 async function carregarArquivos() {
-    const response = await fetch(`http://localhost:6060/arquivos/${atividade.id}`);
+    const response = await fetch(`/api/atividade/${atividade.id}/arquivos`);
     if (!response.ok) return console.error("Não foi possível carregar os arquivos");
     const arquivos = await response.json();
 
@@ -454,7 +454,7 @@ async function carregarArquivos() {
         const link = document.createElement("a");
         ul.append(link);
 
-        link.href = `http://localhost:6060/download/${nome}`;
+        link.href = `api/atividade/download/${nome}`;
         link.textContent = nome;
         link.target = "_blank";
         lista.append(ul);
@@ -463,7 +463,6 @@ async function carregarArquivos() {
     containerPrincipal.append(lista);
 }
 
-
 function initFazerAtividades() {
     containerPrincipal = document.getElementById("main-container");
     carregarAtividade();
@@ -471,7 +470,7 @@ function initFazerAtividades() {
 
     const btnSair = document.getElementById("btn-sair");
     btnSair.addEventListener("click", () => {
-        if (confirm("Deseja realmente sair?")) window.location.href = "home.html";
+        if (confirm("Deseja realmente sair?")) window.location.href = "/home";
     });
 }
 

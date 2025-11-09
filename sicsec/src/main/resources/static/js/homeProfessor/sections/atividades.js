@@ -56,7 +56,7 @@ function preencherTabelaAtividades(atividade) {
 }
 
 function carregarAtividades() {
-    fetch("http://localhost:6060/atividades")
+    fetch("/api/atividade/atividades")
     .then(response => {
         if(!response.ok) throw new Error("Erro ao carregar as atividades");
         return response.json();

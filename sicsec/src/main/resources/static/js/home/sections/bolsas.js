@@ -76,7 +76,7 @@ function exibirDetalhesBolsa(bolsa) {
     containerMais.innerHTML = `
         <div class="detalhes-bolsa">
             <button class="voltar">
-                <img src="../imagens/home/voltar.svg"> Voltar
+                <img th:src="@{/images/home/voltar.svg}"> Voltar
             </button>
             <h2>${bolsa.titulo || ""}</h2>
             <p><strong>Código:</strong> ${bolsa.codigo || ""}</p>
@@ -110,7 +110,7 @@ function exibirDetalhesBolsa(bolsa) {
             <ul>${referencias}</ul>
             
             <button class="interesse-detalhes">
-                <img src="../imagens/home/check.svg">
+                <img th:src="@{/images/home/check.svg}">
                 ${bolsa.registrada ? "Registrado" : "Registrar interesse"}
             </button>
         </div>
@@ -134,13 +134,13 @@ function exibirDetalhesBolsa(bolsa) {
 
 function registrarInteresseBolsa(bolsa, botao) {
     bolsa.registrada = true;
-    botao.innerHTML = `<img src="../imagens/home/check.svg"> Registrado`;
+    botao.innerHTML = `<img th:src="@{/images/home/check.svg}"> Registrado`;
     botao.disabled = true;
     
     // Atualizar também no card original se existir
     const cardOriginal = document.querySelector(`.bolsa-card[data-codigo="${bolsa.codigo}"] .interesse`);
     if (cardOriginal) {
-        cardOriginal.innerHTML = `<img src="../imagens/home/check.svg"> Registrado`;
+        cardOriginal.innerHTML = `<img th:src="@{/images/home/check.svg}"> Registrado`;
         cardOriginal.disabled = true;
     }
     

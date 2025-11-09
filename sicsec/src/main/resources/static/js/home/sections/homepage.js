@@ -82,11 +82,11 @@ function formatarDataEHora(data, hora) {
 }
 
 function irParaFazerAtividades(id) {
-    fetch(`/abrir-atividade/${id}`)
+    fetch(`/api/atividade/${id}`)
         .then(response => response.json())
         .then(atividade => {
             localStorage.setItem("atividade", JSON.stringify(atividade));
-            window.location.href = "./fazerAtividades.html";
+            window.location.href = "../../fazerAtividades.html";
         })
 }
 
@@ -120,7 +120,7 @@ function atualizarAtividades(atividade) {
 }
 
 function carregarAtividades() {
-    fetch("http://localhost:6060/home-atividades")
+    fetch("/api/atividade/home-atividades")
         .then(response => {
             if (!response.ok) throw new Error("Falha ao carregar as atividades");
             return response.json();
@@ -143,7 +143,6 @@ function initHomepage() {
 
     prevBtn.addEventListener('click', () => navegarManual(-1));
     nextBtn.addEventListener('click', () => navegarManual(1));
-
     pararBtn.addEventListener('click', () => {
         if (pararBtn.textContent === 'PARAR') {
             pararSlideshow();

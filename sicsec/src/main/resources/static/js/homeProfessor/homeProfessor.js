@@ -61,6 +61,11 @@ document.addEventListener("DOMContentLoaded", () => {
             openSection(targetSection);
         });
     });
+
+    const btnSair = document.querySelector(".sair");
+    btnSair.addEventListener("click", () => {
+        window.location.href = "/login";
+    })
     
     const ultimaSecao = localStorage.getItem("secaoAtiva");
 
