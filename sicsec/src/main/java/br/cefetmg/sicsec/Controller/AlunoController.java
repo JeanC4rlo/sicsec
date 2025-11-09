@@ -1,5 +1,7 @@
 package br.cefetmg.sicsec.Controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,9 +20,25 @@ public class AlunoController {
     private UsuarioService usuarioService;
 
     @PostMapping("/curso/{cursoId}")
-    public @ResponseBody Iterable<Aluno> getAlunosByCurso(
+    @ResponseBody
+    public List<Object> getAlunosByCurso(
         @PathVariable Long cursoId) {
-        return usuarioService.getAlunosByCurso(cursoId);
+
+
+        List<Aluno> alunos = usuarioService.getAlunosByCurso(cursoId);
+        
+        List<Object> alunosMap = new java.util.ArrayList<>();
+        for (Aluno aluno : alunos) {
+            java.util.Map<String, Object> alunoMap = java.util.Map.of(
+                "id", aluno.getId(),
+                "nome", aluno.getMatricula().getNome(),
+                "numeroMatricula", aluno.getMatricula().getNumeroMatricula()
+            );
+            alunosMap.add(alunoMap);
+        }
+
+        return alunosMap;
+
     }
 
 }

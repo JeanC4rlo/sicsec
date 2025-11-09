@@ -225,3 +225,32 @@
 .choices--searchable-select .choices__list--single {
   order: -1 !important;
 }
+
+/* ---------- [ Checkbox: Turma ativa ] ---------- */
+#turmas .ativo-section {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+#turmas .ativo-section label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: var(--primary);
+  cursor: pointer;
+}
+
+#turmas .ativo-section input[type="checkbox"] {
+  width: 1.2rem;
+  height: 1.2rem;
+  accent-color: var(--primary);
+  cursor: pointer;
+  border-radius: 0.25rem;
+  transition: transform 0.15s ease;
+}
+
+#turmas .ativo-section input[type="checkbox"]:hover {
+  transform: scale(1.1);
+}

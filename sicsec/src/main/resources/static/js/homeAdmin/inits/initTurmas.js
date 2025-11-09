@@ -100,7 +100,7 @@ function setupFormularioEditarTurma(secao) {
   const editarForm = secao.querySelector("#editarTurmaForm");
   const selectBuscar = buscarForm.querySelector("#nomeTurmaBuscar");
 
-  // --- 1. Inicializa Choices.js no campo de busca ---
+  // --- Inicializa Choices.js no campo de busca ---
   const choicesBuscar = new Choices(selectBuscar, {
     ...baseChoicesConfig,
     searchPlaceholderValue: "Digite parte do nome da turma...",
@@ -112,10 +112,9 @@ function setupFormularioEditarTurma(secao) {
     duplicateItemsAllowed: false,
   });
 
-  // --- 2. Busca todas as turmas do curso (uma única requisição) ---
+  // --- Carrega turmas de acordo com o cargo do usuário ---
   async function carregarTurmasDoCurso() {
     try {
-      // Obtém usuário atual para determinar o curso
       const usuarioResp = await fetch("/api/usuario/atual/admin", { method: "POST" });
       if (!usuarioResp.ok) throw new Error("Erro ao obter usuário");
       const usuario = await usuarioResp.json();
@@ -139,13 +138,11 @@ function setupFormularioEditarTurma(secao) {
       if (!res.ok) throw new Error("Erro ao carregar turmas");
       const turmas = await res.json();
 
-      // Formata lista de opções
       const opcoes = turmas.map(t => ({
         value: t.id,
-        label: `${t.nome} (${t.curso?.nome || "Sem curso"})`
+        label: `${t.nome} (${t.curso.nome || "Sem curso"})`
       }));
 
-      // Popula o Choices com todas as turmas
       choicesBuscar.clearChoices();
       choicesBuscar.setChoices(opcoes, "value", "label", true);
     } catch (err) {
@@ -157,7 +154,7 @@ function setupFormularioEditarTurma(secao) {
 
   carregarTurmasDoCurso();
 
-  // --- 3. Ao enviar o formulário, carrega a turma selecionada ---
+  // --- Função principal: vincular busca e edição ---
   buscarForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     const turmaId = selectBuscar.value;
@@ -171,8 +168,11 @@ function setupFormularioEditarTurma(secao) {
       if (!res.ok) throw new Error("Erro ao carregar turma");
       const turma = await res.json();
 
-      editarForm.style.display = "block";
+      // Preenche ID e exibe formulário
       editarForm.querySelector("#turmaId").value = turma.id;
+      editarForm.style.display = "block";
+
+      // Preenche campos
       editarForm.querySelector('input[name="nome"]').value = turma.nome;
 
       const cursoSelect = editarForm.querySelector("#cursoEditarSelect");
@@ -180,7 +180,13 @@ function setupFormularioEditarTurma(secao) {
       const professorSelect = editarForm.querySelector("#professorEditarSelect");
       const alunoSelect = editarForm.querySelector("#alunoEditarSelect");
 
-      // Choices para múltiplos professores e alunos
+      cursoSelect.innerHTML = `<option value="${turma.curso.id}" selected>${turma.curso.nome}</option>`;
+      cursoSelect.disabled = true;
+
+      disciplinaSelect.innerHTML = `<option value="${turma.disciplina.id}" selected>${turma.disciplina.nome}</option>`;
+      disciplinaSelect.disabled = true;
+
+      // Inicializa múltiplos
       const choicesProfessor = new Choices(professorSelect, {
         ...baseChoicesConfig,
         placeholderValue: "Selecione professores...",
@@ -195,17 +201,28 @@ function setupFormularioEditarTurma(secao) {
         noResultsText: "Nenhum aluno encontrado"
       });
 
-      carregarCursos(cursoSelect);
-      carregarDisciplinas(turma.curso.id, disciplinaSelect, choicesProfessor);
-      carregarProfessores(turma.disciplina.id, choicesProfessor);
-      carregarAlunos(turma.curso.id, choicesAluno);
+      // Carrega listas e marca os vinculados
+      const [professores, alunos] = await Promise.all([
+        carregarProfessores(turma.disciplina.id, choicesProfessor),
+        carregarAlunos(turma.curso.id, choicesAluno)
+      ]);
+
+      if (Array.isArray(turma.professores)) {
+        turma.professores.forEach(p => choicesProfessor.setChoiceByValue(String(p.id)));
+      }
+
+      if (Array.isArray(turma.alunos)) {
+        turma.alunos.forEach(a => choicesAluno.setChoiceByValue(String(a.id)));
+      }
+
+      editarForm.querySelector("#turmaAtiva").checked = !!turma.ativo;
+
     } catch (err) {
       console.error(err);
       alert("Falha ao carregar turma selecionada");
     }
   });
 }
-
 
 
 
@@ -268,34 +285,35 @@ function carregarDisciplinas(cursoId, select, choicesProfessor) {
     .then(res => res.json())
     .then(disciplinas => {
       preencherSelect(select, disciplinas, "Selecione uma disciplina");
-      if (disciplinas.length > 0)
-        carregarProfessores(disciplinas[0].id, choicesProfessor);
+      choicesProfessor.clearStore();
     })
     .catch(() => preencherSelect(select, [], "Erro ao carregar disciplinas"));
 }
 
 function carregarProfessores(disciplinaId, choicesProfessor) {
-  fetch(`/api/professor/disciplina/${disciplinaId}`, { method: 'POST' })
+  return fetch(`/api/professor/disciplina/${disciplinaId}`, { method: 'POST' })
     .then(res => res.json())
     .then(professores => {
       const lista = professores.map(p => ({
         id: p.id,
-        nome: `${p.matricula.numeroMatricula} - ${p.matricula.nome}`
+        nome: `${p.numeroMatricula} - ${p.nome}`
       }));
       preencherSelect(choicesProfessor, lista);
+      return professores;
     })
     .catch(() => preencherSelect(choicesProfessor, [], "Erro ao carregar professores"));
 }
 
 function carregarAlunos(cursoId, choicesAluno) {
-  fetch(`/api/aluno/curso/${cursoId}`, { method: 'POST' })
+  return fetch(`/api/aluno/curso/${cursoId}`, { method: 'POST' })
     .then(res => res.json())
     .then(alunos => {
       const lista = alunos.map(a => ({
         id: a.id,
-        nome: `${a.matricula.numeroMatricula} - ${a.matricula.nome}`
+        nome: `${a.numeroMatricula} - ${a.nome}`
       }));
       preencherSelect(choicesAluno, lista);
+      return alunos;
     })
     .catch(() => preencherSelect(choicesAluno, [], "Erro ao carregar alunos"));
 }

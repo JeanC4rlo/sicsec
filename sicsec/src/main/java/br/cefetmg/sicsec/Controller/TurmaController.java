@@ -5,7 +5,9 @@
 package br.cefetmg.sicsec.Controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.cefetmg.sicsec.Model.Curso.Turma.Turma;
+import br.cefetmg.sicsec.Model.Usuario.Aluno.Aluno;
+import br.cefetmg.sicsec.Model.Usuario.Professor.Professor;
 import br.cefetmg.sicsec.Service.TurmaService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -36,26 +40,36 @@ public class TurmaController {
     @Autowired
     private TurmaService tService;
     
+    @PostMapping("/atualizar")
+    public String atualizar(
+            @RequestParam Long id,
+            @RequestParam String nome,
+            @RequestParam(name="alunos") List<Long> discentes,
+            @RequestParam(name="professores") List<Long> doscentes,
+            @RequestParam(required=false, defaultValue="false") boolean arquivar,
+            HttpServletRequest request) 
+            throws IOException {
+
+        tService.atualizarTurma(id, nome, discentes, doscentes, !arquivar);
+
+        String referer = request.getHeader("Referer");
+        return "redirect:" + referer;
+
+    }
+    
+
     @PostMapping("/registrar")
     public String registrar(
             @RequestParam(name="alunos") List<Long> discentes,
             @RequestParam(name="professores") List<Long> doscentes,
+            @RequestParam int anoLetivo,
             @RequestParam Long disciplina,
             @RequestParam Long curso,
             @RequestParam String nome,
             HttpServletRequest request) 
             throws IOException {
-
-        System.out.println("Registrando turma com os seguintes dados:");
-        System.out.println("Nome: " + nome); 
-        System.out.println("Disciplina ID: " + disciplina);
-        System.out.println("Curso ID: " + curso);
-        System.out.println("Discentes IDs: " + discentes);
-        System.out.println("Doscentes IDs: " + doscentes);
         
-        Turma turma = tService.registrarTurma(nome, disciplina, curso, discentes, doscentes);
-
-        System.out.println("Turma registrada com sucesso: " + turma.getNome());
+        tService.registrarTurma(nome, anoLetivo, disciplina, curso, discentes, doscentes);
 
         String referer = request.getHeader("Referer");
         return "redirect:" + referer;
@@ -80,6 +94,8 @@ public class TurmaController {
 
         Object turma = tService.obterTurmaPorId(id);
         
+        System.out.println("Turma obtida: " + turma.toString());
+
         return ResponseEntity.ok(turma);
 
     }
@@ -97,18 +113,30 @@ public class TurmaController {
     }
 
     @PostMapping("/departamento/{id}")
-    public ResponseEntity<List<Object>> getTurmasPorDepartamento(
+    public ResponseEntity<Object> getTurmasPorDepartamento(
         @PathVariable Long id
     ) {
 
-        List<Object> turmas = tService.listarTurmasPorDepartamento(id);
-        
-        return ResponseEntity.ok(turmas);
+        List<Turma> turmas = tService.listarTurmasPorDepartamento(id);
+        List<Map<String, Object>> turmasMap = new ArrayList<>();
+
+        for (Turma turma : turmas) {
+            Map<String, Object> turmaMap = Map.of(
+                "nome", turma.getNome(),
+                "id", turma.getId(),
+                "curso", turma.getCurso().getNome(),
+                "cursoId", turma.getCurso().getId(),
+                "ativo", turma.isAtivo()
+            );
+            turmasMap.add(turmaMap);
+        }
+
+        return ResponseEntity.ok(turmasMap);
 
     }
     
     @PostMapping("/buscar/{termo}")
-    public ResponseEntity<List<Object>> buscarTurma(
+    public ResponseEntity<List<Map<Integer, String>>> buscarTurma(
             @PathVariable String termo,
             HttpServletRequest request,
             HttpServletResponse response) 
@@ -116,7 +144,16 @@ public class TurmaController {
         
         List<Object> turmas = tService.buscarTurmaPorNome(termo, request);
         
-        return ResponseEntity.ok(turmas);
+        List<Map<Integer, String>> turmasMap = turmas.stream().map(turmaObj -> {
+            Turma turma = (Turma) turmaObj;
+            return Map.of(
+                0, "Nome: " + turma.getNome(),
+                1, "ID: " + turma.getId(),
+                2, "Ativo: " + turma.isAtivo()
+            );
+        }).toList();
+
+        return ResponseEntity.ok(turmasMap);
         
     }
     

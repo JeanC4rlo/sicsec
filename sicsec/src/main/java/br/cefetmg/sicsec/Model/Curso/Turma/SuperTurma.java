@@ -32,13 +32,13 @@ public class SuperTurma extends Turma {
         
     }
     
-    public SuperTurma(String nome, Disciplina disciplina, Curso curso, List<Aluno> discentes, List<Professor> doscentes) {
-        super(nome, disciplina, curso, discentes, doscentes);
+    public SuperTurma(String nome, int anoLetivo, boolean ativo, Disciplina disciplina, Curso curso, List<Aluno> discentes, List<Professor> doscentes) {
+        super(nome, anoLetivo, ativo, disciplina, curso, discentes, doscentes);
         this.setTipo(TipoTurma.SUPERTURMA);
     }
     
-    public SuperTurma(String nome, Disciplina disciplina, Curso curso) {
-        super(nome, disciplina, curso);
+    public SuperTurma(String nome, int anoLetivo, boolean ativo, Disciplina disciplina, Curso curso) {
+        super(nome, anoLetivo, ativo, disciplina, curso);
         this.setTipo(TipoTurma.SUPERTURMA);
     }
     

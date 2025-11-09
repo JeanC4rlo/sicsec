@@ -39,12 +39,12 @@ public class UsuarioService {
         return null;
     }
 
-    public Iterable<Aluno> getAlunosByCurso(Long cursoId) {
+    public List<Aluno> getAlunosByCurso(Long cursoId) {
 
         return alunoRepo.findAllByCurso(cursoId);
     }
 
-    public Iterable<Professor> getProfessoresByDisciplina(Long disciplinaId) {
+    public List<Professor> getProfessoresByDisciplina(Long disciplinaId) {
 
 
         Curso curso = cursoRepo.findByDisciplina(disciplinaId);

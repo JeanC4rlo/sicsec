@@ -33,16 +33,62 @@ public class SubTurma extends Turma {
         
     }
     
-    public SubTurma(String nome, Disciplina disciplina, Curso curso, List<Aluno> discentes, List<Professor> doscentes, SuperTurma turma) {
-        super(nome, disciplina, curso, discentes, doscentes);
+    public SubTurma(String nome, List<Aluno> discentes, List<Professor> doscentes, SuperTurma turma) {
+
+        super(nome, turma.getAnoLetivo(), turma.isAtivo(), turma.getDisciplina(), turma.getCurso(), discentes, doscentes);
+
         this.setTipo(TipoTurma.SUBTURMA);
         this.setSuperTurma(turma);
     }
     
-    public SubTurma(String nome, Disciplina disciplina, Curso curso, SuperTurma turma) {
-        super(nome, disciplina, curso);
+    public SubTurma(String nome, SuperTurma turma) {
+
+        super(nome, turma.getAnoLetivo(), turma.isAtivo(), turma.getDisciplina(), turma.getCurso());
+
         this.setTipo(TipoTurma.SUBTURMA);
         this.setSuperTurma(turma);
+    }
+
+    @Override
+    public List<Aluno> getDiscentes() {
+        return super.getDiscentes();
+    }
+
+    @Override
+    public void setDiscentes(List<Aluno> discentes) {
+
+        if (discentes == null || discentes.isEmpty()) {
+            throw new IllegalArgumentException("Toda SubTurma deve ter pelo menos um Aluno associado.");
+        }
+
+        for (Aluno aluno : discentes) {
+            if (!this.getSuperTurma().getDiscentes().contains(aluno)) {
+                throw new IllegalArgumentException("O Aluno " + aluno.getMatricula().getNome() + " não está associado à Turma.");
+            }
+        }
+
+        super.setDiscentes(discentes);
+    }
+
+    @Override
+    public List<Professor> getDoscentes() {
+        return super.getDoscentes();
+    }
+
+    @Override
+    public void setDoscentes(List<Professor> doscentes) {
+
+        if (doscentes == null || doscentes.isEmpty()) {
+            throw new IllegalArgumentException("Toda SubTurma deve ter pelo menos um Professor associado.");
+        }
+
+        for (Professor professor : doscentes) {
+            if (!this.getSuperTurma().getDoscentes().contains(professor)) {
+                throw new IllegalArgumentException("O Professor " + professor.getMatricula().getNome() + " não está associado à Turma.");
+            }
+        }
+
+        super.setDoscentes(doscentes);
     }
     
     public SuperTurma getSuperTurma() {
