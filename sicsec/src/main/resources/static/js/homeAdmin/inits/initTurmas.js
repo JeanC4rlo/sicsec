@@ -171,7 +171,7 @@ async function carregarTurmasDoUsuario(choicesBuscar) {
     }[usuario.cargo];
     
     const turmas = await fetchJSON(endpoint);
-    const opcoes = turmas.map(t => ({ value: t.id, label: `${t.nome} (${t.curso || "Sem curso"})` }));
+    const opcoes = turmas.map(t => ({ value: t.id, label: `${t.nome} (${t.curso.nome || "Sem curso"})` }));
     choicesBuscar.clearChoices();
     choicesBuscar.setChoices(opcoes, "value", "label", true);
   } catch (err) {
@@ -259,5 +259,5 @@ function preencherFormularioEdicao(form, turma) {
     console.log("Professores:", turma.professores);
   });
 
-  form.querySelector("#turmaAtiva").checked = !!turma.ativo;
+  form.querySelector("#arquivarTurma").checked = !turma.ativo;
 }

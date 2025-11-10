@@ -93,7 +93,8 @@ public class TurmaController {
                 "curso", Map.of(
                     "id", turma.getCurso().getId(),
                     "nome", turma.getCurso().getNome()
-                )
+                ),
+                "ativo", turma.isAtivo()
             ));
         }
 
@@ -123,16 +124,17 @@ public class TurmaController {
         }
 
         Map<String, Object> turmaMap = Map.of(
-            "id", turma.getId(),
-            "nome", turma.getNome(),
-            "disciplina", Map.of(
-                "id", turma.getDisciplina().getId(),
-                "nome", turma.getDisciplina().getNome()
-            ),
-            "curso", Map.of(
-                "id", turma.getCurso().getId(),
-                "nome", turma.getCurso().getNome()
-            ),
+                "id", turma.getId(),
+                "nome", turma.getNome(),
+                "disciplina", Map.of(
+                    "id", turma.getDisciplina().getId(),
+                    "nome", turma.getDisciplina().getNome()
+                ),
+                "curso", Map.of(
+                    "id", turma.getCurso().getId(),
+                    "nome", turma.getCurso().getNome()
+                ),
+                "ativo", turma.isAtivo(),
             "professores", doscentesId,
             "alunos", discentesId
         );
@@ -162,7 +164,8 @@ public class TurmaController {
                 "curso", Map.of(
                     "id", turma.getCurso().getId(),
                     "nome", turma.getCurso().getNome()
-                )
+                ),
+                "ativo", turma.isAtivo()
             ));
         }
 
@@ -180,10 +183,16 @@ public class TurmaController {
 
         for (Turma turma : turmas) {
             Map<String, Object> turmaMap = Map.of(
-                "nome", turma.getNome(),
                 "id", turma.getId(),
-                "curso", turma.getCurso().getNome(),
-                "cursoId", turma.getCurso().getId(),
+                "nome", turma.getNome(),
+                "disciplina", Map.of(
+                    "id", turma.getDisciplina().getId(),
+                    "nome", turma.getDisciplina().getNome()
+                ),
+                "curso", Map.of(
+                    "id", turma.getCurso().getId(),
+                    "nome", turma.getCurso().getNome()
+                ),
                 "ativo", turma.isAtivo()
             );
             turmasMap.add(turmaMap);
@@ -205,11 +214,18 @@ public class TurmaController {
         List<Object> turmasMap = new ArrayList<>();
 
         for(Turma turma : turmas) {
-
             turmasMap.add(Map.of(
-                0, "Nome: " + turma.getNome(),
-                1, "ID: " + turma.getId(),
-                2, "Ativo: " + turma.isAtivo()
+                "id", turma.getId(),
+                "nome", turma.getNome(),
+                "disciplina", Map.of(
+                    "id", turma.getDisciplina().getId(),
+                    "nome", turma.getDisciplina().getNome()
+                ),
+                "curso", Map.of(
+                    "id", turma.getCurso().getId(),
+                    "nome", turma.getCurso().getNome()
+                ),
+                "ativo", turma.isAtivo()
             ));
         }
 
