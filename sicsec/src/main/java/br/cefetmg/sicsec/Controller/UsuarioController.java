@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,8 +37,10 @@ public class UsuarioController {
     private AdministradorService admService;
     
     @PostMapping("/atual")
-    public Object getUsuarioAtual(HttpSession session) {
-        Usuario usuario = (Usuario) session.getAttribute("usuario");
+    public ResponseEntity<Object> getUsuarioAtual(HttpSession session) {
+
+
+        Usuario usuario = uService.getUsuarioFromSession(session);
 
         if (usuario == null) {
             return new org.springframework.http.ResponseEntity<>(
@@ -46,18 +49,22 @@ public class UsuarioController {
             );
         }
 
-        // Evita enviar dados sensíveis (como senha)
-        return java.util.Map.of(
+        Map<String, Object> mapaUsuario = Map.of(
             "id", usuario.getId(),
             "nome", usuario.getMatricula().getNome(),
             "cargo", usuario.getCargo().toString()
         );
+
+        return ResponseEntity.ok(mapaUsuario);
+
     }
 
     @PostMapping("/atual/admin")
-    public Object getAdminAtual(HttpSession session) {
+    public ResponseEntity<Object> getAdminAtual(HttpSession session) {
 
-        return admService.GetAdministrador((Usuario) session.getAttribute("usuario"));
+        Object adm = admService.GetAdministrador((Usuario) session.getAttribute("usuario"));
+
+        return ResponseEntity.ok(adm);
 
     }
 

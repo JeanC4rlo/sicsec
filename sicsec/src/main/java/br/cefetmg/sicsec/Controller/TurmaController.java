@@ -41,7 +41,7 @@ public class TurmaController {
     private TurmaService tService;
     
     @PostMapping("/atualizar")
-    public String atualizar(
+    public String atualizarTurma(
             @RequestParam Long id,
             @RequestParam String nome,
             @RequestParam(name="alunos") List<Long> discentes,
@@ -56,20 +56,18 @@ public class TurmaController {
         return "redirect:" + referer;
 
     }
-    
 
     @PostMapping("/registrar")
-    public String registrar(
+    public String registrarTurma(
             @RequestParam(name="alunos") List<Long> discentes,
             @RequestParam(name="professores") List<Long> doscentes,
-            @RequestParam int anoLetivo,
             @RequestParam Long disciplina,
             @RequestParam Long curso,
             @RequestParam String nome,
             HttpServletRequest request) 
             throws IOException {
         
-        tService.registrarTurma(nome, anoLetivo, disciplina, curso, discentes, doscentes);
+        tService.registrarTurma(nome, 2025, disciplina, curso, discentes, doscentes);
 
         String referer = request.getHeader("Referer");
         return "redirect:" + referer;
@@ -81,9 +79,25 @@ public class TurmaController {
             HttpServletRequest request) 
             throws IOException {
         
-        List<Object> turmas = tService.listarTurmas();
-        
-        return ResponseEntity.ok(turmas);
+        List<Turma> turmas = tService.listarTurmas();
+        List<Object> turmasMap = new ArrayList<>();
+
+        for(Turma turma : turmas) {
+            turmasMap.add(Map.of(
+                "id", turma.getId(),
+                "nome", turma.getNome(),
+                "disciplina", Map.of(
+                    "id", turma.getDisciplina().getId(),
+                    "nome", turma.getDisciplina().getNome()
+                ),
+                "curso", Map.of(
+                    "id", turma.getCurso().getId(),
+                    "nome", turma.getCurso().getNome()
+                )
+            ));
+        }
+
+        return ResponseEntity.ok(turmasMap);
         
     }
 
@@ -92,11 +106,38 @@ public class TurmaController {
         @PathVariable Long id
     ) {
 
-        Object turma = tService.obterTurmaPorId(id);
+        Turma turma = tService.obterTurmaPorId(id);
         
-        System.out.println("Turma obtida: " + turma.toString());
+        if (turma == null) {
+            return ResponseEntity.badRequest().body("Turma não encontrada");
+        }
 
-        return ResponseEntity.ok(turma);
+        List<Long> discentesId = new ArrayList<>();
+        for (Aluno a : turma.getDiscentes()) {
+            discentesId.add(a.getId());
+        }
+
+        List<Long> doscentesId = new ArrayList<>();
+        for (Professor p : turma.getDoscentes()) { 
+            doscentesId.add(p.getId());
+        }
+
+        Map<String, Object> turmaMap = Map.of(
+            "id", turma.getId(),
+            "nome", turma.getNome(),
+            "disciplina", Map.of(
+                "id", turma.getDisciplina().getId(),
+                "nome", turma.getDisciplina().getNome()
+            ),
+            "curso", Map.of(
+                "id", turma.getCurso().getId(),
+                "nome", turma.getCurso().getNome()
+            ),
+            "professores", doscentesId,
+            "alunos", discentesId
+        );
+
+        return ResponseEntity.ok(turmaMap);
 
     }
     
@@ -106,9 +147,26 @@ public class TurmaController {
         @PathVariable Long id
     ) {
 
-        List<Object> turmas = tService.listarTurmasPorCurso(id);
-        
-        return ResponseEntity.ok(turmas);
+        List<Turma> turmas = tService.listarTurmasPorCurso(id);
+
+        List<Object> turmasMap = new ArrayList<>();
+
+        for(Turma turma : turmas) {
+            turmasMap.add(Map.of(
+                "id", turma.getId(),
+                "nome", turma.getNome(),
+                "disciplina", Map.of(
+                    "id", turma.getDisciplina().getId(),
+                    "nome", turma.getDisciplina().getNome()
+                ),
+                "curso", Map.of(
+                    "id", turma.getCurso().getId(),
+                    "nome", turma.getCurso().getNome()
+                )
+            ));
+        }
+
+        return ResponseEntity.ok(turmasMap);
 
     }
 
@@ -136,22 +194,24 @@ public class TurmaController {
     }
     
     @PostMapping("/buscar/{termo}")
-    public ResponseEntity<List<Map<Integer, String>>> buscarTurma(
+    public ResponseEntity<List<Object>> buscarTurma(
             @PathVariable String termo,
             HttpServletRequest request,
             HttpServletResponse response) 
             throws IOException {
         
-        List<Object> turmas = tService.buscarTurmaPorNome(termo, request);
+        List<Turma> turmas = tService.buscarTurmaPorNome(termo, request);
         
-        List<Map<Integer, String>> turmasMap = turmas.stream().map(turmaObj -> {
-            Turma turma = (Turma) turmaObj;
-            return Map.of(
+        List<Object> turmasMap = new ArrayList<>();
+
+        for(Turma turma : turmas) {
+
+            turmasMap.add(Map.of(
                 0, "Nome: " + turma.getNome(),
                 1, "ID: " + turma.getId(),
                 2, "Ativo: " + turma.isAtivo()
-            );
-        }).toList();
+            ));
+        }
 
         return ResponseEntity.ok(turmasMap);
         

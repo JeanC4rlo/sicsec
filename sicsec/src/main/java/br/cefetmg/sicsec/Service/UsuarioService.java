@@ -2,11 +2,12 @@ package br.cefetmg.sicsec.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import jakarta.servlet.http.HttpServletRequest;
-
+import jakarta.servlet.http.HttpSession;
 import br.cefetmg.sicsec.Model.Curso.Curso;
 import br.cefetmg.sicsec.Model.Usuario.Usuario;
 import br.cefetmg.sicsec.Model.Usuario.Aluno.Aluno;
@@ -35,8 +36,13 @@ public class UsuarioService {
     @Autowired
     private ProfessorRepo professorRepo;
 
-    public Usuario getUsuarioFromSession(HttpServletRequest request) {
-        return null;
+    public Usuario getUsuarioFromSession(HttpSession session) {
+
+        Usuario usuario = (Usuario) session.getAttribute("usuario");
+
+        return usuario;
+
+
     }
 
     public List<Aluno> getAlunosByCurso(Long cursoId) {

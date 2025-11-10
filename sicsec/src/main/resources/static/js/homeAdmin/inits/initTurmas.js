@@ -1,4 +1,3 @@
-// ---------- [ SEÇÃO: inicialização principal ] ----------
 function initTurmas() {
   const secao = document.querySelector("#turmas");
   if (!secao) return;
@@ -10,30 +9,25 @@ function initTurmas() {
 
 
 
-// ---------- [ SEÇÃO: gerenciamento de abas internas ] ----------
+
+
 function setupAbasTurmas(secao) {
   const botoes = secao.querySelectorAll("header button");
   const abas = secao.querySelectorAll(".tab");
   const ultimaAba = localStorage.getItem("turmasAbaAtiva") || "criar-turma";
 
-  abas.forEach(aba => aba.classList.remove("ativo"));
-  botoes.forEach(btn => btn.classList.remove("ativo"));
+  const trocarAba = (tab) => {
+    abas.forEach(aba => aba.classList.toggle("ativo", aba.classList.contains(tab)));
+    botoes.forEach(btn => btn.classList.toggle("ativo", btn.dataset.tab === tab));
+    localStorage.setItem("turmasAbaAtiva", tab);
+  };
 
-  botoes.forEach(btn => {
-    btn.addEventListener("click", () => {
-      const tab = btn.dataset.tab;
-      trocarAba(abas, botoes, tab);
-      localStorage.setItem("turmasAbaAtiva", tab);
-    });
-  });
-
-  trocarAba(abas, botoes, ultimaAba);
+  botoes.forEach(btn => btn.addEventListener("click", () => trocarAba(btn.dataset.tab)));
+  trocarAba(ultimaAba);
 }
 
-function trocarAba(abas, botoes, tab) {
-  abas.forEach(aba => aba.classList.toggle("ativo", aba.classList.contains(tab)));
-  botoes.forEach(b => b.classList.toggle("ativo", b.dataset.tab === tab));
-}
+
+
 
 
 const baseChoicesConfig = {
@@ -53,7 +47,9 @@ const baseChoicesConfig = {
 };
 
 
-// ---------- [ SEÇÃO: formulário de cadastro de turmas ] ----------
+
+
+
 function setupFormularioTurma(secao) {
   const cursoSelect = secao.querySelector("#cursoSelect");
   const disciplinaSelect = secao.querySelector("#disciplinaSelect");
@@ -65,15 +61,13 @@ function setupFormularioTurma(secao) {
   const choicesProfessor = new Choices(professorSelect, {
     ...baseChoicesConfig,
     placeholderValue: "Selecione professores...",
-    searchPlaceholderValue: "Buscar professor...",
-    noResultsText: "Nenhum professor encontrado"
+    searchPlaceholderValue: "Buscar professor..."
   });
 
   const choicesAluno = new Choices(alunoSelect, {
     ...baseChoicesConfig,
     placeholderValue: "Selecione alunos...",
-    searchPlaceholderValue: "Buscar aluno...",
-    noResultsText: "Nenhum aluno encontrado"
+    searchPlaceholderValue: "Buscar aluno..."
   });
 
   carregarCursos(cursoSelect);
@@ -87,136 +81,35 @@ function setupFormularioTurma(secao) {
 
   disciplinaSelect.addEventListener("change", () => {
     const disciplinaId = disciplinaSelect.value;
-    if (!disciplinaId) return;
-    carregarProfessores(disciplinaId, choicesProfessor);
+    if (disciplinaId) carregarProfessores(disciplinaId, choicesProfessor);
   });
 }
 
 
 
-// ---------- [ SEÇÃO: formulário de edição de turmas ] ----------
+
+
 function setupFormularioEditarTurma(secao) {
   const buscarForm = secao.querySelector("#buscarTurmaForm");
   const editarForm = secao.querySelector("#editarTurmaForm");
   const selectBuscar = buscarForm.querySelector("#nomeTurmaBuscar");
 
-  // --- Inicializa Choices.js no campo de busca ---
   const choicesBuscar = new Choices(selectBuscar, {
     ...baseChoicesConfig,
     searchPlaceholderValue: "Digite parte do nome da turma...",
-    noResultsText: "Nenhuma turma encontrada",
-    noChoicesText: "Carregando turmas...",
-    itemSelectText: "Selecionar",
-    removeItemButton: false,
-    shouldSort: false,
-    duplicateItemsAllowed: false,
+    removeItemButton: false
   });
 
-  // --- Carrega turmas de acordo com o cargo do usuário ---
-  async function carregarTurmasDoCurso() {
-    try {
-      const usuarioResp = await fetch("/api/usuario/atual/admin", { method: "POST" });
-      if (!usuarioResp.ok) throw new Error("Erro ao obter usuário");
-      const usuario = await usuarioResp.json();
+  carregarTurmasDoUsuario(choicesBuscar);
 
-      let endpoint;
-      switch (usuario.cargo) {
-        case "ROOT":
-          endpoint = "/api/turma/getAll";
-          break;
-        case "CHEFE_DE_DEPARTAMENTO":
-          endpoint = `/api/turma/departamento/${usuario.departamento}`;
-          break;
-        case "COORDENADOR":
-          endpoint = `/api/turma/curso/${usuario.curso}`;
-          break;
-        default:
-          throw new Error("Cargo não autorizado");
-      }
-
-      const res = await fetch(endpoint, { method: "POST" });
-      if (!res.ok) throw new Error("Erro ao carregar turmas");
-      const turmas = await res.json();
-
-      const opcoes = turmas.map(t => ({
-        value: t.id,
-        label: `${t.nome} (${t.curso.nome || "Sem curso"})`
-      }));
-
-      choicesBuscar.clearChoices();
-      choicesBuscar.setChoices(opcoes, "value", "label", true);
-    } catch (err) {
-      console.error("Falha ao carregar turmas:", err);
-      choicesBuscar.clearChoices();
-      choicesBuscar.setChoices([{ value: "", label: "Erro ao carregar turmas" }], "value", "label", true);
-    }
-  }
-
-  carregarTurmasDoCurso();
-
-  // --- Função principal: vincular busca e edição ---
   buscarForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     const turmaId = selectBuscar.value;
-    if (!turmaId) {
-      alert("Selecione uma turma para editar");
-      return;
-    }
+    if (!turmaId) return alert("Selecione uma turma para editar");
 
     try {
-      const res = await fetch(`/api/turma/${turmaId}`, { method: "POST" });
-      if (!res.ok) throw new Error("Erro ao carregar turma");
-      const turma = await res.json();
-
-      // Preenche ID e exibe formulário
-      editarForm.querySelector("#turmaId").value = turma.id;
-      editarForm.style.display = "block";
-
-      // Preenche campos
-      editarForm.querySelector('input[name="nome"]').value = turma.nome;
-
-      const cursoSelect = editarForm.querySelector("#cursoEditarSelect");
-      const disciplinaSelect = editarForm.querySelector("#disciplinaEditarSelect");
-      const professorSelect = editarForm.querySelector("#professorEditarSelect");
-      const alunoSelect = editarForm.querySelector("#alunoEditarSelect");
-
-      cursoSelect.innerHTML = `<option value="${turma.curso.id}" selected>${turma.curso.nome}</option>`;
-      cursoSelect.disabled = true;
-
-      disciplinaSelect.innerHTML = `<option value="${turma.disciplina.id}" selected>${turma.disciplina.nome}</option>`;
-      disciplinaSelect.disabled = true;
-
-      // Inicializa múltiplos
-      const choicesProfessor = new Choices(professorSelect, {
-        ...baseChoicesConfig,
-        placeholderValue: "Selecione professores...",
-        searchPlaceholderValue: "Buscar professor...",
-        noResultsText: "Nenhum professor encontrado"
-      });
-
-      const choicesAluno = new Choices(alunoSelect, {
-        ...baseChoicesConfig,
-        placeholderValue: "Selecione alunos...",
-        searchPlaceholderValue: "Buscar aluno...",
-        noResultsText: "Nenhum aluno encontrado"
-      });
-
-      // Carrega listas e marca os vinculados
-      const [professores, alunos] = await Promise.all([
-        carregarProfessores(turma.disciplina.id, choicesProfessor),
-        carregarAlunos(turma.curso.id, choicesAluno)
-      ]);
-
-      if (Array.isArray(turma.professores)) {
-        turma.professores.forEach(p => choicesProfessor.setChoiceByValue(String(p.id)));
-      }
-
-      if (Array.isArray(turma.alunos)) {
-        turma.alunos.forEach(a => choicesAluno.setChoiceByValue(String(a.id)));
-      }
-
-      editarForm.querySelector("#turmaAtiva").checked = !!turma.ativo;
-
+      const turma = await fetchJSON(`/api/turma/${turmaId}`);
+      preencherFormularioEdicao(editarForm, turma);
     } catch (err) {
       console.error(err);
       alert("Falha ao carregar turma selecionada");
@@ -226,54 +119,21 @@ function setupFormularioEditarTurma(secao) {
 
 
 
-// ---------- [ SEÇÃO: funções de integração com servidor ] ----------
+
+
 async function carregarCursos(select) {
   try {
-    const usuarioResp = await fetch("/api/usuario/atual/admin", { method: 'POST' });
-    if (!usuarioResp.ok) throw new Error("Falha ao obter usuário atual");
-    const usuario = await usuarioResp.json();
+    const usuario = await fetchJSON("/api/usuario/atual/admin");
+    const endpoint = {
+      ROOT: "/api/curso/getAll",
+      CHEFE_DE_DEPARTAMENTO: `/api/curso/departamento/${usuario.departamento}`,
+      COORDENADOR: `/api/curso/${usuario.curso}`
+    }[usuario.cargo];
 
-    let endpoint;
-    switch (usuario.cargo) {
-      case "ROOT":
-        endpoint = "/api/curso/getAll";
-        break;
-      case "CHEFE_DE_DEPARTAMENTO":
-        endpoint = `/api/curso/departamento/${usuario.departamento}`;
-        break;
-      case "COORDENADOR":
-        endpoint = `/api/curso/${usuario.curso}`;
-        break;
-      default:
-        throw new Error("Cargo não autorizado");
-    }
+    if (!endpoint) throw new Error("Cargo não autorizado");
 
-    const cursosResp = await fetch(endpoint, { method: 'POST' });
-    if (!cursosResp.ok) throw new Error("Falha ao carregar cursos");
-    const cursos = await cursosResp.json();
-
-    select.innerHTML = "";
-
-    if (usuario.cargo === "COORDENADOR") {
-      const curso = Array.isArray(cursos) ? cursos[0] : cursos;
-      select.innerHTML = `<option value="${curso.id}" selected>${curso.nome}</option>`;
-      select.disabled = true;
-      select.dispatchEvent(new Event("change"));
-      return;
-    }
-
-    const placeholder =
-      usuario.cargo === "ROOT"
-        ? "Selecione um curso"
-        : "Selecione um curso do seu departamento";
-    select.innerHTML = `<option value="">${placeholder}</option>`;
-
-    cursos.forEach(c => {
-      select.innerHTML += `<option value="${c.id}">${c.nome}</option>`;
-    });
-
-    select.disabled = false;
-
+    const cursos = await fetchJSON(endpoint);
+    preencherSelectCursos(select, cursos, usuario);
   } catch (err) {
     console.error(err);
     preencherSelect(select, [], "Erro ao carregar cursos");
@@ -281,8 +141,7 @@ async function carregarCursos(select) {
 }
 
 function carregarDisciplinas(cursoId, select, choicesProfessor) {
-  fetch(`/api/disciplina/curso/${cursoId}`, { method: 'POST' })
-    .then(res => res.json())
+  fetchJSON(`/api/disciplina/curso/${cursoId}`)
     .then(disciplinas => {
       preencherSelect(select, disciplinas, "Selecione uma disciplina");
       choicesProfessor.clearStore();
@@ -290,69 +149,115 @@ function carregarDisciplinas(cursoId, select, choicesProfessor) {
     .catch(() => preencherSelect(select, [], "Erro ao carregar disciplinas"));
 }
 
-function carregarProfessores(disciplinaId, choicesProfessor) {
-  return fetch(`/api/professor/disciplina/${disciplinaId}`, { method: 'POST' })
-    .then(res => res.json())
-    .then(professores => {
-      const lista = professores.map(p => ({
-        id: p.id,
-        nome: `${p.numeroMatricula} - ${p.nome}`
-      }));
-      preencherSelect(choicesProfessor, lista);
-      return professores;
-    })
-    .catch(() => preencherSelect(choicesProfessor, [], "Erro ao carregar professores"));
+function carregarProfessores(disciplinaId, choices) {
+  return fetchJSON(`/api/professor/disciplina/${disciplinaId}`)
+    .then(profs => preencherSelect(choices, profs.map(p => ({ id: p.id, nome: `${p.numeroMatricula} - ${p.nome}` }))))
+    .catch(() => preencherSelect(choices, [], "Erro ao carregar professores"));
 }
 
-function carregarAlunos(cursoId, choicesAluno) {
-  return fetch(`/api/aluno/curso/${cursoId}`, { method: 'POST' })
-    .then(res => res.json())
-    .then(alunos => {
-      const lista = alunos.map(a => ({
-        id: a.id,
-        nome: `${a.numeroMatricula} - ${a.nome}`
-      }));
-      preencherSelect(choicesAluno, lista);
-      return alunos;
-    })
-    .catch(() => preencherSelect(choicesAluno, [], "Erro ao carregar alunos"));
+function carregarAlunos(cursoId, choices) {
+  return fetchJSON(`/api/aluno/curso/${cursoId}`)
+    .then(alunos => preencherSelect(choices, alunos.map(a => ({ id: a.id, nome: `${a.numeroMatricula} - ${a.nome}` }))))
+    .catch(() => preencherSelect(choices, [], "Erro ao carregar alunos"));
+}
+
+async function carregarTurmasDoUsuario(choicesBuscar) {
+  try {
+    const usuario = await fetchJSON("/api/usuario/atual/admin");
+    const endpoint = {
+      ROOT: "/api/turma/getAll",
+      CHEFE_DE_DEPARTAMENTO: `/api/turma/departamento/${usuario.departamento}`,
+      COORDENADOR: `/api/turma/curso/${usuario.curso}`
+    }[usuario.cargo];
+    
+    const turmas = await fetchJSON(endpoint);
+    const opcoes = turmas.map(t => ({ value: t.id, label: `${t.nome} (${t.curso || "Sem curso"})` }));
+    choicesBuscar.clearChoices();
+    choicesBuscar.setChoices(opcoes, "value", "label", true);
+  } catch (err) {
+    console.error("Falha ao carregar turmas:", err);
+    choicesBuscar.clearChoices();
+    choicesBuscar.setChoices([{ value: "", label: "Erro ao carregar turmas" }], "value", "label", true);
+  }
 }
 
 
 
-// ---------- [ SEÇÃO: utilitário genérico ] ----------
+
+
+async function fetchJSON(url, options = { method: "POST" }) {
+  const res = await fetch(url, options);
+  if (!res.ok) throw new Error(`Erro HTTP ${res.status} em ${url}`);
+  return res.json();
+}
+
 function preencherSelect(selectOuChoices, dados, placeholder = null) {
   const isChoices = typeof selectOuChoices.setChoices === "function";
+
   if (isChoices) {
     selectOuChoices.clearStore();
-    const choices = dados.map(item => ({
-      value: item.id,
-      label: item.nome
-    }));
-    selectOuChoices.setChoices(choices, 'value', 'label', true);
-    return;
+    const choices = dados.map(item => ({ value: item.id, label: item.nome }));
+    selectOuChoices.setChoices(choices, "value", "label", true);
+  } else {
+    const select = selectOuChoices;
+    select.innerHTML = "";
+    if (placeholder) select.innerHTML = `<option value="">${placeholder}</option>`;
+    dados.forEach(d => {
+      const opt = document.createElement("option");
+      opt.value = d.id;
+      opt.textContent = d.nome;
+      select.append(opt);
+    });
   }
-
-  const select = selectOuChoices;
-  const options = [];
-  if (placeholder) {
-    const opt = document.createElement("option");
-    opt.value = "";
-    opt.textContent = placeholder;
-    options.push(opt);
-  }
-  dados.forEach(item => {
-    const opt = document.createElement("option");
-    opt.value = item.id;
-    opt.textContent = item.nome;
-    options.push(opt);
-  });
-  select.replaceChildren(...options);
 }
 
-function toggleFormFields(form, disable) {
-  form.querySelectorAll("input, select, textarea, button").forEach(el => {
-    if (disable) el.setAttribute("disabled", "true");
-    else el.removeAttribute("disabled");
+function preencherSelectCursos(select, cursos, usuario) {
+  if (usuario.cargo === "COORDENADOR") {
+    const curso = Array.isArray(cursos) ? cursos[0] : cursos;
+    select.innerHTML = `<option value="${curso.id}" selected>${curso.nome}</option>`;
+    select.disabled = true;
+    select.dispatchEvent(new Event("change"));
+  } else {
+    select.innerHTML = `<option value="">Selecione um curso</option>`;
+    cursos.forEach(c => {
+      select.innerHTML += `<option value="${c.id}">${c.nome}</option>`;
+    });
+    select.disabled = false;
+  }
+}
+
+function preencherFormularioEdicao(form, turma) {
+  form.querySelector("#turmaId").value = turma.id;
+  form.style.display = "block";
+  form.querySelector('input[name="nome"]').value = turma.nome;
+
+  const cursoSel = form.querySelector("#cursoEditarSelect");
+  const discSel = form.querySelector("#disciplinaEditarSelect");
+
+  cursoSel.innerHTML = `<option value="${turma.curso.id}" selected>${turma.curso.nome}</option>`;
+  discSel.innerHTML = `<option value="${turma.disciplina.id}" selected>${turma.disciplina.nome}</option>`;
+  cursoSel.disabled = discSel.disabled = true;
+
+  const profChoices = new Choices(form.querySelector("#professorEditarSelect"), {
+    ...baseChoicesConfig,
+    placeholderValue: "Selecione professores...",
+    searchPlaceholderValue: "Buscar professor..."
   });
+  const alunoChoices = new Choices(form.querySelector("#alunoEditarSelect"), {
+    ...baseChoicesConfig,
+    placeholderValue: "Selecione alunos...",
+    searchPlaceholderValue: "Buscar aluno..."
+  });
+
+  Promise.all([
+    carregarProfessores(turma.disciplina.id, profChoices),
+    carregarAlunos(turma.curso.id, alunoChoices)
+  ]).then(() => {
+    turma.professores?.forEach(p => profChoices.setChoiceByValue(String(p.id)));
+    turma.alunos?.forEach(a => alunoChoices.setChoiceByValue(String(a.id)));
+    console.log("Alunos:", turma.alunos);
+    console.log("Professores:", turma.professores);
+  });
+
+  form.querySelector("#turmaAtiva").checked = !!turma.ativo;
 }

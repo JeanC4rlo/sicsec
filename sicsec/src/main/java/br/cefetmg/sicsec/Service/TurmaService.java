@@ -279,82 +279,28 @@ public class TurmaService {
         
     }
 
-    public List<Object> listarTurmas() {
+    public List<Turma> listarTurmas() {
 
         List<Turma> turmas = turmaRepo.findAll();
-        List<Object> turmasObj = new ArrayList<>();
 
-        for(Turma turma : turmas) {
-            turmasObj.add(Map.of(
-                "id", turma.getId(),
-                "nome", turma.getNome(),
-                "disciplina", Map.of(
-                    "id", turma.getDisciplina().getId(),
-                    "nome", turma.getDisciplina().getNome()
-                ),
-                "curso", Map.of(
-                    "id", turma.getCurso().getId(),
-                    "nome", turma.getCurso().getNome()
-                )
-            ));
-        }
-
-        return turmasObj;
+        return turmas;
 
     }
 
-    public Object obterTurmaPorId(Long turmaId) {
+    public Turma obterTurmaPorId(Long turmaId) {
 
         Turma turma = turmaRepo.findById(turmaId).orElseThrow(() -> new IllegalStateException("Turma Invalida"));
 
-        List<Long> discentesId = new ArrayList<>();
-        for (Aluno a : turma.getDiscentes()) {
-            discentesId.add(a.getId());
-        }
-
-        List<Long> doscentesId = new ArrayList<>();
-        for (Professor p : turma.getDoscentes()) { 
-            doscentesId.add(p.getId());
-        }
-
-        return Map.of(
-            "id", turma.getId(),
-            "nome", turma.getNome(),
-            "disciplina", Map.of(
-                "id", turma.getDisciplina().getId(),
-                "nome", turma.getDisciplina().getNome()
-            ),
-            "curso", Map.of(
-                "id", turma.getCurso().getId(),
-                "nome", turma.getCurso().getNome()
-            ),
-            "professores", doscentesId,
-            "alunos", discentesId
-        );
+        return turma;
 
     }
     
-    public List<Object> listarTurmasPorCurso(Long cursoId) {
+    public List<Turma> listarTurmasPorCurso(Long cursoId) {
 
         Curso curso = cursoRepo.findById(cursoId).orElseThrow(() -> new IllegalStateException("Curso Invalido"));
         List<Turma> turmas = turmaRepo.findByCurso(curso);
-        List<Object> turmasObj = new ArrayList<>();
-
-        for(Turma turma : turmas) {
-            turmasObj.add(Map.of(
-                "id", turma.getId(),
-                "nome", turma.getNome(),
-                "disciplina", Map.of(
-                    "id", turma.getDisciplina().getId(),
-                    "nome", turma.getDisciplina().getNome()
-                ),
-                "curso", Map.of(
-                    "id", turma.getCurso().getId(),
-                    "nome", turma.getCurso().getNome()
-                )
-            ));
-        }
-        return turmasObj;
+        
+        return turmas;
     }
 
     public List<Turma> listarTurmasPorDepartamento(Long departamentoId) {
@@ -368,28 +314,11 @@ public class TurmaService {
         return turmas;
     }
 
-    public List<Object> buscarTurmaPorNome(String nome, HttpServletRequest request) {
+    public List<Turma> buscarTurmaPorNome(String nome, HttpServletRequest request) {
         
         List<Turma> turmas = turmaRepo.findByNomeContainingIgnoreCase(nome);
-        List<Object> turmasObj = new ArrayList<>();
 
-        for(Turma turma : turmas) {
-
-            turmasObj.add(Map.of(
-                "id", turma.getId(),
-                "nome", turma.getNome(),
-                "disciplina", Map.of(
-                    "id", turma.getDisciplina().getId(),
-                    "nome", turma.getDisciplina().getNome()
-                ),
-                "curso", Map.of(
-                    "id", turma.getCurso().getId(),
-                    "nome", turma.getCurso().getNome()
-                )
-            ));
-        }
-
-        return turmasObj;
+        return turmas;
         
     }
     

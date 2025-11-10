@@ -5,6 +5,9 @@ import org.springframework.web.bind.annotation.*;
 
 import br.cefetmg.sicsec.Model.Curso.Disciplina;
 import br.cefetmg.sicsec.Service.DisciplinaService;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Controller
@@ -15,7 +18,7 @@ public class DisciplinaController {
     private DisciplinaService disciplinaService;
     
     @PostMapping("/curso/{cursoId}")
-    public @ResponseBody Iterable<Disciplina> getDisciplinasByCurso(@PathVariable Long cursoId) {
+    public @ResponseBody List<Disciplina> getDisciplinasByCurso(@PathVariable Long cursoId) {
         return disciplinaService.getByCursoId(cursoId);
     }
 
