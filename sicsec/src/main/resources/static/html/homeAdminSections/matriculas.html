@@ -5,7 +5,7 @@
 </header>
 
 <div class="criar tab" id="matriculaForm">
-    <form id="formMatricula" action="/api/matricular" method="post">
+    <form id="formMatricula" method="post">
         <input type="text" name="cpf" placeholder="CPF" required />
         <input type="text" name="nome" placeholder="Nome completo" required />
         <input type="email" name="email" placeholder="Email" required />
@@ -26,7 +26,7 @@
         <button type="submit">Buscar</button>
     </form>
 
-    <form id="editarForm" action="/api/matricula/atualizar" method="post" style="display:none;margin-top: 1rem;">
+    <form id="editarForm" method="post" style="display:none;margin-top: 1rem;">
         <input type="hidden" id="matriculaId" name="id" />
         <input type="text" name="cpf" placeholder="CPF" required />
         <input type="text" name="nome" placeholder="Nome completo" required />

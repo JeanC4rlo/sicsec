@@ -120,10 +120,6 @@ function setupEditarMatricula(secao) {
         const buscarForm = secao.querySelector("#buscarMatriculaForm");
         if (!buscarForm) return;
 
-        buscarForm.reset();
-        editarForm.style.display = "none";
-        editarForm.reset();
-
         try {
             const response = await fetch("/api/matricula/atualizar", {
                 method: "POST",
@@ -136,6 +132,11 @@ function setupEditarMatricula(secao) {
         } catch (err) {
             console.error(err);
             alert("Erro ao atualizar matrícula");
+        }
+        finally {
+            buscarForm.reset();
+            editarForm.style.display = "none";
+            editarForm.reset();
         }
     });
 }
@@ -158,10 +159,13 @@ function setupRegistrarMatricula(secao) {
             if (!response.ok) throw new Error("Erro ao cadastrar matrícula");
 
             alert("Matrícula cadastrada com sucesso!");
-            form.reset();
+
         } catch (err) {
             console.error(err);
             alert("Erro ao cadastrar matrícula");
+        }
+        finally {
+            form.reset();
         }
     });
 }
