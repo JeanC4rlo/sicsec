@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.servlet.http.HttpSession;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @Controller
 public class ViewController {
@@ -49,4 +51,10 @@ public class ViewController {
     public String indexView() {
         return "redirect:/login";
     }
+
+    @GetMapping("/fazerAtividades")
+    public String getMethodName(@RequestParam String param) {
+        return "/fazerAtividades";
+    }
+    
 }

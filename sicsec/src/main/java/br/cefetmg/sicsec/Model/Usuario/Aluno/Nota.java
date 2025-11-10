@@ -70,7 +70,4 @@ public class Nota {
     public void setAvaliacao(String avaliacao) {
         this.avaliacao = avaliacao;
     }
-    
-    
-   
 }
