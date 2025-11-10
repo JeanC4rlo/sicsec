@@ -23,7 +23,7 @@ public class NescessidadeEspecial {
     private Aluno aluno;
     
     private String tipo;
-    private String cidr;
+    private String cid;
     private String descricao;
     private String acomodacao;
 
@@ -51,12 +51,12 @@ public class NescessidadeEspecial {
         this.tipo = tipo;
     }
 
-    public String getCidr() {
-        return cidr;
+    public String getCid() {
+        return cid;
     }
 
-    public void setCidr(String cidr) {
-        this.cidr = cidr;
+    public void setCid(String cid) {
+        this.cid = cid;
     }
 
     public String getDescricao() {

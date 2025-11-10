@@ -24,5 +24,9 @@ public interface MatriculaRepo extends JpaRepository<Matricula, Long> {
             WHERE m.cpf.cpf = :cpf
             """)
     Matricula findByCpf(@Param("cpf") Long cpf);
+
+    boolean existsByNumeroMatricula(Long numeroMatricula);
+
+    Matricula findByNumeroMatricula(Long numeroMatricula);
     
 }
