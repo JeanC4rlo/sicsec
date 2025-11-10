@@ -13,7 +13,6 @@ import java.util.Map;
 @Service
 public class CursoService {
 
-
     @Autowired
     private CursoRepo cursoRepo;
 
@@ -23,15 +22,14 @@ public class CursoService {
 
         List<Object> cursos = new ArrayList<>();
 
-        for(Curso curso : cursosDAO) {
+        for (Curso curso : cursosDAO) {
             cursos.add(Map.of(
-                "id", curso.getId(),
-                "nome", curso.getNome()
-                ));
+                    "id", curso.getId(),
+                    "nome", curso.getNome()));
         }
 
         return cursos;
-        
+
     }
 
     public Object getCursosByDepartamento(Long departamentoId) {
@@ -40,27 +38,17 @@ public class CursoService {
 
         List<Object> cursos = new ArrayList<>();
 
-        for(Curso curso : cursosDAO) {
+        for (Curso curso : cursosDAO) {
             cursos.add(Map.of(
-                "id", curso.getId(),
-                "nome", curso.getNome()
-                ));
+                    "id", curso.getId(),
+                    "nome", curso.getNome()));
         }
 
         return cursos;
     }
 
-    public Object getCursoById(Long cursoId) {
-
-        Curso cursoDAO = cursoRepo.findById(cursoId).orElseThrow(() -> new IllegalStateException("Curso Invalido"));
-
-        Object curso = Map.of(
-                "id", cursoDAO.getId(),
-                "nome", cursoDAO.getNome()
-                );
-
-        return curso;
-
+    public Curso getCursoById(Long cursoId) {
+        return cursoRepo.findById(cursoId)
+                .orElseThrow(() -> new IllegalStateException("Curso inválido"));
     }
-
 }

@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
     <link th:href="@{/css/home.css}" rel="stylesheet" />
     <link th:href="@{/css/base.css}" rel="stylesheet" />
-    <link th:href="@{/css/matricula.css}" rel="stylesheet" />
+    <link th:href="@{/css/matriculas.css}" rel="stylesheet" />
     <link th:href="@{/css/turmas.css}" rel="stylesheet" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -15,7 +15,7 @@
       rel="stylesheet"
     />
     <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
-    <script th:src="@{/js/homeAdmin/inits/initGestao.js}"></script>
+    <script th:src="@{/js/homeAdmin/inits/initMatriculas.js}"></script>
     <script th:src="@{/js/homeAdmin/inits/initTurmas.js}"></script>
     <script th:src="@{/js/homeAdmin/SectionManager.js}"></script>
     <title>SICSEC</title>
@@ -31,8 +31,8 @@
           <img th:src="@{/images/home/homepage.svg}" alt="" />
           Home
         </button>
-        <button data-section="matricula">
-          <img th:src="@{/images/home/turmas.svg}" alt="" />
+        <button data-section="matriculas">
+          <img th:src="@{/images/home/pessoa.svg}" alt="" />
           Gestão de Usuários
         </button>
         <button data-section="turmas">
@@ -47,7 +47,7 @@
         <div class="wrapper">
         </div>
       </section>
-      <section id="matricula">
+      <section id="matriculas">
         <div class="wrapper">
         </div>
       </section>

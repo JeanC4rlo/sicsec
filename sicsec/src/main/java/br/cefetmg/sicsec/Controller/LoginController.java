@@ -21,9 +21,9 @@ public class LoginController {
 
 	@PostMapping("/api/login")
 	public String login(@RequestParam String cpf,
-			@RequestParam String senha,
-			HttpSession session,
-			Model model) {
+						@RequestParam String senha,
+						HttpSession session,
+						Model model) {
 
     	return loginService.authenticate(cpf, senha, session, model);
 	}
