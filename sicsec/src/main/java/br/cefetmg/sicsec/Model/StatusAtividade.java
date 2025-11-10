@@ -10,7 +10,7 @@ import jakarta.persistence.ManyToOne;
 import java.time.LocalDateTime;
 
 @Entity
-public class Tentativa {
+public class StatusAtividade {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
