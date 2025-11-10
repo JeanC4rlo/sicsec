@@ -1,9 +1,10 @@
 class SectionManager {
+
     constructor(navSelector = "nav button", sectionSelector = "main > section") {
         this.navButtons = document.querySelectorAll(navSelector);
         this.sections = document.querySelectorAll(sectionSelector);
         this.activeSectionId = localStorage.getItem("secaoAtiva") || (this.sections[0]?.id || null);
-        this.initSections = ["matricula"];
+        this.initSections = ["matricula", "turmas"];
     }
 
     init() {
@@ -42,7 +43,14 @@ class SectionManager {
     }
 
     runInit(id) {
-        if (id === "matricula") initGestao();
+        switch (id) {
+            case "matricula":
+                initGestao();
+                break;
+            case "turmas":
+                initTurmas();
+                break;
+        }
     }
 }
 

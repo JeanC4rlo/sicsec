@@ -4,25 +4,26 @@
  */
 package br.cefetmg.sicsec.Repository;
 
+import br.cefetmg.sicsec.Model.Curso.Disciplina;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
-import br.cefetmg.sicsec.Model.Usuario.Matricula;
+import java.util.List;
 
 /**
  *
  * @author davig
  */
 @Repository
-public interface MatriculaRepo extends JpaRepository<Matricula, Long> {
+public interface DisciplinaRepo extends JpaRepository<Disciplina, Long> {
     
+
     @Query("""
-            SELECT m
-            FROM Matricula m
-            WHERE m.cpf.cpf = :cpf
+            SELECT d
+            FROM Disciplina d
+            WHERE d.curso.id = :curso_id
             """)
-    Matricula findByCpf(@Param("cpf") Long cpf);
-    
+    List<Disciplina> findByCursoId(@Param("curso_id") Long cursoId);
+
 }

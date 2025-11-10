@@ -2,9 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package br.cefetmg.sicsec.Repository;
+package br.cefetmg.sicsec.Repository.Usuarios;
 
 import br.cefetmg.sicsec.Model.Usuario.Usuario;
+import br.cefetmg.sicsec.Model.Usuario.Aluno.Aluno;
 import br.cefetmg.sicsec.Model.Util.Enum.Cargo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -21,22 +22,28 @@ import java.util.List;
  */
 
 @Repository
-public interface UsuarioRepo extends JpaRepository<Usuario, Long> {
-    //Busca usuários por tipo de matrícula (ESTUDANTE, PROFESSOR, ADMIN)
-    List<Usuario> findByCargo(Cargo cargo);
+public interface AlunoRepo extends JpaRepository<Aluno, Long> {
+    
+    List<Aluno> findByCargo(Cargo cargo);
 
-    //Busca usuários pela matrícula
-    Optional<Usuario> findByMatricula_NumeroMatricula(Long matricula);
+    Optional<Aluno> findByMatricula_NumeroMatricula(Long matricula);
 
-    //Busca usuários pelo CPF
     @Query("""
             SELECT u
             FROM Usuario u
             JOIN u.matricula m
             WHERE m.cpf.cpf = :cpf
             """)
-    List<Usuario> findByCpf(@Param("cpf") Long cpf);
+    List<Aluno> findByCpf(@Param("cpf") Long cpf);
     
-    //Busca usuários pelo nome contendo algo (LIKE %nome%)
-    List<Usuario> findByMatricula_NomeContaining(String nome);
+    List<Aluno> findByMatricula_NomeContaining(String nome);
+
+     @Query("""
+            SELECT a
+            FROM Aluno a
+            JOIN a.matricula m
+            WHERE m.curso.id = :cursoId
+            """)
+    List<Aluno> findAllByCurso(@Param("cursoId") Long cursoId);
+
 }

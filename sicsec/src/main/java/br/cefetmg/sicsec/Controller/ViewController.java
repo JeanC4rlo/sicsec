@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class ViewController {
+    
     @GetMapping("/home")
     public String homeView(HttpSession session, RedirectAttributes redirectAttributes) {
         Object usuario = session.getAttribute("usuario");
