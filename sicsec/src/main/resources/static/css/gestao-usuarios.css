@@ -1,0 +1,24 @@
+.escondido {
+    display: none;
+}
+
+#botoes {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4vh;
+    margin-top: 10vh;
+}
+
+#botoes button {
+    color: white;
+    background-color: var(--primary);
+    height: 7vh;
+    width: 15vw;
+    font-size: 1.5rem;
+}
+
+#botoes button:hover {
+    background-color: var(--secondary);
+    cursor: pointer;
+}
