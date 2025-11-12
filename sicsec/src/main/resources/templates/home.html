@@ -3,14 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <title>SICSEC</title>
-
-
-    <link rel="stylesheet" th:href="@{/css/home.css}" />
-    <link rel="stylesheet" th:href="@{/css/base.css}" />
-    <link rel="stylesheet" th:href="@{/css/biblioteca.css}" />
-
+    
+    <link th:href="@{/css/home.css}" rel="stylesheet" />
+    <link th:href="@{/css/base.css}" rel="stylesheet" />
+    <link th:href="@{/css/biblioteca.css}" rel="stylesheet" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -19,23 +15,24 @@
       rel="stylesheet"
     />
 
-   
-    <script th:src="@{/scripts/home/sections/homepage.js}"></script>
-    <script th:src="@{/scripts/home/sections/loginBiblioteca.js}"></script>
-    <script th:src="@{/scripts/home/sections/tabelaAcervo.js}"></script>
-    <script th:src="@{/scripts/home/sections/bibliotecaSections.js}"></script>
-    <script th:src="@{/scripts/home/sections/tabelaDinamica.js}"></script>
-    <script th:src="@{/scripts/home/sections/turmasVinculadas.js}"></script>
-    <script th:src="@{/scripts/home/sections/turmaSections.js}"></script>
-    <script th:src="@{/scripts/home/sections/bolsas.js}"></script>
-    <script th:src="@{/scripts/home/sections/bolsasSections.js}"></script>
-    <script th:src="@{/scripts/home/home.js}"></script>
+    <script th:src="@{/js/home/sections/homepage.js}"></script>
+    <script th:src="@{/js/home/sections/loginBiblioteca.js}"></script>
+    <script th:src="@{/js/home/sections/tabelaAcervo.js}"></script>
+    <script th:src="@{/js/home/sections/bibliotecaSections.js}"></script>
+    <script th:src="@{/js/home/sections/tabelaDinamica.js}"></script>
+    <script th:src="@{/js/home/sections/turmasVinculadas.js}"></script>
+    <script th:src="@{/js/home/sections/turmaSections.js}"></script>
+    <script th:src="@{/js/home/sections/bolsas.js}"></script>
+    <script th:src="@{/js/home/sections/bolsasSections.js}"></script>
+    <script th:src="@{/js/home/home.js}"></script>
+
+    <title>SICSEC</title>
   </head>
 
   <body>
     <header>
       <div class="logos">
-        <img th:src="@{/images/cefet.png}" alt="Logo CEFET" />
+        <img th:src="@{/images/cefet.png}" alt="" id="logo-cefet" />
         <h1>SICSEC</h1>
       </div>
 
@@ -61,16 +58,12 @@
           Bolsas
         </button>
       </nav>
-
-      <a th:href="@{/logout}" class="sair">Sair</a>
+      <a th:href="@{/}" class="sair">Sair</a>
     </header>
 
     <main>
       <section id="homepage">
-        <div class="wrapper">
-          <h2>Bem-vindo, <span th:text="${usuario.matricula.nome}">Usuário</span>!</h2>
-          <p>Seu cargo: <span th:text="${usuario.cargo}"></span></p>
-        </div>
+        <div class="wrapper"></div>
       </section>
 
       <section id="turmas">

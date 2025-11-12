@@ -4,11 +4,12 @@
  */
 package br.cefetmg.sicsec.Repository;
 
-import br.cefetmg.sicsec.Model.Usuario.Matricula;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import br.cefetmg.sicsec.Model.Usuario.Matricula;
 
 /**
  *
@@ -16,5 +17,16 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface MatriculaRepo extends JpaRepository<Matricula, Long> {
+    
+    @Query("""
+            SELECT m
+            FROM Matricula m
+            WHERE m.cpf.cpf = :cpf
+            """)
+    Matricula findByCpf(@Param("cpf") Long cpf);
+
+    boolean existsByNumeroMatricula(Long numeroMatricula);
+
+    Matricula findByNumeroMatricula(Long numeroMatricula);
     
 }

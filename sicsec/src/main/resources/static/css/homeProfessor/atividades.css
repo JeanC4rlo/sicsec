@@ -1,0 +1,124 @@
+#barra-de-pesquisa {
+    width: 100%;
+    max-width: 400px;
+    padding: 0.75rem 1rem;
+    border: 2px solid black;
+    border-radius: 0.25rem;
+    font-size: 1rem;
+    transition: 300ms ease all;
+    margin-bottom: 1rem;
+}
+
+#barra-de-pesquisa:focus {
+    outline: none;
+    border-color: var(--primary);
+    background-color: var(--primary);
+    color: white;
+}
+
+#atividades-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    width: 100%;
+    padding: 2rem 5vw;
+    background-color: var(--bg-secondary);
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+#add-atividade {
+    background-color: var(--primary);
+    color: white;
+    font-weight: bold;
+    font-size: 1rem;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 0.5rem;
+    transition: 200ms ease all;
+    cursor: pointer;
+    align-self: flex-start;
+}
+
+#add-atividade:hover {
+    background-color: var(--secondary);
+    transform: scale(1.05);
+}
+
+#tabela-atividades {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    border-radius: 0.5rem;
+    overflow: hidden;
+    table-layout: fixed;
+}
+
+#tabela-atividades caption {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--primary);
+    padding: 1rem;
+    text-align: left;
+}
+
+#tabela-atividades thead {
+    background-color: var(--primary);
+    color: white;
+}
+
+#tabela-atividades th, 
+#tabela-atividades td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+#tabela-atividades th {
+    font-weight: bold;
+}
+
+#tabela-atividades tbody tr:nth-child(even):not(.encerrada) {
+    background-color: var(--bg-secondary);
+}
+
+#tabela-atividades tbody tr:hover:not(.encerrada) {
+    background-color: var(--secondary);
+    color: white;
+    cursor: pointer;
+}
+
+.tabela-container {
+    max-height: 60vh;
+    overflow-y: auto;
+    border-radius: 0.5rem;
+}
+
+.encerrada {
+    background-color: #6a6a6a;
+    color: #e0e0e0;
+    opacity: 0.7;
+    font-style: italic;
+}
+
+.encerrada:hover {
+    background-color: var(--primary);
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    #tabela-atividades th,
+    #tabela-atividades td {
+        font-size: 0.9rem;
+        padding: 0.5rem;
+    }
+
+    #barra-de-pesquisa {
+        max-width: 100%;
+    }
+
+    #add-atividade {
+        width: 100%;
+    }
+}

@@ -4,6 +4,7 @@
  */
 package br.cefetmg.sicsec.Model.Curso;
 
+import br.cefetmg.sicsec.Model.Curso.Turma.Turma;
 import br.cefetmg.sicsec.Model.Util.Enum.DiaSemana;
 import br.cefetmg.sicsec.Model.Util.Horario;
 import com.fasterxml.jackson.annotation.*;
@@ -19,6 +20,11 @@ public class Aula {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    
+    @JsonBackReference
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_turma", nullable = false)
+    private Turma turma;
     
     @Enumerated(EnumType.STRING)
     private DiaSemana dia;
@@ -41,6 +47,14 @@ public class Aula {
         this.id = id;
     }
 
+    public Turma getTurma() {
+        return turma;
+    }
+
+    public void setTurma(Turma turma) {
+        this.turma = turma;
+    }
+    
     public DiaSemana getDia() {
         return dia;
     }

@@ -1,4 +1,4 @@
-const fotoPadrao = "../imagens/foto-padrao.png";
+const fotoPadrao = "/images/foto-padrao.png";
 let listaTurmas;
 let materiaAtual;
 let localAtual;

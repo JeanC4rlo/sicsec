@@ -4,7 +4,6 @@
  */
 package br.cefetmg.sicsec.Model.Curso;
 
-import br.cefetmg.sicsec.Model.Curso.Curso;
 import br.cefetmg.sicsec.Model.Curso.Turma.Turma;
 import br.cefetmg.sicsec.Model.Util.Enum.Area;
 import com.fasterxml.jackson.annotation.*;
@@ -28,7 +27,7 @@ public class Disciplina {
     private Area area;
     
     private String nome;
-    private int[] cargaHoraria; //Número de horários da aula por semana.
+    private int cargaHoraria; //Número de horários da aula por semana.
     
     @JsonBackReference
     @OneToMany(fetch = FetchType.LAZY, mappedBy="disciplina")
@@ -68,11 +67,11 @@ public class Disciplina {
         this.nome = nome;
     }
 
-    public int[] getCargaHoraria() {
+    public int getCargaHoraria() {
         return cargaHoraria;
     }
 
-    public void setCargaHoraria(int[] cargaHoraria) {
+    public void setCargaHoraria(int cargaHoraria) {
         this.cargaHoraria = cargaHoraria;
     }
 
