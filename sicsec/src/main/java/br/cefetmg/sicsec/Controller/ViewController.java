@@ -16,10 +16,10 @@ public class ViewController {
 
         if (usuario == null) {
             redirectAttributes.addFlashAttribute("error", "Acesse a visão de aluno com um login válido!");
-            return "redirect:/login";
+            return "redirect:/html/login/login.html";
         }
 
-        return "home";
+        return "redirect:/html/aluno/home.html";
     }
 
     @GetMapping("/homeAdmin")
@@ -28,7 +28,7 @@ public class ViewController {
 
         if (usuario == null) {
             redirectAttributes.addFlashAttribute("error", "Acesse a visão de administrador com um login válido!");
-            return "redirect:/login";
+            return "redirect:/html/login/login.html";
         }
 
         return "homeAdmin";
@@ -40,7 +40,7 @@ public class ViewController {
 
         if (usuario == null) {
             redirectAttributes.addFlashAttribute("error", "Acesse a visão de professor com um login válido!");
-            return "redirect:/login";
+            return "redirect:/html/login/login.html";
         }
 
         return "homeProfessor";
@@ -48,7 +48,7 @@ public class ViewController {
 
     @GetMapping("/")
     public String indexView() {
-        return "redirect:/login";
+        return "redirect:/html/login/login.html";
     }
 
     @GetMapping("/fazerAtividades")

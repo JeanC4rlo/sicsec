@@ -26,10 +26,10 @@ function validate(cpf, senha) {
             if (perfil.senha === senha) {
                 console.log("Logado com sucesso");
                 if(perfil.admin) {
-                    window.location.href = `html/homeAdmin.html?cpf=${encodeURIComponent(cpf)}`;
+                    window.location.href = `/html/admin/home.html?cpf=${encodeURIComponent(cpf)}`;
                 }
                 else {
-                    window.location.href = `html/home.html?cpf=${encodeURIComponent(cpf)}`;
+                    window.location.href = `/html/aluno/home.html?cpf=${encodeURIComponent(cpf)}`;
                 }
             }
             else {

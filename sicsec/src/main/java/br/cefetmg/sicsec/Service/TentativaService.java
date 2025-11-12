@@ -1,5 +1,5 @@
 package br.cefetmg.sicsec.Service;
 
-public class StatusAtividadeService {
+public class TentativaService {
     
 }

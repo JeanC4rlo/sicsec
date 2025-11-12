@@ -16,7 +16,7 @@ public class LoginController {
 
 	@GetMapping("/login")
 	public String loginView() {
-		return "login";
+		return "redirect:/html/login/login.html";
 	}
 
 	@PostMapping("/api/login")

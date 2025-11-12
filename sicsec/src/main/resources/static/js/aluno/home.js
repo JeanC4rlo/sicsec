@@ -39,7 +39,7 @@ async function loadSection(section) {
     if (!section)
         return;
 
-    const resposta = await fetch(`/html/homeSections/${section.id}.html`);
+    const resposta = await fetch(`/html/aluno/frag/${section.id}.html`);
     const _html = await resposta.text();
 
     section.querySelector(".wrapper").innerHTML = _html;

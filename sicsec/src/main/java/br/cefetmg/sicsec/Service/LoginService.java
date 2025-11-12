@@ -46,25 +46,25 @@ public class LoginService {
 				String redirectPage;
 				switch (usuario.getCargo()) {
 					case ADMINISTRADOR:
-						redirectPage = "redirect:/homeAdmin";
+						redirectPage = "redirect:/html/admin/home.html";
 						break;
 					case PROFESSOR:
-						redirectPage = "redirect:/homeProfessor";
+						redirectPage = "redirect:/html/professor/home.html";
 						break;
 					default:
-						redirectPage = "redirect:/home";
+						redirectPage = "redirect:/html/aluno/home.html";
 				}
 				return redirectPage;
 			} else {
 				model.addAttribute("error", "CPF ou senha inválidos.");
-				return "login";
+				return "/login";
 			}
 		} catch(EntityNotFoundException e) {
 			model.addAttribute("error", "Usuário não encontrado.");
-			return "login";
+			return "/login";
 		} catch (Exception e) {
 			model.addAttribute("error", "Error ao realizar login.");
-			return "login";
+			return "/login";
 		}
     }
 }

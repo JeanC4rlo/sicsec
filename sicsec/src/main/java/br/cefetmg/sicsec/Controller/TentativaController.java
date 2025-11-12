@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.cefetmg.sicsec.Model.Atividade;
-import br.cefetmg.sicsec.Model.StatusAtividade;
-import br.cefetmg.sicsec.Repository.StatusAtividadeRepository;
+import br.cefetmg.sicsec.Model.Tentativa;
+import br.cefetmg.sicsec.Repository.TentativaRepository;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,15 +22,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
 @CrossOrigin(origins = "*")
-public class StatusAtividadeController {
+public class TentativaController {
     @Autowired
-    StatusAtividadeRepository statusAtividadeRepository;
+    TentativaRepository statusAtividadeRepository;
 
     @Autowired
     private AtividadeRepository atividadeRepository;
 
     @PostMapping("/salvar-status-atividade")
-    public ResponseEntity<StatusAtividade> salvarStatusAtividade(@RequestBody StatusAtividade statusAtividade) {
+    public ResponseEntity<Tentativa> salvarStatusAtividade(@RequestBody Tentativa statusAtividade) {
         if (statusAtividade.getAtividade() == null || statusAtividade.getAtividade().getId() == null) {
             return ResponseEntity.badRequest().build();
         }
@@ -41,7 +41,7 @@ public class StatusAtividadeController {
 
         statusAtividade.setAtividade(atividadeOpt.get());
 
-        StatusAtividade salvo = statusAtividadeRepository.save(statusAtividade);
+        Tentativa salvo = statusAtividadeRepository.save(statusAtividade);
         return ResponseEntity.ok(salvo);
     }
 
@@ -64,14 +64,14 @@ public class StatusAtividadeController {
     }
 
     @GetMapping("/atividade/{atividadeId}/tentativa-aberta")
-    public StatusAtividade getTentativasAbertas(@PathVariable Long atividadeId) {
+    public Tentativa getTentativasAbertas(@PathVariable Long atividadeId) {
         return statusAtividadeRepository.findByAtividadeIdAndAbertaTrue(atividadeId)
                 .orElse(null);
     }
 
     @GetMapping("/atividade/{atividadeId}/ultima-tentativa")
-    public ResponseEntity<StatusAtividade> buscarUltimaTentativa(@PathVariable Long atividadeId) {
-        Optional<StatusAtividade> ultimaTentativa = statusAtividadeRepository
+    public ResponseEntity<Tentativa> buscarUltimaTentativa(@PathVariable Long atividadeId) {
+        Optional<Tentativa> ultimaTentativa = statusAtividadeRepository
                 .findTopByAtividade_IdOrderByNumTentativaDesc(atividadeId);
 
         return ultimaTentativa
@@ -80,10 +80,10 @@ public class StatusAtividadeController {
     }
 
     @PatchMapping("atualizar-status-tentativa/{tentativaId}/atualizar-tempo")
-    public StatusAtividade atualizarTempo(
+    public Tentativa atualizarTempo(
             @PathVariable Long tentativaId,
             @RequestBody Map<String, Object> dados) {
-        StatusAtividade tentativa = statusAtividadeRepository.findById(tentativaId)
+        Tentativa tentativa = statusAtividadeRepository.findById(tentativaId)
                 .orElseThrow(() -> new RuntimeException("Tentativa não encontrada"));
 
         if (dados.containsKey("tempoRestante")) {
@@ -94,8 +94,8 @@ public class StatusAtividadeController {
     }
 
     @PatchMapping("atualizar-status-tentativa/{tentativaId}/fechar-tentativa")
-    public StatusAtividade fecharTentativa(@PathVariable Long tentativaId) {
-        StatusAtividade tentativa = statusAtividadeRepository.findById(tentativaId)
+    public Tentativa fecharTentativa(@PathVariable Long tentativaId) {
+        Tentativa tentativa = statusAtividadeRepository.findById(tentativaId)
                 .orElseThrow(() -> new RuntimeException("Tentativa não encontrada"));
         tentativa.setTempoRestante(0);
         tentativa.setAberta(false);
@@ -104,8 +104,8 @@ public class StatusAtividadeController {
     }
 
     @PostMapping("/iniciar-tentativa/{atividadeId}")
-    public ResponseEntity<StatusAtividade> iniciarTentativa(@PathVariable Long atividadeId) {
-        StatusAtividade status = new StatusAtividade();
+    public ResponseEntity<Tentativa> iniciarTentativa(@PathVariable Long atividadeId) {
+        Tentativa status = new Tentativa();
         status.setAtividade(atividadeRepository.findById(atividadeId).orElseThrow());
         status.setAberta(true);
         status.setHorarioInicio(LocalDateTime.now());
@@ -114,8 +114,8 @@ public class StatusAtividadeController {
     }
 
     @PostMapping("/iniciar-tentativa/{atividadeId}/continuo")
-    public ResponseEntity<StatusAtividade> iniciarTentativaContinua(@PathVariable Long atividadeId) {
-        StatusAtividade status = new StatusAtividade();
+    public ResponseEntity<Tentativa> iniciarTentativaContinua(@PathVariable Long atividadeId) {
+        Tentativa status = new Tentativa();
         status.setAtividade(atividadeRepository.findById(atividadeId).orElseThrow());
         status.setAberta(true);
         status.setHorarioInicio(LocalDateTime.now());
@@ -126,17 +126,12 @@ public class StatusAtividadeController {
 
     @GetMapping("/tempo-restante/{statusAtividadeId}")
     public ResponseEntity<Long> tempoRestante(@PathVariable Long statusAtividadeId) {
-        StatusAtividade status = statusAtividadeRepository.findById(statusAtividadeId)
+        Tentativa status = statusAtividadeRepository.findById(statusAtividadeId)
                 .orElseThrow();
 
         LocalDateTime agora = LocalDateTime.now();
         Duration decorrido = Duration.between(status.getHorarioInicio(), agora);
         long restante = status.getTempoRestante() - decorrido.getSeconds();
-
-        System.out.println("Início: " + status.getHorarioInicio());
-        System.out.println("Agora: " + agora);
-        System.out.println("Decorrido (s): " + decorrido.getSeconds());
-        System.out.println("Tempo restante salvo: " + status.getTempoRestante());
 
         if (restante <= 0) {
             status.setAberta(false);

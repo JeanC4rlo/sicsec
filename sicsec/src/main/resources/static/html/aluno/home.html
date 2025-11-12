@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<html lang="pt-br">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
-    <link th:href="@{/css/home.css}" rel="stylesheet" />
-    <link th:href="@{/css/base.css}" rel="stylesheet" />
-    <link th:href="@{/css/biblioteca.css}" rel="stylesheet" />
+    <link href="/css/home.css" rel="stylesheet" />
+    <link href="/css/base.css" rel="stylesheet" />
+    <link href="/css/biblioteca.css" rel="stylesheet" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -15,16 +15,16 @@
       rel="stylesheet"
     />
 
-    <script th:src="@{/js/home/sections/homepage.js}"></script>
-    <script th:src="@{/js/home/sections/loginBiblioteca.js}"></script>
-    <script th:src="@{/js/home/sections/tabelaAcervo.js}"></script>
-    <script th:src="@{/js/home/sections/bibliotecaSections.js}"></script>
-    <script th:src="@{/js/home/sections/tabelaDinamica.js}"></script>
-    <script th:src="@{/js/home/sections/turmasVinculadas.js}"></script>
-    <script th:src="@{/js/home/sections/turmaSections.js}"></script>
-    <script th:src="@{/js/home/sections/bolsas.js}"></script>
-    <script th:src="@{/js/home/sections/bolsasSections.js}"></script>
-    <script th:src="@{/js/home/home.js}"></script>
+    <script src="/js/aluno/frag/homepage.js"></script>
+    <script src="/js/aluno/frag/loginBiblioteca.js"></script>
+    <script src="/js/aluno/frag/tabelaAcervo.js"></script>
+    <script src="/js/aluno/frag/bibliotecaSections.js"></script>
+    <script src="/js/aluno/frag/tabelaDinamica.js"></script>
+    <script src="/js/aluno/frag/turmasVinculadas.js"></script>
+    <script src="/js/aluno/frag/turmaSections.js"></script>
+    <script src="/js/aluno/frag/bolsas.js"></script>
+    <script src="/js/aluno/frag/bolsasSections.js"></script>
+    <script src="/js/aluno/home.js"></script>
 
     <title>SICSEC</title>
   </head>
@@ -32,32 +32,32 @@
   <body>
     <header>
       <div class="logos">
-        <img th:src="@{/images/cefet.png}" alt="" id="logo-cefet" />
+        <img src="/images/cefet.png" alt="" id="logo-cefet" />
         <h1>SICSEC</h1>
       </div>
       <nav>
         <button data-section="homepage">
-          <img th:src="@{/images/home/homepage.svg}" alt="" />
+          <img src="/images/home/homepage.svg" alt="" />
           Página Inicial
         </button>
         <button id="botaoAcessoBoletim" data-section="boletim">
-          <img th:src="@{/images/home/boletim.svg}" alt="" />
+          <img src="/images/home/boletim.svg" alt="" />
           Boletim
         </button>
         <button data-section="biblioteca">
-          <img th:src="@{/images/home/biblioteca.svg}" alt="" />
+          <img src="/images/home/biblioteca.svg" alt="" />
           Biblioteca
         </button>
         <button data-section="turmas">
-          <img th:src="@{/images/home/turmas.svg}" alt="" />
+          <img src="/images/home/turmas.svg" alt="" />
           Turmas
         </button>
         <button data-section="bolsas">
-          <img th:src="@{/images/home/bolsas.svg}" alt="" />
+          <img src="/images/home/bolsas.svg" alt="" />
           Bolsas
         </button>
       </nav>
-      <a th:href="@{/}" class="sair">Sair</a>
+      <a href="/" class="sair">Sair</a>
     </header>
 
     <main>

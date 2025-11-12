@@ -6,15 +6,15 @@ import jakarta.persistence.ManyToOne;
 public class QuestionarioEnviado extends AtividadeEnviada {
     @ManyToOne
     @JoinColumn(name = "status_id", nullable = false)
-    private StatusAtividade numDaTentativa;
+    private Tentativa numDaTentativa;
 
     private String respostas;
 
-    public StatusAtividade getNumDaTentativa() {
+    public Tentativa getNumDaTentativa() {
         return numDaTentativa;
     }
 
-    public void setNumDaTentativa(StatusAtividade numDaTentativa) {
+    public void setNumDaTentativa(Tentativa numDaTentativa) {
         this.numDaTentativa = numDaTentativa;
     }
 
