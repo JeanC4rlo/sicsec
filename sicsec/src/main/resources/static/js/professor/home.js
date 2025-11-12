@@ -34,7 +34,7 @@ async function loadSection(section) {
     if (!section)
         return;
 
-    const resposta = await fetch(`homeProfessorSections/${section.id}.html`);
+    const resposta = await fetch(`/html/professor/frag/${section.id}.html`);
     const _html = await resposta.text();
 
     section.querySelector(".wrapper").innerHTML = _html;

@@ -79,7 +79,7 @@ function initAtividades() {
     
 
     btnAddAtividade.addEventListener('click', () => {
-        window.location.href = "../homeProfessorSections/prodAtividade.html";
+        window.location.href = "/producao-atividades";
     });
 
     carregarAtividades();

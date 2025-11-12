@@ -2,10 +2,10 @@ package br.cefetmg.sicsec.Controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.servlet.http.HttpSession;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 @Controller
@@ -31,7 +31,7 @@ public class ViewController {
             return "redirect:/html/login/login.html";
         }
 
-        return "homeAdmin";
+        return "redirect:/html/admin/home.html";
     }
 
     @GetMapping("/homeProfessor")
@@ -43,7 +43,7 @@ public class ViewController {
             return "redirect:/html/login/login.html";
         }
 
-        return "homeProfessor";
+        return "redirect:/html/professor/home.html";
     }
 
     @GetMapping("/")
@@ -52,8 +52,13 @@ public class ViewController {
     }
 
     @GetMapping("/fazerAtividades")
-    public String getMethodName(@RequestParam String param) {
-        return "/fazerAtividades";
+    public String fazerAtividadesView(@RequestParam String param) {
+        return "redirect:/html/aluno/fazer-atividades.html";
+    }
+
+    @GetMapping("/producao-atividades")
+    public String producaoAtividadesView() {
+        return "redirect:/html/professor/producao-atividades";
     }
     
 }

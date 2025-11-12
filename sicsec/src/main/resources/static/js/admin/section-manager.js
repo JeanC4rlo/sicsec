@@ -32,7 +32,7 @@ class SectionManager {
         this.sections.forEach(section => {
             const wrapper = section.querySelector(".wrapper");
             if (!wrapper) return;
-            fetch(`/html/homeAdminSections/${section.id}.html`)
+            fetch(`/html/admin/${section.id}.html`)
                 .then(resp => resp.text())
                 .then(html => {
                     wrapper.innerHTML = html;
