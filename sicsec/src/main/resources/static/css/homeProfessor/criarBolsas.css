@@ -1,0 +1,222 @@
+@import url("../base.css");
+
+:root {
+    --accent: #36b37e;
+    --danger: #ff5630;
+    --bg: #f4f6fa;
+    --text: #222;
+    --card-bg: #fff;
+    --shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+* {
+    box-sizing: border-box;
+    font-family: "Inter", system-ui, sans-serif;
+    color: var(--text);
+}
+
+body {
+    background: linear-gradient(180deg, #f6f9ff 0%, #eef3ff 100%);
+    margin: 0;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    min-height: 100vh;
+}
+
+#btn-sair {
+    align-self: flex-end;
+    background-color: var(--primary);
+    color: white;
+    font-weight: 600;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.6rem 1.2rem;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+#btn-sair:hover {
+    transform: translateY(-2px);
+    background-color: #ff2a00;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    background-color: var(--card-bg);
+    padding: 3rem 2rem;
+    border-radius: 0.75rem;
+    box-shadow: var(--shadow);
+    width: 100%;
+    max-width: 650px;
+    animation: fadeIn 0.4s ease;
+}
+
+form label {
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+input,
+select,
+textarea {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    border: 2px solid #d0d7e2;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: var(--secondary);
+    background-color: #f0f6ff;
+    box-shadow: 0 0 0 3px rgba(38, 132, 255, 0.15);
+}
+
+#btn-enviar {
+    background-color: var(--primary);
+    color: white;
+    font-weight: 600;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1.75rem;
+    cursor: pointer;
+    transition: 0.25s ease;
+    margin: 0.25rem;
+    box-shadow: var(--shadow);
+}
+
+#btn-enviar:hover {
+    background-color: var(--secondary);
+    transform: translateY(-2px);
+}
+
+section {
+    display: none;
+    flex-direction: column;
+    gap: 1.5rem;
+    background-color: var(--card-bg);
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: var(--shadow);
+    width: 100%;
+    max-width: 650px;
+    animation: fadeIn 0.5s ease;
+}
+
+.ativo {
+    display: block;
+}
+
+.inativo {
+    display: none;
+}
+
+section > div{
+    display: none;
+}
+
+#container-botoes {
+    display: flex !important;
+}
+
+section label {
+    font-weight: 600;
+}
+
+section button {
+    background-color: var(--accent);
+    color: white;
+    font-weight: 600;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.6rem 1rem;
+    cursor: pointer;
+    transition: 0.25s ease;
+}
+section button:hover {
+    background-color: #2ca96d;
+    transform: translateY(-2px);
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  background-color: #007bff;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 180px;
+  background-color: #333;
+  color: #fff;
+  text-align: left;
+  border-radius: 6px;
+  padding: 8px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -90px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  font-size: 13px;
+}
+
+.tooltip .tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #333 transparent transparent transparent;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* ===== Animações ===== */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== Responsividade ===== */
+@media (max-width: 600px) {
+    body {
+        padding: 1rem;
+    }
+
+    form,
+    section {
+        width: 100%;
+        padding: 1.25rem;
+    }
+
+    #btn-anterior,
+    #btn-proximo,
+    #btn-enviar {
+        width: 100%;
+    }
+}
