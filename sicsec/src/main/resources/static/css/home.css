@@ -89,6 +89,10 @@ nav button.ativo::before {
     opacity: 1;
 }
 
+.inativo {
+    display: none;
+}
+
 .sair {
     display: flex;
     justify-content: center;
@@ -437,6 +441,7 @@ main>section.ativo {
 .turmas-vinculadas tr:hover,
 .minhas-atividades tr:hover {
     background-color: #f8f9fa;
+    cursor: pointer;
 }
 
 #boletim .wrapper {

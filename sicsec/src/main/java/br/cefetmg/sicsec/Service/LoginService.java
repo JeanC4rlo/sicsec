@@ -27,7 +27,7 @@ public class LoginService {
 
         if (cpf == null || cpf.trim().isEmpty() || senha == null || senha.isEmpty()) {
 			model.addAttribute("error", "CPF e senha são obrigatórios.");
-			return "login";
+			return "redirect:/html/login/login.html";
 		}
 
 		cpf = cpf.replaceAll("[^0-9]", "");
@@ -57,14 +57,14 @@ public class LoginService {
 				return redirectPage;
 			} else {
 				model.addAttribute("error", "CPF ou senha inválidos.");
-				return "/login";
+				return "redirect:/html/login/login.html";
 			}
 		} catch(EntityNotFoundException e) {
 			model.addAttribute("error", "Usuário não encontrado.");
-			return "/login";
+			return "redirect:/html/login/login.html";
 		} catch (Exception e) {
 			model.addAttribute("error", "Error ao realizar login.");
-			return "/login";
+			return "redirect:/html/login/login.html";
 		}
     }
 }

@@ -58,7 +58,7 @@ public class ViewController {
 
     @GetMapping("/producao-atividades")
     public String producaoAtividadesView() {
-        return "redirect:/html/professor/producao-atividades";
+        return "redirect:/html/professor/producao-atividades.html";
     }
     
 }

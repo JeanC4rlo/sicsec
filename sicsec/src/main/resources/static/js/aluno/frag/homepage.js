@@ -86,7 +86,7 @@ function irParaFazerAtividades(id) {
         .then(response => response.json())
         .then(atividade => {
             localStorage.setItem("atividade", JSON.stringify(atividade));
-            window.location.href = "../../fazerAtividades.html";
+            window.location.href = "/html/aluno/fazer-atividades.html";
         })
 }
 
@@ -126,6 +126,8 @@ function carregarAtividades() {
             return response.json();
         })
         .then(dados => {
+            if(dados.length > 0) document.getElementById("msg-sem-atividade").classList.add("inativo");
+            else document.getElementById("msg-sem-atividade").classList.remove("inativo");
             dados.forEach(atividade => {
                 atualizarAtividades(atividade);
             });

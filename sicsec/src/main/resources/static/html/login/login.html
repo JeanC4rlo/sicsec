@@ -21,9 +21,6 @@
 
             <form action="/api/login" method="post">
                 <h1>Faça seu login</h1>
-
-                <p th:if="${error}" th:text="${error}" style="color:red;"></p>
-
                 <div class="inputs">
                     <label>
                         <span class="label-text">CPF</span>
@@ -39,7 +36,7 @@
         </section>
 
         <section class="banner">
-            <img th:src="/images/banner.jpg" alt="" class="imagem-campus">
+            <img src="/images/banner.jpg" alt="" class="imagem-campus">
             <p class="campus">Seja bem-vindo ao SICSEC!</p>
             <p class="endereco">Aqui integramos os serviços primordiais do CEFET</p>
         </section>

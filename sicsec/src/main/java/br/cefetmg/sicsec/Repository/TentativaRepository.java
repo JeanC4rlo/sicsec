@@ -9,6 +9,8 @@ import br.cefetmg.sicsec.Model.Tentativa;
 public interface TentativaRepository extends JpaRepository<Tentativa, Long> {
     long countByAtividade_Id(Long atividadeId);
 
+    long countByAtividade_IdAndAbertaFalse(Long atividadeId);
+
     Optional<Tentativa> findTopByAtividade_IdOrderByNumTentativaDesc(Long atividadeId);
 
     Optional<Tentativa> findByAtividadeIdAndAbertaTrue(Long atividadeId);

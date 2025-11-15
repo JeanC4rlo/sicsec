@@ -35,6 +35,7 @@ function checkQuestaoMarcada() {
 async function carregarOuCriarTentativa() {
     try {
         let response = await fetch(`/atividade/${atividade.id}/tentativa-aberta`);
+        console.log(response);
         if (!response.ok) throw new Error("Erro ao verificar tentativa aberta");
 
         const text = await response.text();
@@ -393,8 +394,11 @@ function salvarStatusTentativa() {
 }
 
 function tratamentoPreFechamentoDaPagina() {
-    if (tempoTotal > 0 && atividade.tipoTimer === "interrompivel")
-        atualizarTempo();
+    if (tempoTotal > 0) {
+        if (atividade.tipoTimer === "interrompivel") {
+            atualizarTempo();
+        }
+    }
     else
         fecharTentativa();
 }

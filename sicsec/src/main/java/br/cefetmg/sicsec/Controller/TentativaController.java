@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 @CrossOrigin(origins = "*")
 public class TentativaController {
     @Autowired
-    TentativaRepository statusAtividadeRepository;
+    TentativaRepository tentativaRepository;
 
     @Autowired
     private AtividadeRepository atividadeRepository;
@@ -41,7 +41,7 @@ public class TentativaController {
 
         statusAtividade.setAtividade(atividadeOpt.get());
 
-        Tentativa salvo = statusAtividadeRepository.save(statusAtividade);
+        Tentativa salvo = tentativaRepository.save(statusAtividade);
         return ResponseEntity.ok(salvo);
     }
 
@@ -58,20 +58,20 @@ public class TentativaController {
                     .body(null);
         }
 
-        long tentativas = statusAtividadeRepository.countByAtividade_Id(atividadeId);
+        long tentativas = tentativaRepository.countByAtividade_IdAndAbertaFalse(atividadeId);
 
         return ResponseEntity.ok((int) tentativas);
     }
 
     @GetMapping("/atividade/{atividadeId}/tentativa-aberta")
     public Tentativa getTentativasAbertas(@PathVariable Long atividadeId) {
-        return statusAtividadeRepository.findByAtividadeIdAndAbertaTrue(atividadeId)
+        return tentativaRepository.findByAtividadeIdAndAbertaTrue(atividadeId)
                 .orElse(null);
     }
 
     @GetMapping("/atividade/{atividadeId}/ultima-tentativa")
     public ResponseEntity<Tentativa> buscarUltimaTentativa(@PathVariable Long atividadeId) {
-        Optional<Tentativa> ultimaTentativa = statusAtividadeRepository
+        Optional<Tentativa> ultimaTentativa = tentativaRepository
                 .findTopByAtividade_IdOrderByNumTentativaDesc(atividadeId);
 
         return ultimaTentativa
@@ -83,24 +83,24 @@ public class TentativaController {
     public Tentativa atualizarTempo(
             @PathVariable Long tentativaId,
             @RequestBody Map<String, Object> dados) {
-        Tentativa tentativa = statusAtividadeRepository.findById(tentativaId)
+        Tentativa tentativa = tentativaRepository.findById(tentativaId)
                 .orElseThrow(() -> new RuntimeException("Tentativa não encontrada"));
 
         if (dados.containsKey("tempoRestante")) {
             tentativa.setTempoRestante((Integer) dados.get("tempoRestante"));
         }
 
-        return statusAtividadeRepository.save(tentativa);
+        return tentativaRepository.save(tentativa);
     }
 
     @PatchMapping("atualizar-status-tentativa/{tentativaId}/fechar-tentativa")
     public Tentativa fecharTentativa(@PathVariable Long tentativaId) {
-        Tentativa tentativa = statusAtividadeRepository.findById(tentativaId)
+        Tentativa tentativa = tentativaRepository.findById(tentativaId)
                 .orElseThrow(() -> new RuntimeException("Tentativa não encontrada"));
         tentativa.setTempoRestante(0);
         tentativa.setAberta(false);
 
-        return statusAtividadeRepository.save(tentativa);
+        return tentativaRepository.save(tentativa);
     }
 
     @PostMapping("/iniciar-tentativa/{atividadeId}")
@@ -109,7 +109,7 @@ public class TentativaController {
         status.setAtividade(atividadeRepository.findById(atividadeId).orElseThrow());
         status.setAberta(true);
         status.setHorarioInicio(LocalDateTime.now());
-        statusAtividadeRepository.save(status);
+        tentativaRepository.save(status);
         return ResponseEntity.ok(status);
     }
 
@@ -120,13 +120,13 @@ public class TentativaController {
         status.setAberta(true);
         status.setHorarioInicio(LocalDateTime.now());
         status.setTempoRestante(0);
-        statusAtividadeRepository.save(status);
+        tentativaRepository.save(status);
         return ResponseEntity.ok(status);
     }
 
     @GetMapping("/tempo-restante/{statusAtividadeId}")
     public ResponseEntity<Long> tempoRestante(@PathVariable Long statusAtividadeId) {
-        Tentativa status = statusAtividadeRepository.findById(statusAtividadeId)
+        Tentativa status = tentativaRepository.findById(statusAtividadeId)
                 .orElseThrow();
 
         LocalDateTime agora = LocalDateTime.now();
@@ -135,7 +135,7 @@ public class TentativaController {
 
         if (restante <= 0) {
             status.setAberta(false);
-            statusAtividadeRepository.save(status);
+            tentativaRepository.save(status);
             restante = 0;
         }
 
