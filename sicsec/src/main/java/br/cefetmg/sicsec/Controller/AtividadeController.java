@@ -37,20 +37,13 @@ public class AtividadeController {
     @Autowired
     private ValidarArquivosService validarArquivosService;
 
-    @Autowired
-    private GlobalExceptionHandler globalExceptionHandler;
-
     @PostMapping("/salvar")
     public ResponseEntity<?> salvarAtividade(
             @RequestPart("atividade") Atividade atividade,
-            @RequestPart(value = "arquivos", required = false) MultipartFile[] arquivos) {
+            @RequestPart(value = "arquivos", required = false) MultipartFile[] arquivos) throws IOException {
 
-        try {
-            Atividade nova = validarArquivosService.validarListaArquivos(atividade, arquivos);
-            return ResponseEntity.status(HttpStatus.CREATED).body(nova);
-        } catch (IOException e) {
-            return globalExceptionHandler.handleGeneric(e);
-        }
+        Atividade nova = validarArquivosService.validarListaArquivos(atividade, arquivos);
+        return ResponseEntity.status(HttpStatus.CREATED).body(nova);
     }
 
     @GetMapping("/{atividadeId}/arquivos")
@@ -67,14 +60,10 @@ public class AtividadeController {
 
     @GetMapping("/download/{nomeArquivo}")
     public ResponseEntity<?> downloadArquivo(@PathVariable String nomeArquivo) throws IOException {
-        try {
-            Resource resource = arquivoService.carregarArquivo(nomeArquivo);
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
-                    .body(resource);
-        } catch (IOException e) {
-            return globalExceptionHandler.handleGeneric(e);
-        }
+        Resource resource = arquivoService.carregarArquivo(nomeArquivo);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+                .body(resource);
     }
 
     @GetMapping("/atividades")

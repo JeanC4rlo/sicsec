@@ -12,7 +12,7 @@ const MAX_CARACTERES_TXT_GRANDE = 2000;
 const tipos = {
     questionario: "Questionário",
     redacao: "Redação",
-    envTexto: "Envio de Texto"
+    envArquivo: "Envio de Arquivo"
 };
 
 window.onload = initProdAtividade;
@@ -296,11 +296,11 @@ function enviar() {
         valor: form.valor.value || "",
         dataEncerramento: form.data.value || "",
         horaEncerramento: form.horas.value || "",
-        enunciado: "",
-        questoes: "[]",
-        tentativas: "1",
-        tempoDeDuracao: JSON.stringify({ numHoras: 1, numMinutos: 0 }),
-        tipoTimer: ""
+        enunciado: null,
+        questoes: null,
+        tentativas: null,
+        tempoDeDuracao: null,
+        tipoTimer: null
     };
 
     if (form.tipo.value === "questionario") {
@@ -330,7 +330,7 @@ function enviar() {
         const numMinutos = document.querySelector("#num-minutos")?.value || "0";
         dados.tempoDeDuracao = JSON.stringify({ numHoras, numMinutos });
 
-        dados.tipoTimer = document.querySelector("#tipo-timer")?.value || "interrompivel";
+        dados.tipoTimer = document.querySelector("#tipo-timer")?.value || "none";
     }
     else {
         const inputEnunciado = sessao.querySelector(".inputEnunciado");

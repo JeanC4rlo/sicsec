@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import br.cefetmg.sicsec.Model.Usuario.Usuario;
 import br.cefetmg.sicsec.Repository.UsuarioRepo;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 @Service
@@ -16,13 +17,16 @@ public class LoginService {
     @Autowired
     private UsuarioRepo usuarioRepo;
 
+	@Autowired
+	private SessionService sessionService;
+
     public Usuario register(Usuario usuario) {
         return usuarioRepo.save(usuario);
     }
 
     public String authenticate(String cpf,
                                String senha,
-                               HttpSession session,
+                               HttpServletRequest request,
                                Model model) {
 
         if (cpf == null || cpf.trim().isEmpty() || senha == null || senha.isEmpty()) {
@@ -42,7 +46,8 @@ public class LoginService {
 
             Usuario usuario = usuarios.get(0);
             if (senha.equals(usuario.getSenha()) && usuario != null) {
-				session.setAttribute("usuario", usuario);
+				HttpSession session = request.getSession(true);
+				sessionService.salvarDadosSessao(session, usuario);
 				String redirectPage;
 				switch (usuario.getCargo()) {
 					case ADMINISTRADOR:

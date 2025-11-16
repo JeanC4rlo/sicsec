@@ -4,7 +4,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import jakarta.servlet.http.HttpSession;
 
 
@@ -12,12 +11,14 @@ import jakarta.servlet.http.HttpSession;
 public class ViewController {
     @GetMapping("/home")
     public String homeView(HttpSession session, RedirectAttributes redirectAttributes) {
-        Object usuario = session.getAttribute("usuario");
+        String usuario = (String) session.getAttribute("usuario");
 
         if (usuario == null) {
             redirectAttributes.addFlashAttribute("error", "Acesse a visão de aluno com um login válido!");
             return "redirect:/html/login/login.html";
         }
+
+        System.out.println(usuario);
 
         return "redirect:/html/aluno/home.html";
     }

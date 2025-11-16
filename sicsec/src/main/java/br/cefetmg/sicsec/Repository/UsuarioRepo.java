@@ -39,4 +39,6 @@ public interface UsuarioRepo extends JpaRepository<Usuario, Long> {
     
     //Busca usuários pelo nome contendo algo (LIKE %nome%)
     List<Usuario> findByMatricula_NomeContaining(String nome);
+
+    Optional<Usuario> findById(Long id);
 }

@@ -31,14 +31,10 @@ public class RespostaController {
     GlobalExceptionHandler globalExceptionHandler;
 
     @PostMapping("/salvar/resposta")
-    public ResponseEntity<?> corrigirResposta(@RequestBody Resposta resposta) {
-        try {
+    public ResponseEntity<?> corrigirResposta(@RequestBody Resposta resposta) throws CorrecaoException {
         correcaoService.corrigir(resposta);
         Resposta nova = respostaRepository.save(resposta);
         return ResponseEntity.ok(nova);
-        } catch(CorrecaoException e) {
-            return globalExceptionHandler.handleCorrecao(e);
-        }
     }
 
     @GetMapping("/conferir-nota/{atividadeId}/{statusAtividadeId}")
