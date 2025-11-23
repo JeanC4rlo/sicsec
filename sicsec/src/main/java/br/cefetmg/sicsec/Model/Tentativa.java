@@ -1,16 +1,16 @@
 package br.cefetmg.sicsec.Model;
 
-//import br.cefetmg.sicsec.Model.Usuario.Aluno.Aluno;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+
 import java.time.LocalDateTime;
 
 @Entity
-public class AtividadeEnviada {
+public class Tentativa {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,11 +23,10 @@ public class AtividadeEnviada {
     @JoinColumn(name = "aluno_id", nullable = false)
     private Aluno aluno;*/
 
-    private Double nota;
-    private LocalDateTime horarioEnvio;
-    private String resposta;
-    private String nomeArquivoEnviado;
+    private LocalDateTime horarioInicio;
+    private Integer tempoRestante;
     private Integer numTentativa;
+    private Boolean aberta;
 
     public Long getId() {
         return id;
@@ -53,43 +52,35 @@ public class AtividadeEnviada {
         this.aluno = aluno;
     }*/
 
-    public Double getNota() {
-        return nota;
+    public LocalDateTime getHorarioInicio() {
+        return horarioInicio;
+    }
+    
+    public void setHorarioInicio(LocalDateTime horarioInicio) {
+        this.horarioInicio = horarioInicio;
+    }
+    
+    public Integer getTempoRestante() {
+        return tempoRestante;
     }
 
-    public void setNota(Double nota) {
-        this.nota = nota;
-    }
-
-    public LocalDateTime getHorarioEnvio() {
-        return horarioEnvio;
-    }
-
-    public void setHorarioEnvio(LocalDateTime horarioEnvio) {
-        this.horarioEnvio = horarioEnvio;
-    }
-
-    public String getResposta() {
-        return resposta;
-    }
-
-    public void setResposta(String resposta) {
-        this.resposta = resposta;
-    }
-
-    public String getNomeArquivoEnviado() {
-        return nomeArquivoEnviado;
-    }
-
-    public void setNomeArquivoEnviado(String nomeArquivoEnviado) {
-        this.nomeArquivoEnviado = nomeArquivoEnviado;
+    public void setTempoRestante(Integer tempoRestante) {
+        this.tempoRestante = tempoRestante;
     }
 
     public Integer getNumTentativa() {
         return numTentativa;
     }
 
-    public void setNumTentativa(Integer numTentativa) {
-        this.numTentativa = numTentativa;
+    public void setNumTentativa(Integer tentativas) {
+        this.numTentativa = tentativas;
+    }
+
+    public Boolean getAberta() {
+        return aberta;
+    }
+
+    public void setAberta(Boolean aberta) {
+        this.aberta = aberta;
     }
 }

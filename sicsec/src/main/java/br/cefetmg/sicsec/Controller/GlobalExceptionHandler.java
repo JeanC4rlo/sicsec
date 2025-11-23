@@ -1,5 +1,6 @@
 package br.cefetmg.sicsec.Controller;
 
+import java.io.IOException;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleCorrecao(CorrecaoException e) {
         return ResponseEntity.badRequest()
                 .body(Map.of("erro", e.getMessage()));
+    }
+
+    @ExceptionHandler(IOException.class)
+    public ResponseEntity<?> handleIOException(IOException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body("Erro ao processar arquivos: " + ex.getMessage());
     }
 
     @ExceptionHandler(Exception.class)

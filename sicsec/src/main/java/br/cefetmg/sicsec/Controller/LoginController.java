@@ -4,7 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
-import jakarta.servlet.http.HttpSession;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 import br.cefetmg.sicsec.Service.LoginService;
 
@@ -16,15 +17,15 @@ public class LoginController {
 
 	@GetMapping("/login")
 	public String loginView() {
-		return "login";
+		return "redirect:/html/login/login.html";
 	}
 
 	@PostMapping("/api/login")
 	public String login(@RequestParam String cpf,
-						@RequestParam String senha,
-						HttpSession session,
-						Model model) {
+			@RequestParam String senha,
+			HttpServletRequest request,
+			Model model) {
 
-    	return loginService.authenticate(cpf, senha, session, model);
+    	return loginService.authenticate(cpf, senha, request, model);
 	}
 }

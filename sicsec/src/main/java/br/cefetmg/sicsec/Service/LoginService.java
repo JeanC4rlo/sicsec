@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import br.cefetmg.sicsec.Model.Usuario.Usuario;
 import br.cefetmg.sicsec.Repository.Usuarios.UsuarioRepo;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 @Service
@@ -16,18 +17,21 @@ public class LoginService {
     @Autowired
     private UsuarioRepo usuarioRepo;
 
+	@Autowired
+	private SessionService sessionService;
+
     public Usuario register(Usuario usuario) {
         return usuarioRepo.save(usuario);
     }
 
     public String authenticate(String cpf,
                                String senha,
-                               HttpSession session,
+                               HttpServletRequest request,
                                Model model) {
 
         if (cpf == null || cpf.trim().isEmpty() || senha == null || senha.isEmpty()) {
 			model.addAttribute("error", "CPF e senha são obrigatórios.");
-			return "login";
+			return "redirect:/html/login/login.html";
 		}
 
 		cpf = cpf.replaceAll("[^0-9]", "");
@@ -41,29 +45,30 @@ public class LoginService {
             }
 
             if (senha.equals(usuario.getSenha()) && usuario != null) {
-				session.setAttribute("usuario", usuario);
+				HttpSession session = request.getSession(true);
+				sessionService.salvarDadosSessao(session, usuario);
 				String redirectPage;
 				switch (usuario.getCargo()) {
 					case ADMINISTRADOR:
-						redirectPage = "redirect:/homeAdmin";
+						redirectPage = "redirect:/html/admin/home.html";
 						break;
 					case PROFESSOR:
-						redirectPage = "redirect:/homeProfessor";
+						redirectPage = "redirect:/html/professor/home.html";
 						break;
 					default:
-						redirectPage = "redirect:/home";
+						redirectPage = "redirect:/html/aluno/home.html";
 				}
 				return redirectPage;
 			} else {
 				model.addAttribute("error", "CPF ou senha inválidos.");
-				return "login";
+				return "redirect:/html/login/login.html";
 			}
 		} catch(EntityNotFoundException e) {
 			model.addAttribute("error", "Usuário não encontrado.");
-			return "login";
+			return "redirect:/html/login/login.html";
 		} catch (Exception e) {
 			model.addAttribute("error", "Error ao realizar login.");
-			return "login";
+			return "redirect:/html/login/login.html";
 		}
     }
 }
