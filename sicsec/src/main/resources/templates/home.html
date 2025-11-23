@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link th:href="@{/css/base.css}" rel="stylesheet" />
+    <link th:href="@{/css/home/home.css}" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Red+Hat+Display:ital,wght@0,300..900;1,300..900&display=swap"
+        rel="stylesheet" />
+    <title>SICSEC</title>
+
+    <script th:src="@{/js/home/adicionar-secoes.js}"></script>
+    <script th:src="@{/js/home/selecionar-perfil.js}"></script>
+</head>
+
+<body>
+    <header>
+        <div class="logos">
+            <img th:src="@{/images/cefet.png}" alt="Logo CEFET" id="logo-cefet">
+            <h1>SICSEC</h1>
+        </div>
+        <div class="dropdown-perfil" th:if="${perfis != null and !perfis.isEmpty()}">
+            <form th:action="@{/login/select}" method="post" id="perfilForm">
+
+                <select id="perfilSelect" name="idUsuario">
+                    <option disabled selected>Escolha um perfil</option>
+                    <option th:each="perfil : ${perfis}" th:value="${perfil.usuario.id}"
+                        th:text="${perfil.usuario.matricula.numeroMatricula + ' [' + perfil.usuario.cargo + '] (' + (perfil.logado ? 'Logado' : 'Não logado') + ')'}"
+                        th:selected="${perfilSelecionado != null ? perfilSelecionado.usuario.id == perfil.usuario.id : perfil.logado}">
+                    </option>
+                </select>
+
+                <div th:if="${perfilSelecionado != null and !perfilSelecionado.getLogado()}">
+                    <label>Perfil não logado! Insira a senha:
+                        <input type="password" name="senha" required />
+                    </label>
+                    <button type="submit">Trocar</button>
+                </div>
+            </form>
+        </div>
+        <nav th:if="${secoes != null and !secoes.isEmpty() and perfilSelecionado.logado}">
+            <button th:each="secao : ${secoes}" 
+                    class="secao-botao" 
+                    th:classappend="${secao.isDefault} ? 'ativo' : ''"
+                    th:data-id="${secao.secao}">
+                <img th:src="@{${secao.icone}}" alt="" />
+                <span th:text="${secao.texto}"></span>
+            </button>
+        </nav>
+
+        <a th:href="@{/logout}" class="sair">Sair</a>
+    </header>
+    <div id="content">
+        <div class="wrapper"></div>
+    </div>
+</body>
+</html>

@@ -1,10 +1,58 @@
-function criarBolsa(bolsa, container) {
-    const area = bolsa.area_conhecimento || {};
+function initSectionsBolsas() {
 
-    const card = document.createElement("div");
-    card.classList.add("bolsa-card");
-    card.dataset.codigo = bolsa.codigo;
-    card.innerHTML = `
+    function highlightBolsasOption(tabId) {
+        const buttons = document.querySelectorAll(".bolsas header button");
+        buttons.forEach(button => {
+            if (button.dataset.tab === tabId)
+                button.classList.add("ativo");
+            else
+                button.classList.remove("ativo");
+        });
+    }
+
+    function openBolsasTab(tabId) {
+        const tabs = document.querySelectorAll(".bolsas .wrapper > div");
+        tabs.forEach(tab => {
+            if (tab.classList.contains(tabId))
+                tab.classList.add("ativo");
+            else
+                tab.classList.remove("ativo");
+        });
+        localStorage.setItem("bolsasSecaoAtiva", tabId);
+    }
+
+    function initBolsasTabs() {
+        const bolsasButtons = document.querySelectorAll(".bolsas header button");
+
+        bolsasButtons.forEach(button => {
+            if (!button.dataset.tab)
+                button.dataset.tab = button.textContent.trim().toLowerCase().replace(/\s+/g, "-");
+
+            button.addEventListener("click", e => {
+                e.preventDefault();
+                const targetTab = button.dataset.tab;
+                highlightBolsasOption(targetTab);
+                openBolsasTab(targetTab);
+            });
+        });
+
+        const ultimaSecao = localStorage.getItem("bolsasSecaoAtiva");
+        if (ultimaSecao) {
+            highlightBolsasOption(ultimaSecao);
+            openBolsasTab(ultimaSecao);
+        } else {
+            highlightBolsasOption("pesquisa");
+            openBolsasTab("pesquisa");
+        }
+    }
+
+    function criarBolsa(bolsa, container) {
+        const area = bolsa.area_conhecimento || {};
+
+        const card = document.createElement("div");
+        card.classList.add("bolsa-card");
+        card.dataset.codigo = bolsa.codigo;
+        card.innerHTML = `
         <h2>${bolsa.titulo || ""}</h2>
         <p><strong>Código:</strong> ${bolsa.codigo || ""}</p>
         <p><strong>Aluno/Discente:</strong> ${bolsa.discente || ""}</p>
@@ -32,48 +80,48 @@ function criarBolsa(bolsa, container) {
             </div>
         </div>
     `;
-    container.appendChild(card);
+        container.appendChild(card);
 
-    // Configurar evento do botão "Ver mais"
-    const btnLerMais = card.querySelector('.ler-mais');
-    btnLerMais.addEventListener('click', () => {
-        exibirDetalhesBolsa(bolsa);
-    });
+        // Configurar evento do botão "Ver mais"
+        const btnLerMais = card.querySelector('.ler-mais');
+        btnLerMais.addEventListener('click', () => {
+            exibirDetalhesBolsa(bolsa);
+        });
 
-    // Configurar evento do botão "Registrar interesse"
-    const btnInteresse = card.querySelector('.interesse');
-    btnInteresse.addEventListener('click', () => {
-        registrarInteresseBolsa(bolsa, btnInteresse);
-    });
-}
+        // Configurar evento do botão "Registrar interesse"
+        const btnInteresse = card.querySelector('.interesse');
+        btnInteresse.addEventListener('click', () => {
+            registrarInteresseBolsa(bolsa, btnInteresse);
+        });
+    }
 
-function formatarClasseStatus(status) {
-    if (!status) return "";
-    
-    const s = status.toLowerCase();
-    if (s.includes("conclu") || s.includes("final")) return "status-concluido";
-    if (s.includes("andamento")) return "status-andamento";
-    if (s.includes("cancel")) return "status-cancelado";
-    return "status-desconhecido";
-}
+    function formatarClasseStatus(status) {
+        if (!status) return "";
 
-function exibirDetalhesBolsa(bolsa) {
-    const area = bolsa.area_conhecimento || {};
-    const containerMais = document.querySelector('#bolsas .mais');
-    
-    // Guardar qual aba estava ativa antes de abrir os detalhes
-    const abaAnterior = document.querySelector('#bolsas .wrapper > div.ativo');
-    
-    // Esconder outras seções usando forEach
-    document.querySelectorAll('#bolsas .wrapper > div').forEach(secao => {
-        secao.classList.remove('ativo');
-    });
-    containerMais.classList.add('ativo');
+        const s = status.toLowerCase();
+        if (s.includes("conclu") || s.includes("final")) return "status-concluido";
+        if (s.includes("andamento")) return "status-andamento";
+        if (s.includes("cancel")) return "status-cancelado";
+        return "status-desconhecido";
+    }
 
-    const objetivosEspecificos = bolsa.objetivos.especificos.map(obj => `<li>${obj}</li>`).join('');
-    const referencias = bolsa.referencias.map(ref => `<li>${ref}</li>`).join('');
+    function exibirDetalhesBolsa(bolsa) {
+        const area = bolsa.area_conhecimento || {};
+        const containerMais = document.querySelector('.bolsas .mais');
 
-    containerMais.innerHTML = `
+        // Guardar qual aba estava ativa antes de abrir os detalhes
+        const abaAnterior = document.querySelector('.bolsas .wrapper > div.ativo');
+
+        // Esconder outras seções usando forEach
+        document.querySelectorAll('.bolsas .wrapper > div').forEach(secao => {
+            secao.classList.remove('ativo');
+        });
+        containerMais.classList.add('ativo');
+
+        const objetivosEspecificos = bolsa.objetivos.especificos.map(obj => `<li>${obj}</li>`).join('');
+        const referencias = bolsa.referencias.map(ref => `<li>${ref}</li>`).join('');
+
+        containerMais.innerHTML = `
         <div class="detalhes-bolsa">
             <button class="voltar">
                 <img th:src="@{/images/home/voltar.svg}"> Voltar
@@ -116,123 +164,131 @@ function exibirDetalhesBolsa(bolsa) {
         </div>
     `;
 
-    // Configurar evento do botão voltar
-    const btnVoltar = containerMais.querySelector('.voltar');
-    btnVoltar.addEventListener('click', () => {
-        containerMais.classList.remove('ativo');
-        if (abaAnterior) {
-            abaAnterior.classList.add('ativo');
-        }
-    });
-
-    // Configurar evento do botão de interesse na página de detalhes
-    const btnInteresseDetalhes = containerMais.querySelector('.interesse-detalhes');
-    btnInteresseDetalhes.addEventListener('click', () => {
-        registrarInteresseBolsa(bolsa, btnInteresseDetalhes);
-    });
-}
-
-function registrarInteresseBolsa(bolsa, botao) {
-    bolsa.registrada = true;
-    botao.innerHTML = `<img th:src="@{/images/home/check.svg}"> Registrado`;
-    botao.disabled = true;
-    
-    // Atualizar também no card original se existir
-    const cardOriginal = document.querySelector(`.bolsa-card[data-codigo="${bolsa.codigo}"] .interesse`);
-    if (cardOriginal) {
-        cardOriginal.innerHTML = `<img th:src="@{/images/home/check.svg}"> Registrado`;
-        cardOriginal.disabled = true;
-    }
-    
-    alert("Bolsa adicionada em 'Minhas bolsas'.");
-}
-
-function mostrarBolsas(lista, container) {
-    container.innerHTML = "";
-    if (!lista || lista.length === 0) {
-        container.innerHTML = "<p>Nenhuma bolsa encontrada.</p>";
-        return;
-    }
-    lista.forEach(bolsa => criarBolsa(bolsa, container));
-}
-
-function filtrarBolsas(campoPesquisa, textoPesquisa, bolsas) {
-    const campo = campoPesquisa.value;
-    const texto = textoPesquisa.value.toLowerCase().trim();
-    if (!bolsas.length) return [];
-
-    return bolsas.filter(bolsa => {
-        if (!texto) return true;
-        if (campo === "todos") {
-            return Object.values(bolsa).some(valor => {
-                if (typeof valor === "string") return valor.toLowerCase().includes(texto);
-                if (typeof valor === "object" && valor !== null) {
-                    return Object.values(valor).some(v => typeof v === "string" ? v.toLowerCase().includes(texto) : false);
-                }
-                return false;
-            });
-        } else {
-            let valorCampo = bolsa[campo];
-            if (typeof valorCampo === "object" && valorCampo !== null) valorCampo = Object.values(valorCampo).join(" ");
-            return valorCampo && valorCampo.toLowerCase().includes(texto);
-        }
-    });
-}
-
-function carregarBolsas(url, callback) {
-    fetch(url)
-        .then(res => res.json())
-        .then(data => {
-            const bolsas = data.map(b => ({ ...b, registrada: false }));
-            callback(bolsas);
-        })
-        .catch(err => console.error(err));
-}
-
-function configurarNavegacaoAbas(bolsas) {
-    const botoes = document.querySelectorAll('#bolsas header button');
-    const secoes = document.querySelectorAll('#bolsas .wrapper > div');
-
-    function mostrarAba(aba) {
-        // Remove 'ativo' de todos os botões e seções
-        botoes.forEach(btn => btn.classList.remove('ativo'));
-        secoes.forEach(sec => sec.classList.remove('ativo'));
-
-        // Adiciona 'ativo' no botão e seção correspondentes
-        const btnAtivo = document.querySelector(`#bolsas header button[data-tab="${aba}"]`);
-        const secAtiva = document.querySelector(`#bolsas .${aba}`);
-        
-        if (btnAtivo) btnAtivo.classList.add('ativo');
-        if (secAtiva) secAtiva.classList.add('ativo');
-
-        // Se for a aba "minhas-bolsas", carrega as bolsas registradas
-        if (aba === 'minhas-bolsas') {
-            const minhasBolsas = bolsas.filter(b => b.registrada);
-            mostrarBolsas(minhasBolsas, secAtiva);
-        }
-    }
-
-    botoes.forEach(btn => {
-        btn.addEventListener('click', () => mostrarAba(btn.dataset.tab));
-    });
-
-    // Iniciar com a aba de pesquisa
-    mostrarAba('pesquisa');
-}
-
-function initBolsas() {
-    const containerPesquisa = document.querySelector("#bolsas .resultado");
-    const campoPesquisa = document.getElementById("campoPesquisa");
-    const textoPesquisa = document.getElementById("textoPesquisa");
-    const btnPesquisar = document.getElementById("btnPesquisar");
-
-    carregarBolsas("../data/bolsas.json", bolsas => {
-        mostrarBolsas(bolsas, containerPesquisa);
-        configurarNavegacaoAbas(bolsas);
-        
-        btnPesquisar.addEventListener("click", () => {
-            const filtradas = filtrarBolsas(campoPesquisa, textoPesquisa, bolsas);
-            mostrarBolsas(filtradas, containerPesquisa);
+        // Configurar evento do botão voltar
+        const btnVoltar = containerMais.querySelector('.voltar');
+        btnVoltar.addEventListener('click', () => {
+            containerMais.classList.remove('ativo');
+            if (abaAnterior) {
+                abaAnterior.classList.add('ativo');
+            }
         });
-    });
-}
+
+        // Configurar evento do botão de interesse na página de detalhes
+        const btnInteresseDetalhes = containerMais.querySelector('.interesse-detalhes');
+        btnInteresseDetalhes.addEventListener('click', () => {
+            registrarInteresseBolsa(bolsa, btnInteresseDetalhes);
+        });
+    }
+
+    function registrarInteresseBolsa(bolsa, botao) {
+        bolsa.registrada = true;
+        botao.innerHTML = `<img th:src="@{/images/home/check.svg}"> Registrado`;
+        botao.disabled = true;
+
+        // Atualizar também no card original se existir
+        const cardOriginal = document.querySelector(`.bolsa-card[data-codigo="${bolsa.codigo}"] .interesse`);
+        if (cardOriginal) {
+            cardOriginal.innerHTML = `<img th:src="@{/images/home/check.svg}"> Registrado`;
+            cardOriginal.disabled = true;
+        }
+
+        alert("Bolsa adicionada em 'Minhas bolsas'.");
+    }
+
+    function mostrarBolsas(lista, container) {
+        container.innerHTML = "";
+        if (!lista || lista.length === 0) {
+            container.innerHTML = "<p>Nenhuma bolsa encontrada.</p>";
+            return;
+        }
+        lista.forEach(bolsa => criarBolsa(bolsa, container));
+    }
+
+    function filtrarBolsas(campoPesquisa, textoPesquisa, bolsas) {
+        const campo = campoPesquisa.value;
+        const texto = textoPesquisa.value.toLowerCase().trim();
+        if (!bolsas.length) return [];
+
+        return bolsas.filter(bolsa => {
+            if (!texto) return true;
+            if (campo === "todos") {
+                return Object.values(bolsa).some(valor => {
+                    if (typeof valor === "string") return valor.toLowerCase().includes(texto);
+                    if (typeof valor === "object" && valor !== null) {
+                        return Object.values(valor).some(v => typeof v === "string" ? v.toLowerCase().includes(texto) : false);
+                    }
+                    return false;
+                });
+            } else {
+                let valorCampo = bolsa[campo];
+                if (typeof valorCampo === "object" && valorCampo !== null) valorCampo = Object.values(valorCampo).join(" ");
+                return valorCampo && valorCampo.toLowerCase().includes(texto);
+            }
+        });
+    }
+
+    function carregarBolsas(url, callback) {
+        fetch(url)
+            .then(res => res.json())
+            .then(data => {
+                const bolsas = data.map(b => ({ ...b, registrada: false }));
+                callback(bolsas);
+            })
+            .catch(err => console.error(err));
+    }
+
+    function configurarNavegacaoAbas(bolsas) {
+        const botoes = document.querySelectorAll('.bolsas header button');
+        const secoes = document.querySelectorAll('.bolsas .wrapper > div');
+
+        function mostrarAba(aba) {
+            // Remove 'ativo' de todos os botões e seções
+            botoes.forEach(btn => btn.classList.remove('ativo'));
+            secoes.forEach(sec => sec.classList.remove('ativo'));
+
+            // Adiciona 'ativo' no botão e seção correspondentes
+            const btnAtivo = document.querySelector(`.bolsas header button[data-tab="${aba}"]`);
+            const secAtiva = document.querySelector(`.bolsas .${aba}`);
+
+            if (btnAtivo) btnAtivo.classList.add('ativo');
+            if (secAtiva) secAtiva.classList.add('ativo');
+
+            // Se for a aba "minhas-bolsas", carrega as bolsas registradas
+            if (aba === 'minhas-bolsas') {
+                const minhasBolsas = bolsas.filter(b => b.registrada);
+                mostrarBolsas(minhasBolsas, secAtiva);
+            }
+        }
+
+        botoes.forEach(btn => {
+            btn.addEventListener('click', () => mostrarAba(btn.dataset.tab));
+        });
+
+        // Iniciar com a aba de pesquisa
+        mostrarAba('pesquisa');
+    }
+
+    function initBolsas() {
+        const containerPesquisa = document.querySelector(".bolsas .resultado");
+        const campoPesquisa = document.getElementById("campoPesquisa");
+        const textoPesquisa = document.getElementById("textoPesquisa");
+        const btnPesquisar = document.getElementById("btnPesquisar");
+
+        carregarBolsas("../data/bolsas.json", bolsas => {
+            mostrarBolsas(bolsas, containerPesquisa);
+            configurarNavegacaoAbas(bolsas);
+
+            btnPesquisar.addEventListener("click", () => {
+                const filtradas = filtrarBolsas(campoPesquisa, textoPesquisa, bolsas);
+                mostrarBolsas(filtradas, containerPesquisa);
+            });
+        });
+    }
+
+    initBolsasTabs();
+    initBolsas();
+
+};
+
+initSectionsBolsas();
+document.querySelector("button[data-id='bolsas']").addEventListener("click", initSectionsBolsas);

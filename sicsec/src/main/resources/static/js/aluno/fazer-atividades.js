@@ -458,7 +458,7 @@ async function carregarArquivos() {
         const link = document.createElement("a");
         ul.append(link);
 
-        link.href = `/api/atividade/download/${encodeURIComponent(nome)}`;
+        link.href = `api/atividade/download/${nome}`;
         link.textContent = nome;
         link.target = "_blank";
         lista.append(ul);

@@ -1,28 +1,16 @@
 package br.cefetmg.sicsec.Controller;
 
-import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import br.cefetmg.sicsec.Model.Curso.Turma.Turma;
 import br.cefetmg.sicsec.Model.Usuario.Usuario;
-import br.cefetmg.sicsec.Model.Usuario.Administrador.Administrador;
-import br.cefetmg.sicsec.Model.Usuario.Administrador.ChefeDepartamento;
-import br.cefetmg.sicsec.Model.Usuario.Administrador.Coordenador;
-import br.cefetmg.sicsec.Model.Util.Enum.Cargo;
 import br.cefetmg.sicsec.Service.AdministradorService;
 import br.cefetmg.sicsec.Service.UsuarioService;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 @RestController

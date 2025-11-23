@@ -35,7 +35,7 @@ public interface UsuarioRepo extends JpaRepository<Usuario, Long> {
             JOIN u.matricula m
             WHERE m.cpf.cpf = :cpf
             """)
-    Usuario findByCpf(@Param("cpf") Long cpf);
+    List<Usuario> findByCpf(@Param("cpf") Long cpf);
     
     //Busca usuários pelo nome contendo algo (LIKE %nome%)
     List<Usuario> findByMatricula_NomeContaining(String nome);

@@ -84,3 +84,5 @@ function initAtividades() {
 
     carregarAtividades();
 }
+
+initAtividades();
