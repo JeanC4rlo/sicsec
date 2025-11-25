@@ -3,7 +3,7 @@ class SectionManager {
         this.navButtons = document.querySelectorAll(navSelector);
         this.sections = document.querySelectorAll(sectionSelector);
         this.activeSectionId = localStorage.getItem("secaoAtiva") || (this.sections[0]?.id || null);
-        this.initSections = ["matricula"];
+        this.initSections = ["matriculas", "turmas"];
     }
 
     init() {
@@ -42,7 +42,14 @@ class SectionManager {
     }
 
     runInit(id) {
-        if (id === "matricula") initGestao();
+        switch (id) {
+            case "matriculas":
+                initMatriculas();
+                break;
+            case "turmas":
+                initTurmas();
+                break;
+        }
     }
 }
 

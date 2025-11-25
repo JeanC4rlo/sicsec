@@ -3,7 +3,9 @@ package br.cefetmg.sicsec.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.cefetmg.sicsec.Model.AlternativaMarcada;
 import br.cefetmg.sicsec.Model.Atividade;
+import br.cefetmg.sicsec.Model.Resposta;
 import br.cefetmg.sicsec.Repository.AtividadeRepository;
 import br.cefetmg.sicsec.Repository.RespostaRepository;
 
@@ -15,19 +17,23 @@ public class CalculoNotaService {
     @Autowired
     AtividadeRepository atividadeRepository;
 
-    public double calcular(Long atividadeId, Long statusAtividadeId) {
-        Integer acertos = respostaRepository
-                .countByAtividadeIdAndStatusAtividadeIdAndCorretaTrue(
-                        atividadeId,
-                        statusAtividadeId);
+    @Autowired
+    private DesempenhoService desempenhoService;
 
-        Integer numQuestoes = respostaRepository
-                .countByAtividadeIdAndStatusAtividadeId(
-                        atividadeId,
-                        statusAtividadeId);
+    public double calcular(Long tentativaId) {
+        Resposta resposta = respostaRepository.findByTentativaId(tentativaId);
+        Atividade atividade = resposta.getAtividade();
 
-        Atividade atividade = atividadeRepository.findById(atividadeId).get();
+        long acertos = resposta.getAlternativasMarcadas()
+                .stream()
+                .filter(AlternativaMarcada::getEstaCorreta)
+                .count();
+        int numQuestoes = resposta.getAlternativasMarcadas().size();
+        double valor = atividade.getValor();
+        double nota = ((double) acertos / numQuestoes) * valor;
 
-        return (acertos.doubleValue() / numQuestoes) * atividade.getValor();
+        desempenhoService.salvarDesempenhoQuestionario(resposta, nota);
+
+        return nota;
     }
 }

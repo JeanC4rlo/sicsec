@@ -9,7 +9,7 @@ let listaContainers = [];
 let temporizador;
 let tentativasFeitas;
 let tempoAcabou = false;
-let statusAtividade;
+let tentativa;
 const LIMITE_CARACTERES = 2000;
 
 function formatarData(data) {
@@ -32,6 +32,20 @@ function checkQuestaoMarcada() {
     return true;
 }
 
+function checkRedacaoEscrita() {
+    const redacao = document.getElementById("textarea-redacao");
+    if (!redacao.value) {
+        alert("Você não escreveu sua redação ainda!");
+        return false;
+    }
+    return true;
+}
+
+function caracteresRestantes() {
+    const numCaracteres = document.getElementById("textarea-redacao").value.length;
+    return LIMITE_CARACTERES - numCaracteres;
+}
+
 async function carregarOuCriarTentativa() {
     try {
         let response = await fetch(`/atividade/${atividade.id}/tentativa-aberta`);
@@ -39,11 +53,11 @@ async function carregarOuCriarTentativa() {
         if (!response.ok) throw new Error("Erro ao verificar tentativa aberta");
 
         const text = await response.text();
-        const tentativa = text && text.trim().length > 0 ? JSON.parse(text) : null;
+        const _tentativa = text && text.trim().length > 0 ? JSON.parse(text) : null;
 
-        if (tentativa && tentativa.id && tentativa.tempoRestante > 0) {
-            statusAtividade = tentativa;
-            console.log("Tentativa aberta encontrada:", statusAtividade);
+        if (_tentativa && _tentativa.id && _tentativa.tempoRestante > 0) {
+            tentativa = _tentativa;
+            console.log("Tentativa aberta encontrada:", tentativa);
         } else {
             const dados = {
                 atividade: { id: atividade.id },
@@ -61,10 +75,10 @@ async function carregarOuCriarTentativa() {
 
             if (!response.ok) throw new Error("Erro ao criar nova tentativa");
 
-            statusAtividade = await response.json();
-            console.log("Nova tentativa criada:", statusAtividade);
+            tentativa = await response.json();
+            console.log("Nova tentativa criada:", tentativa);
         }
-        tempoTotal = statusAtividade.tempoRestante || converterTempoDaAtividade();
+        tempoTotal = tentativa.tempoRestante || converterTempoDaAtividade();
     } catch (err) {
         console.error(err);
         alert("Não foi possível carregar a tentativa");
@@ -108,7 +122,7 @@ function criarTimerInterrompivel(timer) {
 }
 
 async function criarTimerContinuo(timer) {
-    const resposta = await fetch(`/tempo-restante/${statusAtividade.id}`);
+    const resposta = await fetch(`/tempo-restante/${tentativa.id}`);
     let tempoRestante = await resposta.json();
 
     temporizador = setInterval(() => {
@@ -185,6 +199,18 @@ function converterTempoDaAtividade() {
     return converterTempoParaSegundos(Number(atividade.tempoDeDuracao.numHoras), Number(atividade.tempoDeDuracao.numMinutos));
 }
 
+function montarListaAlternativasMarcadas(alternativas) {
+    const lista = [];
+    alternativas.forEach((alt, idx) => {
+        lista.push({
+            numQuestao: idx,
+            alternativa: alt.value,
+            estaCorreta: null
+        });
+    })
+    return lista;
+}
+
 async function enviarRespostasQuestionario() {
     if (!checkQuestaoMarcada()) return;
 
@@ -197,29 +223,24 @@ async function enviarRespostasQuestionario() {
 
     const alternativasMarcadas = document.querySelectorAll("input:checked");
 
-    const promessas = Array.from(alternativasMarcadas).map(async (alternativa, index) => {
-        const respostaAluno = {
-            atividade: { id: atividade.id },
-            statusAtividade: { id: statusAtividade.id },
-            numQuestao: index,
-            alternativaMarcada: alternativa.value,
-            correta: null
-        };
+    const respostaAluno = {
+        atividade: { id: atividade.id },
+        tentativa: { id: tentativa.id },
+        alternativasMarcadas: montarListaAlternativasMarcadas(alternativasMarcadas),
+        textoRedacao: null,
+        nomeArquivo: null
+    };
 
-        const resposta = await fetch("/salvar/resposta", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(respostaAluno)
-        });
-
-        if (!resposta.ok)
-            throw new Error(erro.message || "Erro desconhecido do servidor");
-        const texto = await resposta.text();
-        return texto ? JSON.parse(texto) : null;
+    const resposta = await fetch("/enviar/questionario", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(respostaAluno)
     });
 
+    if (!resposta.ok)
+        throw new Error("Erro desconhecido do servidor");
+
     try {
-        await Promise.all(promessas);
         alert("Respostas enviadas com sucesso!");
         fecharTentativa();
         montarPaginaResultado(await resgatarNota());
@@ -229,8 +250,95 @@ async function enviarRespostasQuestionario() {
     }
 }
 
+async function enviarRedacao() {
+    if (!checkRedacaoEscrita()) return;
+
+    /*if (tempoAcabou) {
+        window.location.reload();
+        return;
+    }*/
+
+    //clearInterval(temporizador);
+
+    console.log(document.getElementById("textarea-redacao").value);
+
+    const respostaAluno = {
+        atividade: { id: atividade.id },
+        tentativa: null,
+        alternativasMarcadas: null,
+        textoRedacao: document.getElementById("textarea-redacao").value,
+        nomeArquivo: null
+    };
+
+    const resposta = await fetch("/enviar/redacao", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(respostaAluno)
+    });
+
+    if (!resposta.ok)
+        throw new Error("Erro desconhecido do servidor");
+    try {
+        alert("Redação enviada com sucesso!");
+        //fecharTentativa();
+        window.location.href = "/home";
+    } catch (err) {
+        console.error("Erro ao enviar a redação:", err);
+        alert("Ocorreu um erro ao enviar sua redação. Tente novamente.");
+    }
+}
+
+async function enviarArquivo() {
+    const inputArquivo = document.getElementById("input-arquivo");
+    if (inputArquivo.files.length == 0) return;
+
+
+    const respostaAluno = {
+        atividade: { id: atividade.id },
+        tentativa: null,
+        alternativasMarcadas: null,
+        textoRedacao: null,
+        nomeArquivo: null
+    };
+
+    const formData = new FormData();
+
+    if (inputArquivo && inputArquivo.files.length > 0) {
+        const file = inputArquivo.files[0];
+        if (file.size > 5 * 1024 * 1024) {
+            alert(`Arquivo muito grande: ${file.name}`);
+            return;
+        }
+        const extensoesPermitidas = [".txt", ".pdf", ".docx", ".zip"];
+        const nome = file.name.toLowerCase();
+        if (!extensoesPermitidas.some(ext => nome.endsWith(ext))) {
+            alert(`Tipo de arquivo não permitido: ${file.name}`);
+            return;
+        }
+        respostaAluno.nomeArquivo = file.name;
+        formData.append("resposta", new Blob([JSON.stringify(respostaAluno)], { type: "application/json" }));
+        formData.append("arquivo", file);
+    }
+
+    const resposta = await fetch("/enviar/arquivo", {
+        method: "POST",
+        body: formData
+    });
+
+    if (!resposta.ok)
+        throw new Error("Erro desconhecido do servidor");
+    try {
+        alert("Redação enviada com sucesso!");
+        //fecharTentativa();
+        window.location.href = "/home";
+    } catch (err) {
+        console.error("Erro ao enviar o arquivo:", err);
+        alert("Ocorreu um erro ao enviar seu arquivo. Tente novamente.");
+    }
+}
+
 async function resgatarNota() {
-    const resposta = await fetch(`/conferir-nota/${atividade.id}/${statusAtividade.id}`);
+    const resposta = await fetch(`/conferir-nota/${atividade.id}/${tentativa.id}`);
     const valor = await resposta.json();
     return Number(valor);
 }
@@ -245,7 +353,7 @@ function montarPaginaResultado(nota) {
 async function timeOut() {
     clearInterval(temporizador);
 
-    if (statusAtividade && statusAtividade.id) {
+    if (tentativa && tentativa.id) {
         await fecharTentativa();
     }
     alert("O tempo desta tentativa acabou. Reinicie a página para começar uma nova");
@@ -292,17 +400,47 @@ function telaQuestionarioJaFeito() {
 function carregarTelaRedacao() {
     const nome = document.createElement("p");
     const enunciado = document.createElement("p");
-    const textarea = document.createElement("textarea");
+    const textareaRedacao = document.createElement("textarea");
+    const btnEnviar = document.createElement("button");
+    const numCaracteresRestantes = document.createElement("p");
+
+    numCaracteresRestantes.style.fontSize = "15px";
+
+    nome.innerHTML = atividade.nome;
+    enunciado.innerHTML = atividade.enunciado;
+    btnEnviar.textContent = "Enviar";
+    textareaRedacao.maxLength = LIMITE_CARACTERES;
+
+    textareaRedacao.id = "textarea-redacao";
+    textareaRedacao.addEventListener("input", () => {
+        numCaracteresRestantes.innerHTML = caracteresRestantes()
+    });
+
+    carregarArquivos();
+
+    containerPrincipal.append(nome, enunciado, textareaRedacao, numCaracteresRestantes, btnEnviar);
+
+    btnEnviar.addEventListener("click", enviarRedacao);
+}
+
+function carregarTelaEnvioArquivo() {
+    const nome = document.createElement("p");
+    const enunciado = document.createElement("p");
+    const inputArquivo = document.createElement("input");
     const btnEnviar = document.createElement("button");
 
     nome.innerHTML = atividade.nome;
     enunciado.innerHTML = atividade.enunciado;
     btnEnviar.textContent = "Enviar";
-    textarea.maxLength = LIMITE_CARACTERES;
+
+    inputArquivo.id = "input-arquivo";
+    inputArquivo.type = "file";
 
     carregarArquivos();
 
-    containerPrincipal.append(nome, enunciado, textarea, btnEnviar);
+    containerPrincipal.append(nome, enunciado, inputArquivo, btnEnviar);
+
+    btnEnviar.addEventListener("click", enviarArquivo);
 }
 
 async function primeiraTela() {
@@ -316,7 +454,7 @@ async function primeiraTela() {
             carregarTelaRedacao();
             break;
         case ("Envio de Arquivo"):
-            carregarTelaRedacao();
+            carregarTelaEnvioArquivo();
             break;
     }
 }
@@ -348,7 +486,7 @@ async function contarTentativas() {
 
 async function fecharTentativa() {
     try {
-        const response = await fetch(`/atualizar-status-tentativa/${statusAtividade.id}/fechar-tentativa`, {
+        const response = await fetch(`/atualizar-status-tentativa/${tentativa.id}/fechar-tentativa`, {
             method: "PATCH"
         });
         if (!response.ok) throw new Error("Erro ao fechar a tentativa");
@@ -359,7 +497,7 @@ async function fecharTentativa() {
 
 async function atualizarTempo() {
     try {
-        const response = await fetch(`/atualizar-status-tentativa/${statusAtividade.id}/atualizar-tempo`, {
+        const response = await fetch(`/atualizar-status-tentativa/${tentativa.id}/atualizar-tempo`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ tempoRestante: tempoTotal })

@@ -1,13 +1,11 @@
 package br.cefetmg.sicsec.Service;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
 import br.cefetmg.sicsec.Model.Usuario.Usuario;
-import br.cefetmg.sicsec.Repository.UsuarioRepo;
+import br.cefetmg.sicsec.Repository.Usuarios.UsuarioRepo;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -38,13 +36,12 @@ public class LoginService {
 		Long cpfFormatado = Long.parseLong(cpf);
 
 		try {
-			List<Usuario> usuarios = usuarioRepo.findByCpf(cpfFormatado);
+			Usuario usuario = usuarioRepo.findByCpf(cpfFormatado);
 
-            if (usuarios.isEmpty()) {
+            if (usuario == null) {
                 throw new EntityNotFoundException();
             }
 
-            Usuario usuario = usuarios.get(0);
             if (senha.equals(usuario.getSenha()) && usuario != null) {
 				HttpSession session = request.getSession(true);
 				sessionService.salvarDadosSessao(session, usuario);

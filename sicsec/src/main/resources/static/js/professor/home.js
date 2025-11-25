@@ -26,6 +26,7 @@ function openSection(sectionId) {
 
 function loadScripts() {
     initAtividades();
+    initTurmas();
     return;
 }
 

@@ -42,7 +42,7 @@ public class ValidarArquivosService {
         return atividadeRepository.save(atividade);
     }
 
-    private boolean validarArquivoUnico(MultipartFile arquivo) throws IOException {
+    public boolean validarArquivoUnico(MultipartFile arquivo) throws IOException {
         Path uploadDir = Paths.get("uploads");
         if (!Files.exists(uploadDir)) {
             Files.createDirectories(uploadDir);

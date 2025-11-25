@@ -1,0 +1,93 @@
+<header>
+    <h2>Gerenciar Turmas</h2>
+    <button data-tab="criar-turma" class="ativo">Cadastrar Turma</button>
+    <button data-tab="editar-turma">Editar Turma</button>
+</header>
+
+<section class="criar-turma tab">
+    <form action="/api/turma/registrar" method="post">
+        <input type="text"  placeholder="Nome da Turma" name="nome" required />
+
+        <div class="curso-section">
+            <label>Curso:</label>
+            <select id="cursoSelect" name="curso" required>
+                <option value="">Selecione um curso</option>
+            </select>
+        </div>
+
+        <div class="disciplina-section">
+            <label>Disciplina:</label>
+            <select id="disciplinaSelect" name="disciplina" required>
+                <option value="">Selecione uma disciplina</option>
+                <!-- Disciplinas serão filtradas dinamicamente com base no curso -->
+            </select>
+        </div>
+
+        <div class="professor-section">
+            <label>Professor(es):</label>
+            <select id="professorSelect" name="professores" multiple>
+                <!-- Professores serão filtrados dinamicamente com base no departamento da disciplina -->
+            </select>
+        </div>
+
+        <div class="aluno-section">
+            <label>Aluno(s):</label>
+            <select id="alunoSelect" name="alunos" multiple>
+                <!-- Alunos serão filtrados dinamicamente com base no curso selecionado -->
+            </select>
+        </div>
+
+        <button type="submit">Cadastrar Turma</button>
+    </form>
+</section>
+
+<section class="editar-turma tab">
+    <form id="buscarTurmaForm">
+        <select id="nomeTurmaBuscar" name="termo" required>
+            <option value="">Digite para buscar...</option>
+        </select>
+        <button type="submit">Buscar</button>
+    </form>
+
+    <form id="editarTurmaForm"
+          action="/api/turma/atualizar"
+          method="post"
+          style="display:none;">
+        <input type="hidden" id="turmaId"  name="id"/>
+
+        <input type="text" name="nome" required />
+
+        <div class="curso-section">
+            <label>Curso:</label>
+            <select id="cursoEditarSelect" name="curso" required>
+                </option>
+            </select>
+        </div>
+
+        <div class="disciplina-section">
+            <label>Disciplina:</label>
+            <select id="disciplinaEditarSelect" name="disciplina" required>
+                
+            </select>
+        </div>
+
+        <div class="professor-section">
+            <label>Professor(es):</label>
+            <select id="professorEditarSelect" name="professores" multiple></select>
+        </div>
+
+        <div class="aluno-section">
+            <label>Aluno(s):</label>
+            <select id="alunoEditarSelect" name="alunos" multiple></select>
+        </div>
+
+        <div class="ativo-section">
+            <label>
+                Arquivar Turma?
+                <input type="checkbox" id="arquivarTurma" name="arquivar" />
+            </label>
+        </div>
+
+        <button type="submit">Atualizar Turma</button>
+    </form>
+</section>

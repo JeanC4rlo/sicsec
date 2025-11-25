@@ -1,11 +1,16 @@
 package br.cefetmg.sicsec.Model;
 
+import java.util.List;
+
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 
 @Entity
 public class Resposta {
@@ -17,13 +22,16 @@ public class Resposta {
     @JoinColumn(name = "atividade_id", nullable = false)
     private Atividade atividade;
 
-    @ManyToOne
-    @JoinColumn(name = "status_id", nullable = false)
-    private Tentativa statusAtividade;
+    @OneToOne
+    @JoinColumn(name = "tentativa_id", nullable = true)
+    private Tentativa tentativa;
 
-    private Integer numQuestao;
-    private Integer alternativaMarcada;
-    private Boolean correta;
+    @ElementCollection
+    private List<AlternativaMarcada> alternativasMarcadas;
+
+    @Lob
+    private String textoRedacao;
+    private String nomeArquivo;
 
     public Long getId() {
         return id;
@@ -41,35 +49,35 @@ public class Resposta {
         this.atividade = atividade;
     }
 
-    public Tentativa getStatusAtividade() {
-        return statusAtividade;
+    public Tentativa getTentativa() {
+        return tentativa;
     }
 
-    public void setStatusAtividade(Tentativa statusAtividade) {
-        this.statusAtividade = statusAtividade;
+    public void setTentativa(Tentativa statusAtividade) {
+        this.tentativa = statusAtividade;
     }
 
-    public Integer getNumQuestao() {
-        return numQuestao;
+    public List<AlternativaMarcada> getAlternativasMarcadas() {
+        return alternativasMarcadas;
     }
 
-    public void setNumQuestao(Integer numQuestao) {
-        this.numQuestao = numQuestao;
+    public void setAlternativasMarcadas(List<AlternativaMarcada> alternativasMarcadas) {
+        this.alternativasMarcadas = alternativasMarcadas;
     }
 
-    public Integer getAlternativaMarcada() {
-        return alternativaMarcada;
+    public String getTextoRedacao() {
+        return textoRedacao;
     }
 
-    public void setAlternativaMarcada(Integer numAlternativa) {
-        this.alternativaMarcada = numAlternativa;
+    public void setTextoRedacao(String textoRedacao) {
+        this.textoRedacao = textoRedacao;
     }
 
-    public Boolean getCorreta() {
-        return correta;
+    public String getNomeArquivo() {
+        return nomeArquivo;
     }
 
-    public void setCorreta(Boolean correta) {
-        this.correta = correta;
+    public void setNomeArquivo(String nomeArquivo) {
+        this.nomeArquivo = nomeArquivo;
     }
 }

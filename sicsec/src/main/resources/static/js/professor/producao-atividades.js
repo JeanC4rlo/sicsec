@@ -296,11 +296,11 @@ function enviar() {
         valor: form.valor.value || "",
         dataEncerramento: form.data.value || "",
         horaEncerramento: form.horas.value || "",
-        enunciado: null,
-        questoes: null,
-        tentativas: null,
-        tempoDeDuracao: null,
-        tipoTimer: null
+        enunciado: "",
+        questoes: "[]",
+        tentativas: "1",
+        tempoDeDuracao: JSON.stringify({ numHoras: 1, numMinutos: 0 }),
+        tipoTimer: ""
     };
 
     if (form.tipo.value === "questionario") {
@@ -330,7 +330,7 @@ function enviar() {
         const numMinutos = document.querySelector("#num-minutos")?.value || "0";
         dados.tempoDeDuracao = JSON.stringify({ numHoras, numMinutos });
 
-        dados.tipoTimer = document.querySelector("#tipo-timer")?.value || "none";
+        dados.tipoTimer = document.querySelector("#tipo-timer")?.value || "interrompivel";
     }
     else {
         const inputEnunciado = sessao.querySelector(".inputEnunciado");

@@ -1,0 +1,23 @@
+li {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 80px;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    cursor: pointer;
+    text-align: center;
+    width: 50vw;
+}
+
+#cabecalho {
+    color: white;
+    background-color: var(--primary);
+    border-radius: 5px 5px 0 0;
+}
+
+li:hover {
+    background-color: #f3f3f3;
+}
+
+.inativo {
+    display: none;
+}

@@ -4,10 +4,23 @@
  */
 package br.cefetmg.sicsec.Model.Curso;
 
-import br.cefetmg.sicsec.Model.Usuario.Administrador.Coordenador;
-import com.fasterxml.jackson.annotation.*;
-import jakarta.persistence.*;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import br.cefetmg.sicsec.Model.Curso.Turma.Turma;
+import br.cefetmg.sicsec.Model.Usuario.Matricula;
+import br.cefetmg.sicsec.Model.Usuario.Administrador.Coordenador;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 
 /**
  *
@@ -32,10 +45,18 @@ public class Curso {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "curso")
     private List<Disciplina> matrizCurricular;
     
+    @JsonManagedReference
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "curso")
+    private List<Turma> turmas;
+    
     @JsonBackReference
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "departamento_id")
     private Departamento departamento;
+
+    @JsonManagedReference
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "curso")
+    private List<Matricula> matriculasVinculadas;
 
     public Long getId() {
         return id;
@@ -75,6 +96,14 @@ public class Curso {
 
     public void setMatrizCurricular(List<Disciplina> matrizCurricular) {
         this.matrizCurricular = matrizCurricular;
+    }
+
+    public List<Turma> getTurmas() {
+        return turmas;
+    }
+
+    public void setTurmas(List<Turma> turmas) {
+        this.turmas = turmas;
     }
 
     public Departamento getDepartamento() {

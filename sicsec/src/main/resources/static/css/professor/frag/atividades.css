@@ -45,7 +45,7 @@
     transform: scale(1.05);
 }
 
-#tabela-atividades {
+table {
     width: 100%;
     border-collapse: collapse;
     background-color: white;
@@ -55,7 +55,7 @@
     table-layout: fixed;
 }
 
-#tabela-atividades caption {
+table caption {
     font-size: 1.5rem;
     font-weight: bold;
     color: var(--primary);
@@ -63,27 +63,27 @@
     text-align: left;
 }
 
-#tabela-atividades thead {
+table thead {
     background-color: var(--primary);
     color: white;
 }
 
-#tabela-atividades th, 
-#tabela-atividades td {
+table th, 
+table td {
     padding: 0.75rem 1rem;
     text-align: left;
     border-bottom: 1px solid #ddd;
 }
 
-#tabela-atividades th {
+table th {
     font-weight: bold;
 }
 
-#tabela-atividades tbody tr:nth-child(even):not(.encerrada) {
+table tbody tr:nth-child(even):not(.encerrada) {
     background-color: var(--bg-secondary);
 }
 
-#tabela-atividades tbody tr:hover:not(.encerrada) {
+table tbody tr:hover:not(.encerrada) {
     background-color: var(--secondary);
     color: white;
     cursor: pointer;
@@ -108,8 +108,8 @@
 }
 
 @media (max-width: 768px) {
-    #tabela-atividades th,
-    #tabela-atividades td {
+    table th,
+    table td {
         font-size: 0.9rem;
         padding: 0.5rem;
     }

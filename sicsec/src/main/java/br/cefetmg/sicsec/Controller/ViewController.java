@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class ViewController {
+    
     @GetMapping("/home")
     public String homeView(HttpSession session, RedirectAttributes redirectAttributes) {
         String usuario = (String) session.getAttribute("usuario");

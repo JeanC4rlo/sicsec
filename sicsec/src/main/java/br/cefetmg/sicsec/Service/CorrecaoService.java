@@ -32,19 +32,20 @@ public class CorrecaoService {
 
             List<Questao> listaQuestoes = objectMapper.readValue(
                     atividade.getQuestoes(),
-                    new TypeReference<List<Questao>>() {}
-            );
+                    new TypeReference<List<Questao>>() {
+                    });
 
-            if (resposta.getNumQuestao() < 0 || resposta.getNumQuestao() >= listaQuestoes.size()) {
-                throw new CorrecaoException("Número da questão inválido");
-            }
+            resposta.getAlternativasMarcadas().forEach(alt -> {
+                if (alt.getNumQuestao() < 0 || alt.getNumQuestao() >= listaQuestoes.size()) {
+                    throw new CorrecaoException("Número da questão inválido");
+                }
 
-            Questao questao = listaQuestoes.get(resposta.getNumQuestao());
-            resposta.setCorreta(questao.getIdxCorreta().equals(resposta.getAlternativaMarcada()));
+                Questao questao = listaQuestoes.get(alt.getNumQuestao());
+                alt.setEstaCorreta(questao.getIdxCorreta().equals(alt.getAlternativa()));
+            });
 
         } catch (IOException e) {
             throw new CorrecaoException("Erro ao processar os dados da atividade", e);
         }
     }
 }
-
