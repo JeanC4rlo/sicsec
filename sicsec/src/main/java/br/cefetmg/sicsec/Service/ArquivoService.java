@@ -3,12 +3,20 @@ package br.cefetmg.sicsec.Service;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.*;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 
+import br.cefetmg.sicsec.Repository.AtividadeRepository;
+
 @Service
 public class ArquivoService {
+
+    @Autowired
+    AtividadeRepository atividadeRepository;
 
     private final Path uploadDir = Path.of("uploads");
 
@@ -19,4 +27,16 @@ public class ArquivoService {
         }
         return new UrlResource(path.toUri());
     }
+
+    public List<?> listarArquivos(Long atividadeId) {
+        return atividadeRepository.findById(atividadeId)
+                .map(atividade -> {
+                    List<String> arquivos = atividade.getNomesArquivos();
+                    return arquivos != null ? arquivos : List.of();
+                })
+                .orElseGet(() -> {
+                    return List.of();
+                });
+    }
+
 }

@@ -48,7 +48,7 @@ function caracteresRestantes() {
 
 async function carregarOuCriarTentativa() {
     try {
-        let response = await fetch(`/atividade/${atividade.id}/tentativa-aberta`);
+        let response = await fetch(`/api/tentativa/atividade/${atividade.id}/tentativa-aberta`);
         console.log(response);
         if (!response.ok) throw new Error("Erro ao verificar tentativa aberta");
 
@@ -67,7 +67,7 @@ async function carregarOuCriarTentativa() {
                 numTentativa: tentativasFeitas + 1,
                 aberta: true
             }
-            response = await fetch("/salvar-status-atividade", {
+            response = await fetch("/api/tentativa/salvar", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(dados)
@@ -122,7 +122,7 @@ function criarTimerInterrompivel(timer) {
 }
 
 async function criarTimerContinuo(timer) {
-    const resposta = await fetch(`/tempo-restante/${tentativa.id}`);
+    const resposta = await fetch(`/api/tentativa/tempo-restante/${tentativa.id}`);
     let tempoRestante = await resposta.json();
 
     temporizador = setInterval(() => {
@@ -231,7 +231,7 @@ async function enviarRespostasQuestionario() {
         nomeArquivo: null
     };
 
-    const resposta = await fetch("/enviar/questionario", {
+    const resposta = await fetch("/api/resposta/enviar/questionario", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(respostaAluno)
@@ -270,7 +270,7 @@ async function enviarRedacao() {
         nomeArquivo: null
     };
 
-    const resposta = await fetch("/enviar/redacao", {
+    const resposta = await fetch("/api/resposta/enviar/redacao", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(respostaAluno)
@@ -320,7 +320,7 @@ async function enviarArquivo() {
         formData.append("arquivo", file);
     }
 
-    const resposta = await fetch("/enviar/arquivo", {
+    const resposta = await fetch("/api/resposta/enviar/arquivo", {
         method: "POST",
         body: formData
     });
@@ -338,7 +338,7 @@ async function enviarArquivo() {
 }
 
 async function resgatarNota() {
-    const resposta = await fetch(`/conferir-nota/${atividade.id}/${tentativa.id}`);
+    const resposta = await fetch(`/api/desempenho/tentativa/${tentativa.id}/nota`);
     const valor = await resposta.json();
     return Number(valor);
 }
@@ -471,7 +471,7 @@ function formatarDataHora(date) {
 }
 
 async function contarTentativas() {
-    await fetch(`/atividade/${atividade.id}/tentativas`)
+    await fetch(`/api/tentativa/atividade/${atividade.id}/num-tentativas`)
         .then(response => {
             if (!response.ok) {
                 throw new Error("Erro ao consultar o número de tentativas");
@@ -486,7 +486,7 @@ async function contarTentativas() {
 
 async function fecharTentativa() {
     try {
-        const response = await fetch(`/atualizar-status-tentativa/${tentativa.id}/fechar-tentativa`, {
+        const response = await fetch(`/api/tentativa/fechar/${tentativa.id}`, {
             method: "PATCH"
         });
         if (!response.ok) throw new Error("Erro ao fechar a tentativa");
@@ -497,7 +497,7 @@ async function fecharTentativa() {
 
 async function atualizarTempo() {
     try {
-        const response = await fetch(`/atualizar-status-tentativa/${tentativa.id}/atualizar-tempo`, {
+        const response = await fetch(`/api/tentativa/atualizar-timer/${tentativa.id}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ tempoRestante: tempoTotal })
@@ -523,7 +523,7 @@ function salvarStatusTentativa() {
         aberta: true
     };
 
-    fetch("/salvar-status-atividade", {
+    fetch("/api/tentativa/salvar", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(dados),
@@ -584,24 +584,24 @@ function iniciarTentativa() {
 }
 
 async function carregarArquivos() {
-    const response = await fetch(`/api/atividade/${atividade.id}/arquivos`);
-    if (!response.ok) return console.error("Não foi possível carregar os arquivos");
+    const response = await fetch(`/api/arquivo/listar/${atividade.id}`);
+    if (!response.ok) throw new Error("Não foi possível carregar os arquivos");
     const arquivos = await response.json();
 
     const lista = document.createElement("list");
     lista.innerHTML = "";
 
     arquivos.forEach(nome => {
+        console.log(nome);
         const ul = document.createElement("ul");
         const link = document.createElement("a");
         ul.append(link);
 
-        link.href = `/api/atividade/download/${encodeURIComponent(nome)}`;
+        link.href = `/api/arquivo/download/${nome}`;
         link.textContent = nome;
         link.target = "_blank";
         lista.append(ul);
     });
-
     containerPrincipal.append(lista);
 }
 

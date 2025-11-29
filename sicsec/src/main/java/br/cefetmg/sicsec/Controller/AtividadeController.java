@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -18,8 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import br.cefetmg.sicsec.Model.Atividade;
-import br.cefetmg.sicsec.Repository.AtividadeRepository;
-import br.cefetmg.sicsec.Service.ArquivoService;
+import br.cefetmg.sicsec.Service.AtividadeService;
 import br.cefetmg.sicsec.Service.ValidarArquivosService;
 import br.cefetmg.sicsec.dto.HomeAtividadesDTO;
 
@@ -29,13 +26,28 @@ import br.cefetmg.sicsec.dto.HomeAtividadesDTO;
 
 public class AtividadeController {
     @Autowired
-    private AtividadeRepository atividadesRepository;
-
-    @Autowired
-    private ArquivoService arquivoService;
+    private AtividadeService atividadeService;
 
     @Autowired
     private ValidarArquivosService validarArquivosService;
+
+    @GetMapping("/{atividadeId}")
+    public ResponseEntity<Atividade> getAtividade(@PathVariable Long atividadeId) {
+        Atividade atividade = atividadeService.getAtividade(atividadeId);
+        return ResponseEntity.ok(atividade);
+    }
+
+    @GetMapping("/atividades")
+    public ResponseEntity<List<Atividade>> ListarAtividades() {
+        List<Atividade> listaAtividades = atividadeService.ListarAtividades();
+        return ResponseEntity.ok(listaAtividades);
+    }
+
+    @GetMapping("/home-atividades")
+    public ResponseEntity<List<HomeAtividadesDTO>> ListarHomeAtividades() {
+        List<HomeAtividadesDTO> listaAtividadesDTO = atividadeService.ListarAtividadesHomeAtividadeDTO();
+        return ResponseEntity.ok(listaAtividadesDTO);
+    }
 
     @PostMapping("/salvar")
     public ResponseEntity<?> salvarAtividade(
@@ -44,45 +56,5 @@ public class AtividadeController {
 
         Atividade nova = validarArquivosService.validarListaArquivos(atividade, arquivos);
         return ResponseEntity.status(HttpStatus.CREATED).body(nova);
-    }
-
-    @GetMapping("/{atividadeId}/arquivos")
-    public ResponseEntity<List<String>> listarArquivos(@PathVariable Long atividadeId) {
-        return atividadesRepository.findById(atividadeId)
-                .map(atividade -> {
-                    List<String> arquivos = atividade.getNomesArquivos();
-                    if (arquivos == null)
-                        arquivos = List.of();
-                    return ResponseEntity.ok(arquivos);
-                })
-                .orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    @GetMapping("/download/{nomeArquivo}")
-    public ResponseEntity<?> downloadArquivo(@PathVariable String nomeArquivo) throws IOException {
-        Resource resource = arquivoService.carregarArquivo(nomeArquivo);
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
-                .body(resource);
-    }
-
-    @GetMapping("/atividades")
-    public List<Atividade> ListarAtividades() {
-        return atividadesRepository.findAll();
-    }
-
-    @GetMapping("/home-atividades")
-    public List<HomeAtividadesDTO> ListarHomeAtividades() {
-        return atividadesRepository.findAll().stream()
-                .map(a -> new HomeAtividadesDTO(a.getId(), a.getNome(), a.getTipo(), a.getValor(),
-                        a.getDataEncerramento(), a.getHoraEncerramento()))
-                .toList();
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Atividade> buscarAtividade(@PathVariable Long id) {
-        return atividadesRepository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
     }
 }

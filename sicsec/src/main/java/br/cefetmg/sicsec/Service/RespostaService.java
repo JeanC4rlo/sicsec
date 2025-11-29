@@ -1,6 +1,7 @@
 package br.cefetmg.sicsec.Service;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,10 +22,23 @@ public class RespostaService {
     DesempenhoService desempenhoService;
 
     @Autowired
+    CorrecaoService correcaoService;
+
+    @Autowired
     ValidarArquivosService validarArquivosService;
 
     public Resposta getResposta(Long id) {
         return respostaRepository.findById(id).get();
+    }
+
+    public List<Resposta> getListRespostas() {
+        return respostaRepository.findAll();
+    }
+
+    public Resposta salvarQuestionario(Resposta resposta) {
+        double nota = correcaoService.corrigir(resposta);
+        desempenhoService.salvarDesempenhoQuestionario(resposta, nota);
+        return respostaRepository.save(resposta);
     }
 
     public Resposta salvarRedacao(Resposta resposta) {
@@ -32,7 +46,7 @@ public class RespostaService {
         return respostaRepository.save(resposta);
     }
 
-    public Resposta salvarEnvioArquivo(Resposta resposta, MultipartFile arquivo) throws IOException { //implementar check de arquivo
+    public Resposta salvarEnvioArquivo(Resposta resposta, MultipartFile arquivo) throws IOException {
         if(!validarArquivosService.validarArquivoUnico(arquivo)) throw new IOException();
         Resposta novaResposta = respostaRepository.save(resposta);
         System.out.println(novaResposta.getNomeArquivo());
@@ -40,7 +54,7 @@ public class RespostaService {
         return novaResposta;
     }
 
-    public DadosRespostaAlunoDTO getDadosRespostaAluno(Long desempenhoId) {
+    public DadosRespostaAlunoDTO getDadosResposta(Long desempenhoId) {
         Desempenho desempenho = desempenhoService.getDesempenho(desempenhoId);
         Atividade atividade = desempenho.getAtividade();
         Resposta resposta = desempenho.getResposta();

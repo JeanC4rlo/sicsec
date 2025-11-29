@@ -13,7 +13,6 @@ import br.cefetmg.sicsec.Repository.AtividadeRepository;
 import br.cefetmg.sicsec.Repository.DesempenhoRepository;
 import br.cefetmg.sicsec.Repository.TentativaRepository;
 import br.cefetmg.sicsec.dto.DadosRespostaAlunoDTO;
-import br.cefetmg.sicsec.dto.DesempenhoDTO;
 
 @Service
 public class DesempenhoService {
@@ -25,6 +24,11 @@ public class DesempenhoService {
 
     @Autowired
     TentativaRepository tentativaRepository;
+
+    public double getNota(Long tentativaId) {
+        Desempenho desempenho = desempenhoRepository.findByTentativaId(tentativaId);
+        return desempenho.getNota();
+    }
 
     public Desempenho getDesempenho(Long desempenhoId) {
         return desempenhoRepository.findById(desempenhoId).orElseThrow();

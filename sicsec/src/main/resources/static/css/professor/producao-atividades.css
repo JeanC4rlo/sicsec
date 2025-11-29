@@ -2,7 +2,8 @@
 
 :root {
     --accent: #36b37e;
-    --danger: #ff5630;
+    --caution: #ff5630;
+    --danger: #ff2a00;
     --bg: #f4f6fa;
     --text: #222;
     --card-bg: #fff;
@@ -61,6 +62,17 @@ form label {
     font-size: 0.95rem;
 }
 
+select {
+    cursor: pointer;
+}
+
+input:disabled {
+    background-color: #f0f0f0;
+    color: #8a8a8a;        
+    border-color:#c7c7c7;
+    cursor: not-allowed;
+}
+
 input,
 select,
 textarea {
@@ -116,6 +128,10 @@ section {
     animation: fadeIn 0.5s ease;
 }
 
+div {
+    animation: fadeIn 0.5s ease;
+}
+
 .ativo {
     display: block;
 }
@@ -137,18 +153,44 @@ section label {
 }
 
 section button {
-    background-color: var(--accent);
-    color: white;
-    font-weight: 600;
     border: none;
     border-radius: 0.5rem;
     padding: 0.6rem 1rem;
     cursor: pointer;
     transition: 0.25s ease;
+    color: white;
+    font-weight: 600;
 }
+
 section button:hover {
-    background-color: #2ca96d;
     transform: translateY(-2px);
+}
+
+.btn-add-questao,
+.btn-add-alternativa {
+    background-color: var(--accent);
+}
+
+.btn-add-questao:hover,
+.btn-add-alternativa:hover {
+    background-color: #2ca96d;
+}
+
+.btn-rmv-alternativa {
+    background-color: var(--primary);
+    color: white;
+}
+
+.btn-rmv-alternativa:hover {
+    background-color: var(--danger);
+}
+
+.btn-excluir-questao {
+    background-color: var(--caution);
+}
+
+.btn-excluir-questao:hover {
+    background-color: var(--danger);
 }
 
 .tooltip {
@@ -168,7 +210,7 @@ section button:hover {
 
 .tooltip .tooltiptext {
   visibility: hidden;
-  width: 180px;
+  width: 210px;
   background-color: #333;
   color: #fff;
   text-align: left;
@@ -188,7 +230,7 @@ section button:hover {
   content: "";
   position: absolute;
   top: 100%;
-  left: 50%;
+  left: 43%;
   margin-left: -5px;
   border-width: 5px;
   border-style: solid;
@@ -215,7 +257,6 @@ section button:hover {
     transition: 0.25s ease;
 }
 #lista-questoes > div:hover {
-    transform: translateY(-3px);
     box-shadow: 0 4px 8px rgba(38, 132, 255, 0.1);
 }
 

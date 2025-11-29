@@ -7,14 +7,14 @@ public class AlternativaMarcada {
 
     private Integer numQuestao;
     private Integer alternativa;
-    private Boolean estaCorreta;
+    private Boolean correta;
 
     public AlternativaMarcada() {}
 
     public AlternativaMarcada(Integer numQuestao, Integer alternativa, Boolean correta) {
         this.numQuestao = numQuestao;
         this.alternativa = alternativa;
-        this.estaCorreta = correta;
+        this.correta = correta;
     }
 
     public Integer getNumQuestao() {
@@ -33,13 +33,11 @@ public class AlternativaMarcada {
         this.alternativa = alternativa;
     }
 
-    public Boolean getEstaCorreta() {
-        return estaCorreta;
+    public Boolean isCorreta() {
+        return correta;
     }
 
-    public void setEstaCorreta(Boolean correta) {
-        this.estaCorreta = correta;
+    public void setCorreta(Boolean correta) {
+        this.correta = correta;
     }
-
-    
 }

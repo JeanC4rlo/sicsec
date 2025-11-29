@@ -2,10 +2,12 @@ package br.cefetmg.sicsec.Service;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.cefetmg.sicsec.Model.Atividade;
 import br.cefetmg.sicsec.Model.Tentativa;
 import br.cefetmg.sicsec.Repository.AtividadeRepository;
 import br.cefetmg.sicsec.Repository.TentativaRepository;
@@ -18,9 +20,35 @@ public class TentativaService {
     @Autowired
     AtividadeRepository atividadeRepository;
 
-    public Tentativa salvar(Long id) {
+    public Tentativa salvarTentativa(Tentativa tentativa) {
+        Atividade atividade = atividadeRepository.findById(tentativa.getAtividade().getId()).orElseThrow();
+        tentativa.setAtividade(atividade);
+        return tentativaRepository.save(tentativa);
+    }
+
+    public int getNumTentativasAtividade(Long atividadeId) {
+        return tentativaRepository.countByAtividade_IdAndAbertaFalse(atividadeId);
+    }
+
+    public Tentativa getTentativaAberta(Long atividadeId) {
+        return tentativaRepository.findByAtividadeIdAndAbertaTrue(atividadeId).get();
+    }
+
+    public Tentativa getUltimaTentativa(Long atividadeId) {
+        return tentativaRepository.findTopByAtividade_IdOrderByNumTentativaDesc(atividadeId).get();
+    }
+
+    public Tentativa atualizarTimer(Long tentativaId, Map<String, Object> dados) {
+        Tentativa tentativa = tentativaRepository.findById(tentativaId).orElseThrow();
+        if (dados.containsKey("tempoRestante")) {
+            tentativa.setTempoRestante((Integer) dados.get("tempoRestante"));
+        }
+        return tentativaRepository.save(tentativa);
+    }
+
+    public Tentativa salvarTimerInterrompivel(Long atividadeId) {
         Tentativa tentativa = new Tentativa();
-        tentativa.setAtividade(atividadeRepository.findById(id).orElseThrow());
+        tentativa.setAtividade(atividadeRepository.findById(atividadeId).orElseThrow());
         tentativa.setAberta(true);
         tentativa.setHorarioInicio(LocalDateTime.now());
         tentativaRepository.save(tentativa);
@@ -37,22 +65,22 @@ public class TentativaService {
         return tentativa;
     }
 
-    public Tentativa fechar(Long id) {
+    public Tentativa fecharTentativa(Long id) {
         Tentativa tentativa = tentativaRepository.findById(id).orElseThrow();
         tentativa.setTempoRestante(0);
         tentativa.setAberta(false);
-        return tentativa;
+        return tentativaRepository.save(tentativa);
     }
 
-    public Long getTempoRestante(Long id) {
-        Tentativa status = tentativaRepository.findById(id).orElseThrow();
+    public Long getTempoRestante(Long tentativaId) {
+        Tentativa tentativa = tentativaRepository.findById(tentativaId).orElseThrow();
         LocalDateTime agora = LocalDateTime.now();
-        Duration decorrido = Duration.between(status.getHorarioInicio(), agora);
-        long restante = status.getTempoRestante() - decorrido.getSeconds();
+        Duration decorrido = Duration.between(tentativa.getHorarioInicio(), agora);
+        long restante = tentativa.getTempoRestante() - decorrido.getSeconds();
 
         if (restante <= 0) {
-            status.setAberta(false);
-            tentativaRepository.save(status);
+            tentativa.setAberta(false);
+            tentativaRepository.save(tentativa);
             restante = 0;
         }
 

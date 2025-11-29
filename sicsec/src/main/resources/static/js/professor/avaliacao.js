@@ -3,15 +3,15 @@ const divConteudo = document.getElementById("conteudo");
 
 function carregarResposta() {
     const params = new URLSearchParams(window.location.search);
-    const id = params.get("id");
+    const desempenhoId = params.get("id");
 
-    fetch(`/desempenho/${id}`)
+    fetch(`/api/desempenho/${desempenhoId}`)
         .then(resp => {
             if (!resp.ok) throw new Error("Erro ao carregar a tentativa");
             return resp.json();
         })
-        .then(resp => {
-            dadosResposta = resp;
+        .then(dados => {
+            dadosResposta = dados;
             if (dadosResposta.tipoAtividade == "Redação")
                 montarTelaRedacao();
             else
@@ -57,16 +57,8 @@ function montarTelaEnvioArquivo() {
 }
 
 async function carregarPreview(nomeArquivo, divPreview) {
-
-    const resp = await fetch(`/arquivo/${nomeArquivo}`);
-
-    // Debug sem consumir o stream
-    console.log("Content-Type enviado pelo backend:", resp.headers.get("Content-Type"));
-
+    const resp = await fetch(`/api/arquivo/${nomeArquivo}`);
     const blob = await resp.blob();
-
-    console.log("blob.type:", blob.type); // aqui vai mostrar o tipo detectado
-
     const blobUrl = URL.createObjectURL(blob);
 
     if (blob.type.startsWith("image/")) {
@@ -142,18 +134,20 @@ function validaInputNota(inputNota) {
 }
 
 function enviarNota() {
-    let nota = document.getElementById("input-nota").value;
+    const inputNota = document.getElementById("input-nota");
+    let nota = inputNota.value;
 
     if (nota === "") {
         alert("Insira uma nota antes de submeter!");
+        destacarCampo(inputNota);
         return;
     }
 
     nota = Number(nota.replace(",", "."));
 
-    console.log(dadosResposta.desempenhoId);
+    if(confirm(`A nota ${nota} será atribuida`) == false) return;
 
-    fetch(`/atribuir/${dadosResposta.desempenhoId}/nota`, {
+    fetch(`/api/desempenho/${dadosResposta.desempenhoId}/nota`, {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json"
@@ -171,6 +165,12 @@ function enviarNota() {
         .catch(err => {
             alert("Erro: " + err.message);
         });
+}
+
+function destacarCampo(campo) {
+    campo.classList.add("campo-obrigatorio");
+    setTimeout(() => campo.classList.remove("campo-obrigatorio"), 2000);
+    campo.focus();
 }
 
 

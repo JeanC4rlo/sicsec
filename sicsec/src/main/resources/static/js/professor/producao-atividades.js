@@ -23,6 +23,7 @@ function initProdAtividade() {
     btnAnterior = document.getElementById("btn-anterior");
     btnProximo = document.getElementById("btn-proximo");
     btnAddQuestao = document.getElementById("add-questao");
+    btnAddQuestao.classList.add("btn-add-questao");
     btnEnviar = document.getElementById("btn-enviar");
 
     btnSair.addEventListener("click", confirmarSaidaDaPag);
@@ -108,6 +109,7 @@ function passar() {
     idxSegmento++;
     if (idxSegmento === 0) {
         definirSessao();
+        tipotimerD();
         listaSegmentos[idxSegmento].classList.add("ativo");
         return;
     }
@@ -138,8 +140,8 @@ function passarSegmento() {
         case "questionario":
             switch (idxSegmento) {
                 case 0:
-                    if (numQuestoes < 2) {
-                        alert("Um questionário deve ter pelo menos 2 questões");
+                    if (numQuestoes < 1) {
+                        alert("Um questionário deve ter pelo menos uma questões");
                         return;
                     }
                     if (!validarContainer(sessao.querySelector("#lista-questoes"))) return;
@@ -174,6 +176,10 @@ function voltarSegmento() {
         ativarForm();
         idxSegmento = -1;
     }
+}
+
+function addBotaoEnviar() {
+
 }
 
 function enviarArquivo() {
@@ -228,10 +234,12 @@ function adicionarQuestao() {
 
     const btnAddAlternativa = document.createElement("button");
     btnAddAlternativa.textContent = "Adicionar alternativa";
+    btnAddAlternativa.classList.add("btn-add-alternativa")
     btnAddAlternativa.addEventListener("click", () => adicionarAlternativa(listaAlternativas));
 
     const btnRmvQuestao = document.createElement("button");
     btnRmvQuestao.textContent = "Excluir questão";
+    btnRmvQuestao.classList.add("btn-excluir-questao");
     btnRmvQuestao.addEventListener("click", () => removerQuestao(corpo));
 
     while (listaAlternativas.children.length < 2) adicionarAlternativa(listaAlternativas);
@@ -241,8 +249,8 @@ function adicionarQuestao() {
 }
 
 function removerQuestao(corpo) {
-    if (numQuestoes < 3) {
-        alert("Um questionário deve ter pelo menos 2 questões");
+    if (numQuestoes < 2) {
+        alert("Um questionário deve ter pelo menos uma questões");
         return;
     }
     corpo.remove();
@@ -271,6 +279,7 @@ function adicionarAlternativa(listaAlternativas) {
 
     const btnRmvAlternativa = document.createElement("button");
     btnRmvAlternativa.textContent = "Remover alternativa";
+    btnRmvAlternativa.classList.add("btn-rmv-alternativa")
     btnRmvAlternativa.addEventListener("click", () => corpo.remove());
 
     corpo.append(texto, ehCorreta, btnRmvAlternativa);
@@ -281,6 +290,18 @@ function expandirTextarea(textarea) {
     textarea.addEventListener("input", () => {
         textarea.style.height = "auto";
         textarea.style.height = textarea.scrollHeight + "px";
+    });
+}
+
+function tipotimerD() {
+    const numHoras = sessao.querySelector("#num-horas");
+    const numMinutos = sessao.querySelector("#num-minutos");
+    const tipoTimer = sessao.querySelector("#tipo-timer");
+    numHoras.disabled = true;
+    numMinutos.disabled = true;
+    tipoTimer.addEventListener("input", () => {
+        numHoras.disabled = tipoTimer.value == "none";
+        numMinutos.disabled = tipoTimer.value == "none";
     });
 }
 
@@ -324,13 +345,13 @@ function enviar() {
         });
 
         dados.questoes = JSON.stringify(questoesArray);
-        dados.tentativas = document.querySelector("#num-tentativas")?.value || "1";
+        dados.tentativas = sessao.querySelector("#num-tentativas")?.value || "1";
 
-        const numHoras = document.querySelector("#num-horas")?.value || "1";
-        const numMinutos = document.querySelector("#num-minutos")?.value || "0";
+        const numHoras = sessao.querySelector("#num-horas")?.value || "1";
+        const numMinutos = sessao.querySelector("#num-minutos")?.value || "0";
         dados.tempoDeDuracao = JSON.stringify({ numHoras, numMinutos });
 
-        dados.tipoTimer = document.querySelector("#tipo-timer")?.value || "interrompivel";
+        dados.tipoTimer = sessao.querySelector("#tipo-timer")?.value || "none";
     }
     else {
         const inputEnunciado = sessao.querySelector(".inputEnunciado");
@@ -375,6 +396,9 @@ function enviar() {
 
 function montarConfirmacao() {
     btnEnviar.classList.remove("inativo");
+    btnAnterior.addEventListener("click", () => {
+        btnEnviar.classList.add("inativo");
+    }, { once: true });
 
     const nome = sessao.querySelector(".nome");
     const tipo = sessao.querySelector(".tipo");
@@ -399,6 +423,6 @@ function montarConfirmacao() {
 
 function confirmarSaidaDaPag() {
     if (confirm("Tem certeza que deseja sair da página? Os dados da atividade serão perdidos?")) {
-        window.location.href = "../homeProfessor.html";
+        window.location.href = "/html/professor/home.html";
     }
 }

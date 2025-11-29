@@ -34,7 +34,7 @@
             <div id="lista-questoes"></div>
         </div>
         <div id="duracao-e-tentativas">
-            <h3>Numéro de tentativas, duração do questionário e tipo de timer</h3>
+            <h3>Numéro de tentativas, duração e tipo do timer</h3>
             <label for="">Número de tentativas:</label>
             <input id="num-tentativas" type="number" min="1" value="1"><br>
             <label for="">Tipo de timer</label>
@@ -65,6 +65,21 @@
             <input class="inputEnunciado" type="textarea">
             <button class="btn-enviar-arquivo">Inserir arquivo(s) de consulta?</button>
         </div>
+        <div id="duracao">
+            <h3>Duração e tipo do timer</h3>
+            <label for="">Tipo de timer</label>
+            <div class="tooltip">?
+                <span class="tooltiptext">Contínuo: assim que começa, não pode ser parado. Sugerido para provas.<br><br>Interrompível: é interrompido quando usuário sai da página. Sugerido para atividades simples.</span>
+            </div>
+            <select name="tipo-timer" id="tipo-timer">
+                <option value="none">Sem timer</option>
+                <option value="continuo">Contínuo</option>
+                <option value="interrompivel">Interrompível</option>
+            </select><br>
+            <label>Duração:</label>
+            <input id="num-horas" type="number" id="horas" min="0" max="24" placeholder="Horas">
+            <input id="num-minutos" type="number" id="minutos" min="0" max="59" placeholder="Minutos"><br>
+        </div>
         <div class="confirmacao">
             <p class="nome">Nome: </p>
             <p class="tipo">Tipo: </p>
@@ -91,7 +106,7 @@
     </section>
     <button id="btn-anterior">Anterior</button>
     <button id="btn-proximo">Proximo</button>
-    <button id="btn-enviar" class="inativo  ">Enviar</button>
+    <button id="btn-enviar" class="inativo">Enviar</button>
 </body>
 
 </html>

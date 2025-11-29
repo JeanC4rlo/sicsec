@@ -2,6 +2,7 @@ package br.cefetmg.sicsec.Model;
 
 import java.util.List;
 
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -25,6 +26,7 @@ public class Atividade {
     private Integer tentativas;
     private String tempoDeDuracao;
     private String tipoTimer;
+    @ElementCollection
     private List<String> nomesArquivos;
 
     public Long getId() {

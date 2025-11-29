@@ -2,7 +2,7 @@ let listaDesempenhosHTML;
 
 async function carregarDesempenho() {
     try {
-        const resp = await fetch("/desempenhos");
+        const resp = await fetch("/api/desempenho/desempenhos");
         if (!resp.ok) throw new Error("Erro ao carregar as respostas");
 
         const desempenhos = await resp.json();
