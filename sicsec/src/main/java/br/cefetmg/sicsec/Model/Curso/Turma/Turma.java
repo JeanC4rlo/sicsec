@@ -18,13 +18,10 @@ import java.util.List;
  *
  * @author davig
  */
+
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Turma {
-    
-    // TO DO
-    // BOOLEAN ATIVO/INATIVO PARA DESATIVAR TURMAS ANTIGAS
-    // ANO LETIVO
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

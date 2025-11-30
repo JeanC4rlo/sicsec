@@ -154,6 +154,8 @@ function initTurmas() {
     localAtual = document.querySelector(".value.local");
     horarioAtual = document.querySelector(".value.horario");
 
+    
+
     TURMAS.forEach(turma => {
         const botao = document.createElement("button");
         botao.textContent = turma.nome;
