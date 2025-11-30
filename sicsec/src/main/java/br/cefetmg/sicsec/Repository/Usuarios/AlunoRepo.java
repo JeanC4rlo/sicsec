@@ -41,8 +41,7 @@ public interface AlunoRepo extends JpaRepository<Aluno, Long> {
      @Query("""
             SELECT a
             FROM Aluno a
-            JOIN a.matricula m
-            WHERE m.curso.id = :cursoId
+            WHERE a.curso.id = :cursoId
             """)
     List<Aluno> findAllByCurso(@Param("cursoId") Long cursoId);
 

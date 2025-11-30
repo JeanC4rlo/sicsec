@@ -6,6 +6,7 @@ package br.cefetmg.sicsec.Controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -235,30 +236,38 @@ public class TurmaController {
         Turma turma = tService.obterTurmaPorId(id);
         
         if (turma != null) {
+
             List<Map<String, Object>> alunos = new ArrayList<>();
+
             for (Aluno aluno : turma.getDiscentes()) {
-                alunos.add(Map.of(
-                    "id", aluno.getId(),
-                    "nome", aluno.getMatricula().getNome(),
-                    "email", aluno.getMatricula().getEmail(),
-                    "foto", aluno.getFotoPerfil()
-                ));
+                Map<String, Object> m = new HashMap<>();
+                m.put("id", aluno.getId());
+                m.put("nome", aluno.getMatricula() != null ? aluno.getMatricula().getNome() : null);
+                m.put("email", aluno.getMatricula() != null ? aluno.getMatricula().getEmail() : null);
+                m.put("curso", aluno.getCurso() != null ? aluno.getCurso().getNome() : null);
+                m.put("matricula", aluno.getMatricula() != null ? aluno.getMatricula().getNumeroMatricula() : null);
+                m.put("foto", aluno.getFotoPerfil()); // pode ser null
+                alunos.add(m);
             }
 
             List<Map<String, Object>> professores = new ArrayList<>();
-            for (Professor professor : turma.getDoscentes()) {
-                professores.add(Map.of(
-                    "id", professor.getId(),
-                    "nome", professor.getMatricula().getNome(),
-                    "email", professor.getMatricula().getEmail(),
-                    "foto", professor.getFotoPerfil()
-                ));
-            }
 
-            return ResponseEntity.ok(Map.of(
-                "docentes", alunos,
-                "discentes", professores
-            ));
+            for (Professor professor : turma.getDoscentes()) {
+                Map<String, Object> m = new HashMap<>();
+                m.put("id", professor.getId());
+                m.put("departamento", professor.getDepartamento() != null ? professor.getDepartamento().getNome() : null);
+                m.put("formacao", professor.getFormacao());
+                m.put("nome", professor.getMatricula() != null ? professor.getMatricula().getNome() : null);
+                m.put("email", professor.getMatricula() != null ? professor.getMatricula().getEmail() : null);
+                m.put("foto", professor.getFotoPerfil()); // pode ser null
+                professores.add(m);
+            }
+            
+            Map<String, List<Map<String, Object>>> result = new HashMap<>();
+            result.put("docentes", professores);
+            result.put("discentes", alunos);
+
+            return ResponseEntity.ok(result);
         }
         
         return ResponseEntity.badRequest().body(null);

@@ -4,6 +4,7 @@
  */
 package br.cefetmg.sicsec.Model.Usuario.Aluno;
 
+import br.cefetmg.sicsec.Model.Curso.Curso;
 import br.cefetmg.sicsec.Model.Curso.Turma.Turma;
 import br.cefetmg.sicsec.Model.Usuario.*;
 import com.fasterxml.jackson.annotation.*;
@@ -28,6 +29,11 @@ public class Aluno extends Usuario {
     @JsonManagedReference
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "aluno")
     private List<Boletim> anosEscolares;
+
+    @JsonBackReference
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "curso_id", nullable = true)
+    private Curso curso;
     
     /*
     @JsonIgnore
@@ -61,6 +67,14 @@ public class Aluno extends Usuario {
 
     public void setAnosEscolares(List<Boletim> anosEscolares) {
         this.anosEscolares = anosEscolares;
+    }
+    
+    public Curso getCurso() {
+        return curso;
+    }
+
+    public void setCurso(Curso curso) {
+        this.curso = curso;
     }
 
     public List<NescessidadeEspecial> getNescessidadesEspeciais() {

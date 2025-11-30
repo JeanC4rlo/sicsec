@@ -34,12 +34,6 @@ public interface ProfessorRepo extends JpaRepository<Professor, Long> {
     
     List<Professor> findByMatricula_NomeContaining(String nome);
 
-     @Query("""
-            SELECT a
-            FROM Professor a
-            JOIN a.matricula m
-            WHERE m.curso.id = :cursoId
-            """)
-    List<Professor> findAllByCurso(@Param("cursoId") Long cursoId);
+    List<Professor> findAllByDepartamentoId(Long departamentoId);
 
 }

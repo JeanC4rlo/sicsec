@@ -1,4 +1,4 @@
-package br.cefetmg.sicsec.Controller;
+package br.cefetmg.sicsec.Controller.Aluno;
 
 import java.util.ArrayList;
 import java.util.List;

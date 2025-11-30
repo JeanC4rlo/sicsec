@@ -81,49 +81,64 @@ const TURMAS = [
     }
 ];
 
-function montarTabelaTurma(nomeTurma) {
+async function montarTabelaTurma(nomeTurma) {
+
+    const idTurma = 1;
+
     const divDocente = document.querySelector("#docentes");
     const divDiscente = document.querySelector("#discentes");
-    const turma = TURMAS.find(t => t.nome === nomeTurma);
-    if (!turma) return;
+    const participantes = await fetchJSON("/api/turma/participantes/" + encodeURIComponent(idTurma))
+
+    if (!participantes) return;
+
     divDocente.innerHTML = "";
     divDiscente.innerHTML = "";
-    document.querySelector("#h1-docentes").textContent = `Docentes (${turma.docentes.length})`;
-    document.querySelector("#h1-discentes").textContent = `Discentes (${turma.discentes.length})`;
-    turma.docentes.forEach(docente => {
+
+    document.querySelector("#h1-docentes").textContent = `Docentes (${participantes.docentes.length})`;
+    document.querySelector("#h1-discentes").textContent = `Discentes (${participantes.discentes.length})`;
+
+    participantes.docentes.forEach(docente => {
         const div = criarCard(docente);
         divDocente.appendChild(div);
     });
-    turma.discentes.forEach(discente => {
+    
+    participantes.discentes.forEach(discente => {
         const div = criarCard(discente);
         divDiscente.appendChild(div);
     });
+
 }
 
+
 function criarCard(pessoa) {
+
     const div = document.createElement("div");
+    div.classList.add("pessoa");
+
     const foto = document.createElement("img");
     const nome = document.createElement("p");
     nome.classList.add("nome");
+
     const linhaExtra1 = document.createElement("p");
     const linhaExtra2 = document.createElement("p");
     const email = document.createElement("p");
-    div.classList.add("pessoa");
-    foto.src = pessoa.foto;
+
+    if(pessoa.foto === null || pessoa.foto === "") foto.src = fotoPadrao;
+    else foto.src = "/uploads/perfil/" + pessoa.foto + ".png";
     div.appendChild(foto);
+
     nome.textContent = pessoa.nome;
     div.appendChild(nome);
-    if (pessoa.papel === "DOCENTE") {
-        linhaExtra1.textContent = pessoa.departamento;
-        linhaExtra2.textContent = pessoa.formacao;
-    } else {
-        linhaExtra1.textContent = pessoa.matricula;
-        linhaExtra2.textContent = pessoa.curso;
-    }
+
+    if (pessoa.papel === "DOCENTE") [linhaExtra1.textContent, linhaExtra2.textContent] = [pessoa.departamento, pessoa.formacao];
+    else [linhaExtra1.textContent, linhaExtra2.textContent] = [pessoa.matricula, pessoa.curso];
+    
     div.appendChild(linhaExtra1);
     div.appendChild(linhaExtra2);
+
     email.textContent = pessoa.email;
     div.appendChild(email);
+    
     return div;
 }
 
@@ -154,8 +169,6 @@ function initTurmas() {
     localAtual = document.querySelector(".value.local");
     horarioAtual = document.querySelector(".value.horario");
 
-    
-
     TURMAS.forEach(turma => {
         const botao = document.createElement("button");
         botao.textContent = turma.nome;
@@ -178,4 +191,10 @@ function initTurmas() {
             acoesElement.classList.remove("visivel");
         }
     }
+}
+
+async function fetchJSON(url, options = { method: "POST" }) {
+  const res = await fetch(url, options);
+  if (!res.ok) throw new Error(`Erro HTTP ${res.status} em ${url}`);
+  return res.json();
 }

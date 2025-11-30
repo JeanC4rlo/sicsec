@@ -58,9 +58,9 @@ public class UsuarioService {
 
     public List<Professor> getProfessoresByDisciplina(Long disciplinaId) {
 
-
         Curso curso = cursoRepo.findByDisciplina(disciplinaId);
-        List<Professor> professores = professorRepo.findAllByCurso(curso.getId());
+
+        List<Professor> professores = professorRepo.findAllByDepartamentoId(curso.getDepartamento().getId());
 
         return professores;
 
