@@ -38,6 +38,8 @@ public class Professor extends Usuario {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "professor")
     private List<Afastamento> historicoAfastamento;
 
+    
+
     public List<Turma> getTurmas() {
         return turmas;
     }

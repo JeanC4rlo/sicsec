@@ -6,7 +6,6 @@ package br.cefetmg.sicsec.Controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,12 +16,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import br.cefetmg.sicsec.Model.Curso.Aula;
-import br.cefetmg.sicsec.Model.Curso.Turma.Noticia;
 import br.cefetmg.sicsec.Model.Curso.Turma.Turma;
 import br.cefetmg.sicsec.Model.Usuario.Aluno.Aluno;
 import br.cefetmg.sicsec.Model.Usuario.Professor.Professor;
@@ -30,8 +23,6 @@ import br.cefetmg.sicsec.Service.TurmaService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-
-import org.springframework.web.bind.annotation.RequestBody;
 
 
 /**
@@ -206,88 +197,38 @@ public class TurmaController {
         return ResponseEntity.ok(turmasMap);
 
     }
-
-    @PostMapping("/listarAluno")
-    public ResponseEntity<List<Object>> listarTurmasDeAluno(
-        HttpSession session
-    ) {
-
-        try {
-
-            System.out.println("Listando turmas de aluno...");
-
-            List<Turma> turmas = tService.listarTurmasDeAluno(session);
-         
-            List<Object> turmasMap = new ArrayList<>();
-
-            for(Turma turma : turmas) {
-
-                if (turma == null) continue;
-                if (!turma.isAtivo()) continue;
-
-                turmasMap.add(Map.of(
-                    "id", turma.getId(),
-                    "nome", turma.getNome()
-                ));
-
-            }
-
-            return ResponseEntity.ok(turmasMap);
-
-        }
-        catch (IllegalStateException e) {
-            return ResponseEntity.status(403).body(null);
-        }
-
-    }  
-
-    @PostMapping("info/{id}")
-    public ResponseEntity<Map<String, Object>> getTurmaInfo(@PathVariable Long id) {
+    
+    @PostMapping("/buscar/{termo}")
+    public ResponseEntity<List<Object>> buscarTurma(
+            @PathVariable String termo,
+            HttpServletRequest request,
+            HttpServletResponse response) 
+            throws IOException {
         
-        Turma turma = tService.obterTurmaPorId(id);
+        List<Turma> turmas = tService.buscarTurmaPorNome(termo, request);
+        
+        List<Object> turmasMap = new ArrayList<>();
 
-        if (turma == null) {
-            return ResponseEntity.status(404).body(null);
-        }
-
-        Map<String, Object> turmaMap = new HashMap<>();
-        turmaMap.putAll(Map.of(
+        for(Turma turma : turmas) {
+            turmasMap.add(Map.of(
+                "id", turma.getId(),
                 "nome", turma.getNome(),
-                "disciplina", turma.getDisciplina().getNome()
-        ));
+                "disciplina", Map.of(
+                    "id", turma.getDisciplina().getId(),
+                    "nome", turma.getDisciplina().getNome()
+                ),
+                "curso", Map.of(
+                    "id", turma.getCurso().getId(),
+                    "nome", turma.getCurso().getNome()
+                ),
+                "ativo", turma.isAtivo()
+            ));
+        }
+
+        return ResponseEntity.ok(turmasMap);
         
-        List<Aula> aulas = turma.getAulas();
-
-        List<Map<String, Object>> aulasMap = new ArrayList<>();
-
-        for (Aula aula : aulas) {
-
-            aulasMap.add(Map.of(
-                "dia", aula.getDia().toString(),
-                "horaInicio", aula.getHorario().getInicio().toString(),
-                "horaFim", aula.getHorario().getFim().toString(),
-                "sala", aula.getSala()
-            ));
-
-        }
-
-        if (aulasMap.isEmpty()) {
-            aulasMap.add(Map.of(
-                "dia", "Á definir",
-                "horaInicio", "Á definir",
-                "horaFim", "Á definir",
-                "sala", "Á definir"
-            ));
-        }
-
-        System.out.println(aulasMap);
-
-        turmaMap.put("aulas", aulasMap);
-
-        return ResponseEntity.ok(turmaMap);
-
     }
-
+    
     @PostMapping("/participantes/{id}")
     public ResponseEntity<Map<String, List<Map<String, Object>>>> getParticipantesTurma(HttpSession session, @PathVariable Long id) {
         
@@ -322,77 +263,5 @@ public class TurmaController {
         
         return ResponseEntity.badRequest().body(null);
     }
-    
-    @PostMapping("/noticias/{id}")
-    public ResponseEntity<List<Map<String, Object>>> getNoticiasTurma(@PathVariable Long id) {
-        
-        Turma turma = tService.obterTurmaPorId(id);
-        
-        if (turma == null) {
-            return ResponseEntity.badRequest().body(null); 
-        }
-        
-        List<Map<String, Object>> noticiasMap = new ArrayList<>();
 
-        for (Noticia noticia : turma.getNoticias()) {
-            noticiasMap.add(Map.of(
-                "Autor", noticia.getAutor().getMatricula().getNome(),
-                "data", noticia.getData().toString(),
-                "Manchete", noticia.getManchete(),
-                "Corpo", noticia.getCorpo()
-            ));
-        }
-
-        return ResponseEntity.ok(noticiasMap);
-
-    }
-
-    @PostMapping("/atividades/{id}")
-    public ResponseEntity<List<Map<String, Object>>> getAtividadesTurma(@PathVariable Long id) {
-        
-        Turma turma = tService.obterTurmaPorId(id);
-        
-        if (turma == null) {
-            return ResponseEntity.badRequest().body(null); 
-        }
-        
-        List<Map<String, Object>> atividadesMap = new ArrayList<>();
-
-        // TO DO: Implementar atividades quando o modelo estiver pronto
-
-        return ResponseEntity.ok(null);
-
-    }
-    
-    @PostMapping("/buscar/{termo}")
-    public ResponseEntity<List<Object>> buscarTurma(
-            @PathVariable String termo,
-            HttpServletRequest request,
-            HttpServletResponse response) 
-            throws IOException {
-        
-        List<Turma> turmas = tService.buscarTurmaPorNome(termo, request);
-        
-        List<Object> turmasMap = new ArrayList<>();
-
-        for(Turma turma : turmas) {
-            turmasMap.add(Map.of(
-                "id", turma.getId(),
-                "nome", turma.getNome(),
-                "disciplina", Map.of(
-                    "id", turma.getDisciplina().getId(),
-                    "nome", turma.getDisciplina().getNome()
-                ),
-                "curso", Map.of(
-                    "id", turma.getCurso().getId(),
-                    "nome", turma.getCurso().getNome()
-                ),
-                "ativo", turma.isAtivo()
-            ));
-        }
-
-        return ResponseEntity.ok(turmasMap);
-        
-    }
-    
 }
