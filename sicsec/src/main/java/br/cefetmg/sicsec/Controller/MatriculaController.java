@@ -1,5 +1,7 @@
 package br.cefetmg.sicsec.Controller;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,7 +41,16 @@ public class MatriculaController {
             if (matricula == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Matrícula não encontrada");
             }
-            return ResponseEntity.ok(matricula);
+
+            Map<String, Object> matriculaMap = Map.of(
+                    "id", matricula.getId(),
+                    "cpf", matricula.getCpf() != null ? matricula.getCpf() : "",
+                    "email", matricula.getEmail() != null ? matricula.getEmail() : "",
+                    "nome", matricula.getNome() != null ? matricula.getNome() : "",
+                    "numeroMatricula", matricula.getNumeroMatricula() != null ? matricula.getNumeroMatricula() : "",
+                    "telefone", matricula.getTelefone() != null ? matricula.getTelefone() : "");
+
+            return ResponseEntity.ok(matriculaMap);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Erro ao buscar matrícula: " + e.getMessage());

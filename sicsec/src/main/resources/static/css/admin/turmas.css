@@ -1,0 +1,256 @@
+/* ---------- [ Layout geral ] ---------- */
+.turmas .wrapper {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
+.turmas header {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background-color: var(--secondary);
+  color: white;
+  padding: 2rem;
+  justify-content: center;
+}
+
+.turmas header h2 {
+  text-wrap: nowrap;
+  margin-bottom: 1rem;
+}
+
+.turmas header button {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  background-color: transparent;
+  border: none;
+  color: white;
+  font-size: 1.15rem;
+  filter: brightness(0) invert(1);
+  transition: 200ms ease all;
+}
+
+.turmas header button:hover {
+  margin-left: 1rem;
+  cursor: pointer;
+}
+
+.turmas header button.ativo {
+  font-weight: bold;
+}
+
+.turmas header button::before {
+  content: "▶";
+  opacity: 0;
+  transition: 200ms ease all;
+}
+
+.turmas header button.ativo::before {
+  opacity: 1;
+}
+
+.turmas .tab {
+  flex-direction: column;
+  gap: 2rem;
+  padding: 2rem 5vw;
+  height: 100%;
+  width: 100%;
+  overflow-y: auto;
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  transition: opacity 0.2s ease;
+}
+
+.turmas .tab.ativo {
+  opacity: 1;
+  pointer-events: auto;
+  position: relative;
+}
+
+.turmas form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  transition: 200ms ease all;
+  background: white;
+  border: 2px solid var(--secondary);
+  border-radius: 0.75rem;
+  padding: 2rem;
+}
+
+.turmas input,
+.turmas select {
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  transition: 200ms ease all;
+  min-height: 2.4em;
+  box-sizing: border-box;
+}
+
+.turmas input:focus,
+.turmas select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(0, 58, 105, 0.2);
+}
+
+.turmas button[type="submit"] {
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: 200ms ease all;
+}
+
+.turmas button[type="submit"]:hover {
+  background-color: var(--secondary);
+}
+
+.turmas .curso-section,
+.turmas .disciplina-section,
+.turmas .professor-section,
+.turmas .aluno-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.turmas label {
+  font-weight: 600;
+  color: var(--primary);
+}
+
+/* ---------- [ Choices.js — estilo base ] ---------- */
+.choices {
+  width: 100%;
+}
+
+.choices__input--cloned {
+  display: block;
+  margin-top: 8px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+/* Múltiplos (Professores e Alunos) */
+.choices--top-search .choices__inner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.choices--top-search .choices__input--cloned {
+  order: -1;
+  width: 100%;
+  margin-bottom: 6px;
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.choices--top-search .choices__list--multiple .choices__item {
+  margin-bottom: 4px;
+}
+
+/* ---------- [ Formulário de busca de turma ] ---------- */
+#buscarTurmaForm .choices {
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+#buscarTurmaForm button {
+  margin-top: 6px;
+}
+
+/* ---------- [ Choices.js — modo select único (turmas) ] ---------- */
+.choices--select-one .choices__inner,
+.choices[data-type*="select-one"] .choices__inner {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  min-height: auto !important;
+}
+
+.choices--select-one .choices__input--cloned,
+.choices[data-type*="select-one"] .choices__input--cloned {
+  display: block !important;
+  opacity: 1 !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 8px !important;
+  border: 1px solid #ccc !important;
+  border-radius: 6px !important;
+  margin-top: 6px !important;
+  min-height: 2.4em !important;
+  background: #fff !important;
+}
+
+.choices--select-one .choices__list--single,
+.choices[data-type*="select-one"] .choices__list--single {
+  order: -1 !important;
+}
+
+/* Campo de busca de turmas: modo dropdown com input ativo */
+.choices--searchable-select .choices__inner {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+}
+
+.choices--searchable-select .choices__input--cloned {
+  display: block !important;
+  opacity: 1 !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 8px !important;
+  border: 1px solid #ccc !important;
+  border-radius: 6px !important;
+  margin-top: 6px !important;
+  background: #fff !important;
+  pointer-events: auto !important;
+}
+
+.choices--searchable-select .choices__list--single {
+  order: -1 !important;
+}
+
+/* ---------- [ Checkbox: Turma ativa ] ---------- */
+.turmas .ativo-section {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.turmas .ativo-section label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: var(--primary);
+  cursor: pointer;
+}
+
+.turmas .ativo-section input[type="checkbox"] {
+  width: 1.2rem;
+  height: 1.2rem;
+  accent-color: var(--primary);
+  cursor: pointer;
+  border-radius: 0.25rem;
+  transition: transform 0.15s ease;
+}
+
+.turmas .ativo-section input[type="checkbox"]:hover {
+  transform: scale(1.1);
+}
