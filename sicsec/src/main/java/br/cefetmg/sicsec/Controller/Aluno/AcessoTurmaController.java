@@ -13,10 +13,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import br.cefetmg.sicsec.Model.Curso.Aula;
+import br.cefetmg.sicsec.Model.Curso.Turma.Cronograma;
 import br.cefetmg.sicsec.Model.Curso.Turma.Noticia;
 import br.cefetmg.sicsec.Model.Curso.Turma.Turma;
-import br.cefetmg.sicsec.Model.Usuario.Aluno.Aluno;
-import br.cefetmg.sicsec.Model.Usuario.Professor.Professor;
 import br.cefetmg.sicsec.Service.TurmaService;
 import jakarta.servlet.http.HttpSession;
 
@@ -36,8 +35,6 @@ public class AcessoTurmaController {
     public ResponseEntity<List<Object>> listarTurmasDeAluno(HttpSession session) {
 
         try {
-
-            System.out.println("Listando turmas de aluno...");
 
             List<Turma> turmas = tService.listarTurmasDeAluno(session);
          
@@ -76,7 +73,8 @@ public class AcessoTurmaController {
         Map<String, Object> turmaMap = new HashMap<>();
         turmaMap.putAll(Map.of(
                 "nome", turma.getNome(),
-                "disciplina", turma.getDisciplina().getNome()
+                "disciplina", turma.getDisciplina().getNome(),
+                "curso", turma.getCurso().getNome()
         ));
         
         List<Aula> aulas = turma.getAulas();
@@ -86,26 +84,64 @@ public class AcessoTurmaController {
         for (Aula aula : aulas) {
 
             aulasMap.add(Map.of(
-                "dia", aula.getDia().toString(),
-                "horaInicio", aula.getHorario().getInicio().toString(),
-                "horaFim", aula.getHorario().getFim().toString(),
+                "diaSemana", aula.getDia().toString(),
+                "horarioInicio", aula.getHorario().getInicio().toString(),
+                "horarioFim", aula.getHorario().getFim().toString(),
                 "sala", aula.getSala()
             ));
 
         }
 
         if (aulasMap.isEmpty()) {
-            aulasMap.add(Map.of(
-                "dia", "Á definir",
-                "horaInicio", "Á definir",
-                "horaFim", "Á definir",
-                "sala", "Á definir"
+            turmaMap.put("aulas", false);
+        }
+        else turmaMap.put("aulas", aulasMap);
+        
+        List<Noticia> noticias = turma.getNoticias();
+
+        if (noticias.isEmpty()) {
+            turmaMap.put("ultimaNoticia", false);
+        } else {
+            noticias.sort((n1, n2) -> n1.getData().compareTo(n2.getData()));
+            Noticia ultimaNoticia = noticias.get(noticias.size() - 1);
+            turmaMap.put("ultimaNoticia", Map.of(
+                "autor", ultimaNoticia.getAutor().getMatricula().getNome(),
+                "data", ultimaNoticia.getData().toString(),
+                "manchete", ultimaNoticia.getManchete(),
+                "corpo", ultimaNoticia.getCorpo()
             ));
         }
 
-        System.out.println(aulasMap);
+        List<Cronograma> cronogramas = turma.getCronogramas();
 
-        turmaMap.put("aulas", aulasMap);
+        if (cronogramas.isEmpty()) {
+            turmaMap.put("proximoCronograma", false);
+        } else {
+
+            Cronograma proximoCronograma = null;
+
+            for (Cronograma cronograma : cronogramas) {
+                if (proximoCronograma == null || (cronograma.getData().before(proximoCronograma.getData()) && cronograma.getData().after(new java.util.Date())))
+                    proximoCronograma = cronograma;
+                
+            }
+
+            if (proximoCronograma == null) {
+                turmaMap.put("proximoCronograma", false);
+            } else {
+                turmaMap.put("proximoCronograma", Map.of(
+                    "autor", proximoCronograma.getAutor().getMatricula().getNome(),
+                    "data", proximoCronograma.getData().toString(),
+                    "titulo", proximoCronograma.getTitulo(),
+                    "descricao", proximoCronograma.getDescricao(),
+                    "arquivo", proximoCronograma.getArquivo(),
+                    "tipo", proximoCronograma.getTipo().toString()
+                ));
+            }
+
+        }
+
+        
 
         return ResponseEntity.ok(turmaMap);
 
@@ -124,10 +160,10 @@ public class AcessoTurmaController {
 
         for (Noticia noticia : turma.getNoticias()) {
             noticiasMap.add(Map.of(
-                "Autor", noticia.getAutor().getMatricula().getNome(),
+                "autor", noticia.getAutor().getMatricula().getNome(),
                 "data", noticia.getData().toString(),
-                "Manchete", noticia.getManchete(),
-                "Corpo", noticia.getCorpo()
+                "manchete", noticia.getManchete(),
+                "corpo", noticia.getCorpo()
             ));
         }
 
@@ -165,7 +201,7 @@ public class AcessoTurmaController {
 
         for (var cronograma : turma.getCronogramas()) {
             cronogramasMap.add(Map.of(
-                "Autor", cronograma.getAutor().getMatricula().getNome(),
+                "autor", cronograma.getAutor().getMatricula().getNome(),
                 "data", cronograma.getData().toString(),
                 "titulo", cronograma.getTitulo(),
                 "descricao", cronograma.getDescricao(),

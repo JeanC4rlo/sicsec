@@ -958,18 +958,25 @@ td {
     background-color: var(--secondary);
     height: 100%;
     overflow-x: hidden;
-    overflow-y: scroll;
+    overflow-y: auto;
     color: white;
     padding: 2rem;
     gap: 2rem;
-    min-width: 15rem;
-
+    width: 25%;
     padding-left: 5%;
     direction: rtl;
 }
 
-.wrapper header > * {
+#turmas .wrapper header > * {
   direction: ltr;
+}
+
+#turmas .wrapper header .lista-turmas-wrapper {
+    height: 45%;
+}
+
+#turmas .wrapper header .acoes {
+    height: 55%;
 }
 
 #turmas .wrapper section {
@@ -979,6 +986,7 @@ td {
 #turmas .wrapper section.ativo {
     display: flex;
     flex-direction: column;
+    width: 75%;
 }
 
 .info-turma {
@@ -1142,11 +1150,6 @@ td {
     transition: 200ms ease all;
 }
 
-.cronograma {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 20px;
-}
 
 .aula-bloco {
     margin-bottom: 30px;
