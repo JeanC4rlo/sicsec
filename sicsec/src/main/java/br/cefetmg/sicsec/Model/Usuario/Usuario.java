@@ -8,6 +8,8 @@ import br.cefetmg.sicsec.Model.Biblioteca.Emprestimo;
 import br.cefetmg.sicsec.Model.Util.Enum.Cargo;
 import java.util.List;
 
+import org.springframework.boot.context.properties.bind.Name;
+
 import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 
@@ -27,6 +29,11 @@ public class Usuario {
     @Enumerated(EnumType.STRING)
     private Cargo cargo;
     
+    private String email;
+
+    @Column(name = "foto_perfil")
+    private String fotoPerfil;
+
     private String senha;
     
     @JsonManagedReference
@@ -38,7 +45,7 @@ public class Usuario {
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_dados", nullable = false)
     private DadosBancarios dadosBancarios;
-    
+
     @JsonBackReference
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "mortuario")
     private List<Emprestimo> emprestimos;
@@ -61,6 +68,22 @@ public class Usuario {
 
     public void setCargo(Cargo cargo) {
         this.cargo = cargo;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getFotoPerfil() {
+        return fotoPerfil;
+    }
+
+    public void setFotoPerfil(String fotoPerfil) {
+        this.fotoPerfil = fotoPerfil;
     }
 
     public String getSenha() {

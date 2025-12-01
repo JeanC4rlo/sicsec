@@ -19,7 +19,6 @@ async function validateBiblioteca(matriculaTipo, matricula, senha) {
 
 function initLoginBiblioteca() {
     const form = document.querySelector("#biblioteca #login form");
-    console.log(form);
 
     form.addEventListener("submit", (event) => {
         event.preventDefault();

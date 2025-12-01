@@ -23,7 +23,7 @@ public class Aula {
     
     @JsonBackReference
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_turma", nullable = false)
+    @JoinColumn(name = "turma_id", nullable = false)
     private Turma turma;
     
     @Enumerated(EnumType.STRING)
@@ -34,7 +34,7 @@ public class Aula {
     
     @JsonManagedReference
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_disciplina", nullable = false)
+    @JoinColumn(name = "disciplina_id", nullable = false)
     private Disciplina disciplina;
     
     private String sala;

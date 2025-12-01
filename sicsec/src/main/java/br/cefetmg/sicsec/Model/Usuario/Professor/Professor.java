@@ -4,6 +4,7 @@
  */
 package br.cefetmg.sicsec.Model.Usuario.Professor;
 
+import br.cefetmg.sicsec.Model.Curso.Departamento;
 import br.cefetmg.sicsec.Model.Curso.Turma.*;
 import br.cefetmg.sicsec.Model.Usuario.*;
 import com.fasterxml.jackson.annotation.*;
@@ -37,6 +38,13 @@ public class Professor extends Usuario {
     @JsonManagedReference
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "professor")
     private List<Afastamento> historicoAfastamento;
+
+    @JsonBackReference
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "departamento_id", nullable = true)
+    private Departamento departamento;
+
+    private String formacao;
 
     public List<Turma> getTurmas() {
         return turmas;
@@ -78,6 +86,20 @@ public class Professor extends Usuario {
         this.historicoAfastamento = historicoAfastamento;
     }
     
-    
-    
+    public Departamento getDepartamento() {
+        return departamento;
+    }
+
+    public void setDepartamento(Departamento departamento) {
+        this.departamento = departamento;
+    }
+
+    public String getFormacao() {
+        return formacao;
+    }
+
+    public void setFormacao(String formacao) {
+        this.formacao = formacao;
+    }
+
 }

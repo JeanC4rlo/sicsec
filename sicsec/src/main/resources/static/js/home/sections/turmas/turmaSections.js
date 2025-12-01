@@ -10,6 +10,9 @@ function highlightTurmasOption(tabId) {
 }
 
 function openTurmasTab(tabId) {
+    
+    console.log("Abrindo aba:", tabId);
+
     const sections = document.querySelectorAll("#turmas section");
 
     sections.forEach(section => {
@@ -19,10 +22,10 @@ function openTurmasTab(tabId) {
             section.classList.remove("ativo");
     });
 
-    localStorage.setItem("turmasSecaoAtiva", tabId);
 }
 
 function initTurmasTabs() {
+    
     const turmasButtons = document.querySelectorAll("#turmas .acoes-container button");
 
     turmasButtons.forEach(button => {
@@ -34,14 +37,4 @@ function initTurmasTabs() {
         });
     });
 
-    const ultimaSecao = localStorage.getItem("turmasSecaoAtiva");
-
-    if (ultimaSecao) {
-        highlightTurmasOption(ultimaSecao);
-        openTurmasTab(ultimaSecao);
-    } else {
-        // Define a seção padrão como "participantes"
-        highlightTurmasOption("participantes");
-        openTurmasTab("participantes");
-    }
 }

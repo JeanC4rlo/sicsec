@@ -24,6 +24,7 @@ import br.cefetmg.sicsec.Repository.DisciplinaRepo;
 import br.cefetmg.sicsec.Repository.TurmaRepo;
 import br.cefetmg.sicsec.Repository.Usuarios.UsuarioRepo;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 /**
  *
@@ -319,6 +320,22 @@ public class TurmaService {
         
         List<Turma> turmas = turmaRepo.findByNomeContainingIgnoreCase(nome);
 
+        return turmas;
+        
+    }
+
+    public List<Turma> listarTurmasDeAluno(HttpSession session) {
+        
+        Usuario usuario = (Usuario) session.getAttribute("usuario");
+        
+        if (usuario == null || !(usuario instanceof Aluno)) {
+            throw new IllegalStateException("Acesso negado.");
+        }
+        
+        Aluno aluno = (Aluno) usuario;
+        
+        List<Turma> turmas = turmaRepo.findByDiscentesContaining(aluno);
+        
         return turmas;
         
     }
