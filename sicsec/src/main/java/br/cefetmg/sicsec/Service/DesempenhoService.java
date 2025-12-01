@@ -5,13 +5,13 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import br.cefetmg.sicsec.Model.Atividade;
 import br.cefetmg.sicsec.Model.Desempenho;
 import br.cefetmg.sicsec.Model.Resposta;
-import br.cefetmg.sicsec.Model.Tentativa;
+import br.cefetmg.sicsec.Model.Usuario.Usuario;
 import br.cefetmg.sicsec.Repository.AtividadeRepository;
 import br.cefetmg.sicsec.Repository.DesempenhoRepository;
 import br.cefetmg.sicsec.Repository.TentativaRepository;
+import br.cefetmg.sicsec.Repository.Usuarios.AlunoRepo;
 import br.cefetmg.sicsec.dto.DadosRespostaAlunoDTO;
 
 @Service
@@ -24,6 +24,9 @@ public class DesempenhoService {
 
     @Autowired
     TentativaRepository tentativaRepository;
+
+    @Autowired
+    AlunoRepo alunoRepository;
 
     public double getNota(Long tentativaId) {
         Desempenho desempenho = desempenhoRepository.findByTentativaId(tentativaId);
@@ -46,42 +49,31 @@ public class DesempenhoService {
                 .toList();
     }
 
-    public void salvarDesempenhoQuestionario(Resposta resposta, double nota) {
-        Desempenho desempenho = new Desempenho();
-        Atividade atividade = resposta.getAtividade();
-        Tentativa tentativa = resposta.getTentativa();
+    public Desempenho salvarDesempenho(Resposta resposta, Usuario aluno) {
+        return desempenhoRepository.save(popularDesempenho(resposta, aluno));
+    }
 
-        desempenho.setAtividade(atividade);
-        desempenho.setTentativa(tentativa);
+    public Desempenho salvarDesempenho(Resposta resposta, double nota, Usuario aluno) {
+        return desempenhoRepository.save(popularDesempenho(resposta, nota, aluno));
+    }
+
+    private Desempenho popularDesempenho(Resposta resposta, Usuario aluno) {
+        Desempenho desempenho = new Desempenho();
+
+        desempenho.setAluno(aluno);
+        desempenho.setAtividade(resposta.getAtividade());
+        desempenho.setCorrigido(false);
+        desempenho.setNota(null);
         desempenho.setResposta(resposta);
-        desempenho.setNota(nota);
+        desempenho.setTentativa(resposta.getTentativa());
+        return desempenho;
+    }
+
+    private Desempenho popularDesempenho(Resposta resposta, double nota, Usuario aluno) {
+        Desempenho desempenho = popularDesempenho(resposta, aluno);
         desempenho.setCorrigido(true);
-
-        desempenhoRepository.save(desempenho);
-    }
-
-    public void salvarDesempenhoRedacao(Resposta resposta) {
-        Desempenho desempenho = new Desempenho();
-
-        desempenho.setAtividade(resposta.getAtividade());
-        desempenho.setTentativa(null);
-        desempenho.setResposta(resposta);
-        desempenho.setNota(null);
-        desempenho.setCorrigido(false);
-
-        desempenhoRepository.save(desempenho);
-    }
-
-    public void salvarDesempenhoEnvioArquivo(Resposta resposta) {
-        Desempenho desempenho = new Desempenho();
-
-        desempenho.setAtividade(resposta.getAtividade());
-        desempenho.setTentativa(null);
-        desempenho.setResposta(resposta);
-        desempenho.setNota(null);
-        desempenho.setCorrigido(false);
-
-        desempenhoRepository.save(desempenho);
+        desempenho.setNota(nota);
+        return desempenho;
     }
 
     public Desempenho atribuirNota(Long desempenhoId, Double nota) {

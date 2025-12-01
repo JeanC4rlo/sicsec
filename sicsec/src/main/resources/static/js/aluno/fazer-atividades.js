@@ -49,7 +49,6 @@ function caracteresRestantes() {
 async function carregarOuCriarTentativa() {
     try {
         let response = await fetch(`/api/tentativa/atividade/${atividade.id}/tentativa-aberta`);
-        console.log(response);
         if (!response.ok) throw new Error("Erro ao verificar tentativa aberta");
 
         const text = await response.text();
@@ -67,6 +66,8 @@ async function carregarOuCriarTentativa() {
                 numTentativa: tentativasFeitas + 1,
                 aberta: true
             }
+            console.log(dados.atividade.id);
+            console.log(JSON.stringify(dados, null, 2));
             response = await fetch("/api/tentativa/salvar", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -172,6 +173,7 @@ function montarQuestao(questao) {
     container.classList.add("inativo");
     listaContainers.push(container);
     containerPrincipal.append(container);
+    if (contador === atividade.questoes.length - 1) AddBotaoEnviar();
 }
 
 function navegarEntreQuestoes(sentido) {
@@ -196,6 +198,7 @@ function converterTempoParaSegundos(horas = 0, minutos = 0, segundos = 0) {
 }
 
 function converterTempoDaAtividade() {
+    if(!atividade.tempoDeDuracao) return null;
     return converterTempoParaSegundos(Number(atividade.tempoDeDuracao.numHoras), Number(atividade.tempoDeDuracao.numMinutos));
 }
 
@@ -231,7 +234,7 @@ async function enviarRespostasQuestionario() {
         nomeArquivo: null
     };
 
-    const resposta = await fetch("/api/resposta/enviar/questionario", {
+    const resposta = await fetch("/api/resposta/enviar", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(respostaAluno)
@@ -270,7 +273,7 @@ async function enviarRedacao() {
         nomeArquivo: null
     };
 
-    const resposta = await fetch("/api/resposta/enviar/redacao", {
+    const resposta = await fetch("/api/resposta/enviar", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(respostaAluno)
@@ -368,9 +371,7 @@ function carregarTelaQuestionario() {
       <p>Valor: <strong>${atividade.valor} ponto${atividade.valor > 1 ? "s" : ""}</strong></p>
       <p>Número máximo de tentativas: ${atividade.tentativas}</p>
       <p>Tentativas restantes: ${atividade.tentativas - tentativasFeitas}</p>
-      <p>Tempo por tentativa: ${atividade.tempoDeDuracao.numHoras} hora${atividade.tempoDeDuracao.numHoras > 1 ? "s" : ""
-        } e ${atividade.tempoDeDuracao.numMinutos} minuto${atividade.tempoDeDuracao.numMinutos > 1 ? "s" : ""
-        }</p>
+      
       <p>Término: ${formatarData(atividade.dataEncerramento)}</p>
       <button id="btn-iniciar-tentativa">Iniciar tentativa</button>
     </div>

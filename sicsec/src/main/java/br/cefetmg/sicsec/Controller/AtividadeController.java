@@ -17,8 +17,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import br.cefetmg.sicsec.Model.Atividade;
 import br.cefetmg.sicsec.Service.AtividadeService;
-import br.cefetmg.sicsec.Service.ValidarArquivosService;
 import br.cefetmg.sicsec.dto.HomeAtividadesDTO;
+import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/api/atividade")
@@ -27,9 +27,6 @@ import br.cefetmg.sicsec.dto.HomeAtividadesDTO;
 public class AtividadeController {
     @Autowired
     private AtividadeService atividadeService;
-
-    @Autowired
-    private ValidarArquivosService validarArquivosService;
 
     @GetMapping("/{atividadeId}")
     public ResponseEntity<Atividade> getAtividade(@PathVariable Long atividadeId) {
@@ -52,9 +49,10 @@ public class AtividadeController {
     @PostMapping("/salvar")
     public ResponseEntity<?> salvarAtividade(
             @RequestPart("atividade") Atividade atividade,
-            @RequestPart(value = "arquivos", required = false) MultipartFile[] arquivos) throws IOException {
+            @RequestPart(value = "arquivos", required = false) MultipartFile[] arquivos,
+            HttpSession session) throws IOException {
 
-        Atividade nova = validarArquivosService.validarListaArquivos(atividade, arquivos);
+        Atividade nova = atividadeService.salvarAtividade(atividade, arquivos, session);
         return ResponseEntity.status(HttpStatus.CREATED).body(nova);
     }
 }

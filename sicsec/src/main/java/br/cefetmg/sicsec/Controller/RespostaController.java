@@ -18,8 +18,8 @@ import org.springframework.web.multipart.MultipartFile;
 import br.cefetmg.sicsec.Exceptions.CorrecaoException;
 import br.cefetmg.sicsec.Model.Resposta;
 import br.cefetmg.sicsec.Service.RespostaService;
-import br.cefetmg.sicsec.Service.ValidarArquivosService;
 import br.cefetmg.sicsec.dto.DadosRespostaAlunoDTO;
+import jakarta.servlet.http.HttpSession;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -27,9 +27,6 @@ import br.cefetmg.sicsec.dto.DadosRespostaAlunoDTO;
 public class RespostaController {
     @Autowired
     RespostaService respostaService;
-
-    @Autowired
-    ValidarArquivosService validarArquivosService;
 
     @GetMapping("/respostas")
     public ResponseEntity<List<Resposta>> getListRespostas() {
@@ -42,27 +39,23 @@ public class RespostaController {
         return ResponseEntity.ok(respostaService.getResposta(respostaId));
     }
 
-    @PostMapping("/enviar/questionario")
-    public ResponseEntity<?> corrigirResposta(@RequestBody Resposta resposta) throws CorrecaoException {
-        Resposta nova = respostaService.salvarQuestionario(resposta);
-        return ResponseEntity.ok(nova);
+    @GetMapping("/dados/{desempenhoId}")
+    public ResponseEntity<DadosRespostaAlunoDTO> getDadosResposta(@PathVariable Long desempenhoId) {
+        return ResponseEntity.ok(respostaService.getDadosResposta(desempenhoId));
     }
 
-    @PostMapping("/enviar/redacao")
-    public ResponseEntity<Resposta> salvarRedacao(@RequestBody Resposta resposta) {
-        Resposta nova = respostaService.salvarRedacao(resposta);
+    @PostMapping("/enviar")
+    public ResponseEntity<?> salvarResposta(@RequestBody Resposta resposta, HttpSession session)
+            throws CorrecaoException {
+        Resposta nova = respostaService.salvarResposta(resposta, session);
         return ResponseEntity.ok(nova);
     }
 
     @PostMapping("/enviar/arquivo")
-    public ResponseEntity<Resposta> salvarArquivo(
+    public ResponseEntity<Resposta> salvarRespostaComArquivo(
             @RequestPart("resposta") Resposta resposta,
-            @RequestPart("arquivo") MultipartFile arquivo) throws IOException {
-        return ResponseEntity.ok(respostaService.salvarEnvioArquivo(resposta, arquivo));
-    }
-
-    @GetMapping("/dados/{desempenhoId}")
-    public ResponseEntity<DadosRespostaAlunoDTO> getDadosResposta(@PathVariable Long desempenhoId) {
-        return ResponseEntity.ok(respostaService.getDadosResposta(desempenhoId));
+            @RequestPart("arquivo") MultipartFile arquivo,
+            HttpSession session) throws IOException {
+        return ResponseEntity.ok(respostaService.salvarResposta(resposta, arquivo, session));
     }
 }

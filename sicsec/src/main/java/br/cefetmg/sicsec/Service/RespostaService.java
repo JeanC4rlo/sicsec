@@ -10,8 +10,11 @@ import org.springframework.web.multipart.MultipartFile;
 import br.cefetmg.sicsec.Model.Atividade;
 import br.cefetmg.sicsec.Model.Desempenho;
 import br.cefetmg.sicsec.Model.Resposta;
+import br.cefetmg.sicsec.Model.Usuario.Usuario;
 import br.cefetmg.sicsec.Repository.RespostaRepository;
+import br.cefetmg.sicsec.Repository.Usuarios.UsuarioRepo;
 import br.cefetmg.sicsec.dto.DadosRespostaAlunoDTO;
+import jakarta.servlet.http.HttpSession;
 
 @Service
 public class RespostaService {
@@ -25,7 +28,13 @@ public class RespostaService {
     CorrecaoService correcaoService;
 
     @Autowired
-    ValidarArquivosService validarArquivosService;
+    ArquivoService arquivoService;
+
+    @Autowired
+    UsuarioRepo usuarioRepository;
+
+    @Autowired
+    AtividadeService atividadeService;
 
     public Resposta getResposta(Long id) {
         return respostaRepository.findById(id).get();
@@ -35,23 +44,29 @@ public class RespostaService {
         return respostaRepository.findAll();
     }
 
-    public Resposta salvarQuestionario(Resposta resposta) {
-        double nota = correcaoService.corrigir(resposta);
-        desempenhoService.salvarDesempenhoQuestionario(resposta, nota);
-        return respostaRepository.save(resposta);
+    public Resposta salvarResposta(Resposta resposta, HttpSession session) {
+        Usuario aluno = usuarioRepository.findById((Long) session.getAttribute("usuarioId")).get();
+        Atividade atividade = atividadeService.getAtividade(resposta.getAtividade().getId());
+        resposta.setAluno(aluno);
+        resposta.setAtividade(atividade);
+        Resposta nova = respostaRepository.save(resposta);
+        if (resposta.getAtividade().getTipo().equals("Questionário")) {
+            double nota = correcaoService.corrigir(nova);
+            desempenhoService.salvarDesempenho(nova, nota, aluno);
+        }
+        desempenhoService.salvarDesempenho(nova, aluno);
+        return respostaRepository.save(nova);
     }
 
-    public Resposta salvarRedacao(Resposta resposta) {
-        desempenhoService.salvarDesempenhoRedacao(resposta);
-        return respostaRepository.save(resposta);
-    }
-
-    public Resposta salvarEnvioArquivo(Resposta resposta, MultipartFile arquivo) throws IOException {
-        if(!validarArquivosService.validarArquivoUnico(arquivo)) throw new IOException();
-        Resposta novaResposta = respostaRepository.save(resposta);
-        System.out.println(novaResposta.getNomeArquivo());
-        desempenhoService.salvarDesempenhoEnvioArquivo(novaResposta);
-        return novaResposta;
+    public Resposta salvarResposta(Resposta resposta, MultipartFile arquivo, HttpSession session) throws IOException {
+        if (arquivo == null || !arquivoService.validarArquivo(arquivo))
+            throw new IOException();
+        Usuario aluno = usuarioRepository.findById((Long) session.getAttribute("usuarioId")).get();
+        resposta.setAluno(aluno);
+        Resposta nova = respostaRepository.save(resposta);
+        arquivoService.salvarArquivoResposta(nova, arquivo);
+        desempenhoService.salvarDesempenho(nova, aluno);
+        return respostaRepository.save(nova);
     }
 
     public DadosRespostaAlunoDTO getDadosResposta(Long desempenhoId) {

@@ -2,6 +2,9 @@ package br.cefetmg.sicsec.Model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import br.cefetmg.sicsec.Model.Usuario.Usuario;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -25,6 +28,11 @@ public class Resposta {
     @OneToOne
     @JoinColumn(name = "tentativa_id", nullable = true)
     private Tentativa tentativa;
+
+    @ManyToOne
+    @JsonIgnore
+    @JoinColumn(name = "aluno_id", nullable = false)
+    private Usuario aluno;
 
     @ElementCollection
     private List<AlternativaMarcada> alternativasMarcadas;
@@ -53,8 +61,16 @@ public class Resposta {
         return tentativa;
     }
 
-    public void setTentativa(Tentativa statusAtividade) {
-        this.tentativa = statusAtividade;
+    public void setTentativa(Tentativa tentativa) {
+        this.tentativa = tentativa;
+    }
+
+    public Usuario getAluno() {
+        return aluno;
+    }
+
+    public void setAluno(Usuario aluno) {
+        this.aluno = aluno;
     }
 
     public List<AlternativaMarcada> getAlternativasMarcadas() {

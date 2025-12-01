@@ -21,7 +21,7 @@ import java.util.List;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Turma {
-    
+
     // TO DO
     // BOOLEAN ATIVO/INATIVO PARA DESATIVAR TURMAS ANTIGAS
     // ANO LETIVO
@@ -29,69 +29,55 @@ public class Turma {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     @Enumerated(EnumType.STRING)
     private TipoTurma tipo;
-    
+
     private String nome;
     private int anoLetivo;
     private boolean ativo;
-    
-    @JsonManagedReference
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "disciplina_id", nullable = false)
     private Disciplina disciplina;
 
-    @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "curso_id", nullable = false)
     private Curso curso;
-    
-    @JsonBackReference
+
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-        name = "turma_aluno",
-        joinColumns = @JoinColumn(name = "turma_id"),
-        inverseJoinColumns = @JoinColumn(name = "aluno_id")
-    )
+    @JoinTable(name = "turma_aluno", joinColumns = @JoinColumn(name = "turma_id"), inverseJoinColumns = @JoinColumn(name = "aluno_id"))
     private List<Aluno> discentes;
-    
-    @JsonBackReference
+
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-        name = "turma_professor",
-        joinColumns = @JoinColumn(name = "turma_id"),
-        inverseJoinColumns = @JoinColumn(name = "professor_id")
-    )
+    @JoinTable(name = "turma_professor", joinColumns = @JoinColumn(name = "turma_id"), inverseJoinColumns = @JoinColumn(name = "professor_id"))
     private List<Professor> doscentes;
-    
-    @JsonManagedReference
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "turma")
     private List<Aula> aulas;
-    
-    /*
-    @JsonManagedReference
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "turma")
-    private List<Avaliacao> avaliacoes;
-    */
 
-    @JsonManagedReference
+    /*
+     * @JsonManagedReference
+     * 
+     * @OneToMany(fetch = FetchType.LAZY, mappedBy = "turma")
+     * private List<Avaliacao> avaliacoes;
+     */
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "turma")
     private List<MaterialDidatico> materialDidatico;
-    
-    @JsonManagedReference
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "turma")
     private List<Noticia> noticias;
-    
-    @JsonManagedReference
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "turma")
     private List<ListaPresenca> frequencia;
 
     public Turma() {
-        
+
     }
-    
-    public Turma(String nome, int anoLetivo, boolean ativo, Disciplina disciplina, Curso curso, List<Aluno> discentes, List<Professor> doscentes) {
+
+    public Turma(String nome, int anoLetivo, boolean ativo, Disciplina disciplina, Curso curso, List<Aluno> discentes,
+            List<Professor> doscentes) {
         this.setNome(nome);
         this.setAnoLetivo(anoLetivo);
         this.setAtivo(ativo);
@@ -101,7 +87,7 @@ public class Turma {
         this.setDoscentes(doscentes);
         this.setTipo(TipoTurma.TURMA_UNICA);
     }
-    
+
     public Turma(String nome, int anoLetivo, boolean ativo, Disciplina disciplina, Curso curso) {
         this.setNome(nome);
         this.setAnoLetivo(anoLetivo);
@@ -112,7 +98,7 @@ public class Turma {
         this.setDoscentes(new ArrayList<Professor>());
         this.setTipo(TipoTurma.TURMA_UNICA);
     }
-    
+
     public Long getId() {
         return id;
     }
@@ -152,7 +138,7 @@ public class Turma {
     public void setAtivo(boolean ativo) {
         this.ativo = ativo;
     }
-    
+
     public Disciplina getDisciplina() {
         return disciplina;
     }
@@ -164,7 +150,7 @@ public class Turma {
     public void setCurso(Curso curso) {
         this.curso = curso;
     }
-    
+
     public void setDisciplina(Disciplina disciplina) {
         this.disciplina = disciplina;
     }
@@ -216,5 +202,5 @@ public class Turma {
     public void setFrequencia(List<ListaPresenca> frequencia) {
         this.frequencia = frequencia;
     }
-    
+
 }

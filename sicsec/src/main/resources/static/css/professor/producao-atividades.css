@@ -116,7 +116,6 @@ textarea:focus {
 }
 
 section {
-    display: none;
     flex-direction: column;
     gap: 1.5rem;
     background-color: var(--card-bg);
@@ -140,9 +139,7 @@ div {
     display: none;
 }
 
-section > div{
-    display: none;
-}
+
 
 #container-botoes {
     display: flex !important;
@@ -166,12 +163,12 @@ section button:hover {
     transform: translateY(-2px);
 }
 
-.btn-add-questao,
+#btn-add-questao,
 .btn-add-alternativa {
     background-color: var(--accent);
 }
 
-.btn-add-questao:hover,
+#btn-add-questao:hover,
 .btn-add-alternativa:hover {
     background-color: #2ca96d;
 }

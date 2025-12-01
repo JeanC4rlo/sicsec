@@ -1,50 +1,73 @@
-let btnSair, form, btnAnterior, btnProximo, btnAddQuestao, btnEnviar;
-let sessao;
-let listaSegmentos;
-let idxSegmento = -1;
+let btnSair, btnAnterior, btnProximo, btnEnviar;
+let dadosForm;
+let idxSection = -1;
+let questoesArray;
 let numQuestoes = 0;
 let inputDeArquvios;
+let handlerProximoAtual = null;
+let dadosAtividade = {
+    numTentativas: "",
+    tipoTimer: "",
+    numHoras: "",
+    numMinutos: "",
+    enunciado: ""
+}
 
-const MAX_NUM_ALTERNATIVAS = 6;
+let section;
+let sequenciaEscolhida;
+const sequenciasAcoes = {
+    questionario: [
+        montarTelaQuestoes,
+        () => montarTelaDuracaoETentativas("duracao-e-tentativas"),
+        montarConfirmacao
+    ],
+    redacao: [
+        montarTelaElaboracaoEnunciado,
+        () => montarTelaDuracaoETentativas("duracao"),
+        montarConfirmacao
+    ],
+    envioArquivo: [
+        montarTelaElaboracaoEnunciado,
+        montarConfirmacao
+    ]
+};
+
+const MAX_NUM_ALTERNATIVAS = 5;
 const MAX_CARACTERES_TXT_PEQUENO = 252;
 const MAX_CARACTERES_TXT_GRANDE = 2000;
 
 const tipos = {
     questionario: "Questionário",
     redacao: "Redação",
-    envArquivo: "Envio de Arquivo"
+    envioArquivo: "Envio de Arquivo"
 };
 
 window.onload = initProdAtividade;
 
 function initProdAtividade() {
-    form = document.querySelector("form");
+    section = document.querySelector("section");
     btnSair = document.getElementById("btn-sair");
     btnAnterior = document.getElementById("btn-anterior");
     btnProximo = document.getElementById("btn-proximo");
-    btnAddQuestao = document.getElementById("add-questao");
-    btnAddQuestao.classList.add("btn-add-questao");
     btnEnviar = document.getElementById("btn-enviar");
 
     btnSair.addEventListener("click", confirmarSaidaDaPag);
-    btnProximo.addEventListener("click", passarSegmento);
-    btnAnterior.addEventListener("click", voltarSegmento);
-    btnAddQuestao.addEventListener("click", adicionarQuestao);
+    montarPrimeiraTela();
+    btnAnterior.addEventListener("click", () => {
+        if (handlerProximoAtual) {
+            btnProximo.removeEventListener("click", handlerProximoAtual);
+            handlerProximoAtual = null;
+        }
+        retroceder();
+    });
     btnEnviar.addEventListener("click", enviar);
-
-    idxSegmento = -1;
+    idxSection = -1;
 }
 
-function ativarForm() {
-    sessao.classList.remove("ativo");
-    form.classList.remove("inativo");
-}
-
-function definirSessao() {
-    sessao = document.querySelector(`#section-${form.tipo.value}`);
-    sessao.classList.add("ativo");
-    listaSegmentos = sessao.querySelectorAll(":scope > div");
-    form.classList.add("inativo");
+function destacarCampo(campo) {
+    campo.classList.add("campo-obrigatorio");
+    setTimeout(() => campo.classList.remove("campo-obrigatorio"), 2000);
+    campo.focus();
 }
 
 function validarCampo(campo) {
@@ -55,17 +78,11 @@ function validarCampo(campo) {
     return true;
 }
 
-function destacarCampo(campo) {
-    campo.classList.add("campo-obrigatorio");
-    setTimeout(() => campo.classList.remove("campo-obrigatorio"), 2000);
-    campo.focus();
-}
-
 function validarContainer(container) {
     const campos = container.querySelectorAll("input, textarea, select");
     for (const campo of campos) {
-        if (!campo.value.trim()) {
-            validarCampo(campo);
+        if (!campo.value.trim() && !campo.classList.contains("texto-questao")) {
+            destacarCampo(campo);
             return false;
         }
     }
@@ -105,81 +122,18 @@ function validarTempo() {
     return true;
 }
 
-function passar() {
-    idxSegmento++;
-    if (idxSegmento === 0) {
-        definirSessao();
-        tipotimerD();
-        listaSegmentos[idxSegmento].classList.add("ativo");
+function avancar() {
+    idxSection = Math.min(idxSection + 1, sequenciaEscolhida.length - 1);
+    sequenciaEscolhida[idxSection]();
+}
+
+function retroceder() {
+    idxSection = Math.max(-1, idxSection - 1);
+    if (idxSection == -1) {
+        montarPrimeiraTela();
         return;
     }
-
-    listaSegmentos[idxSegmento - 1].classList.remove("ativo");
-    listaSegmentos[idxSegmento].classList.add("ativo");
-}
-
-function passarSegmento() {
-    if (idxSegmento === -1) {
-        for (let campo of form.elements) {
-            if (!validarCampo(campo)) return;
-        }
-
-        if (!validarData(form.data.value)) {
-            alert("A data inserida é inválida");
-            destacarCampo(form.data);
-            return;
-        }
-        passar();
-        if (form.tipo.value == "redacao" || form.tipo.value == "envArquivo") enviarArquivo();
-        return;
-    }
-
-    if (idxSegmento >= listaSegmentos.length - 1) return;
-
-    switch (form.tipo.value) {
-        case "questionario":
-            switch (idxSegmento) {
-                case 0:
-                    if (numQuestoes < 1) {
-                        alert("Um questionário deve ter pelo menos uma questões");
-                        return;
-                    }
-                    if (!validarContainer(sessao.querySelector("#lista-questoes"))) return;
-                    passar();
-                    montarConfirmacao();
-                    break;
-                case 1:
-                    if (!validarLista(sessao.querySelector("#duracao-e-tentativas"), { selectors: ["input"] })) return;
-                    passar();
-                    montarConfirmacao();
-                    break;
-            }
-            break;
-        case "redacao":
-        case "envArquivo":
-            if (!validarContainer(sessao.querySelector(".elaboracao"))) return;
-            passar();
-            montarConfirmacao();
-            break;
-    }
-}
-
-function voltarSegmento() {
-    if (idxSegmento < 0) return;
-
-    if (idxSegmento > 0) {
-        listaSegmentos[idxSegmento].classList.remove("ativo");
-        listaSegmentos[idxSegmento - 1].classList.add("ativo");
-        idxSegmento--;
-    } else {
-        listaSegmentos[idxSegmento].classList.remove("ativo");
-        ativarForm();
-        idxSegmento = -1;
-    }
-}
-
-function addBotaoEnviar() {
-
+    sequenciaEscolhida[idxSection]();
 }
 
 function enviarArquivo() {
@@ -208,7 +162,6 @@ function enviarArquivo() {
     });
 }
 
-
 function adicionarQuestao() {
     numQuestoes++;
 
@@ -222,6 +175,7 @@ function adicionarQuestao() {
     const txtDaQuestao = document.createElement("textarea");
     txtDaQuestao.placeholder = "Texto da questão";
     txtDaQuestao.maxLength = MAX_CARACTERES_TXT_GRANDE;
+    txtDaQuestao.classList.add("texto-questao");
     expandirTextarea(txtDaQuestao);
 
     const enunciadoQuestao = document.createElement("textarea");
@@ -230,7 +184,7 @@ function adicionarQuestao() {
     expandirTextarea(enunciadoQuestao);
 
     const listaAlternativas = document.createElement("div");
-    listaAlternativas.id = "lista-alternativas";
+    listaAlternativas.classList.add("lista-alternativas");
 
     const btnAddAlternativa = document.createElement("button");
     btnAddAlternativa.textContent = "Adicionar alternativa";
@@ -242,10 +196,12 @@ function adicionarQuestao() {
     btnRmvQuestao.classList.add("btn-excluir-questao");
     btnRmvQuestao.addEventListener("click", () => removerQuestao(corpo));
 
-    while (listaAlternativas.children.length < 2) adicionarAlternativa(listaAlternativas);
+    adicionarAlternativa(listaAlternativas);
 
     corpo.append(numDaQuestao, txtDaQuestao, enunciadoQuestao, listaAlternativas, btnAddAlternativa, btnRmvQuestao);
     document.querySelector("#lista-questoes").appendChild(corpo);
+
+    return corpo;
 }
 
 function removerQuestao(corpo) {
@@ -259,7 +215,7 @@ function removerQuestao(corpo) {
     numQuestoes--;
 }
 
-function adicionarAlternativa(listaAlternativas) {
+function adicionarAlternativa(listaAlternativas, alt = null) {
     const numAlternativas = listaAlternativas.children.length;
     if (numAlternativas >= MAX_NUM_ALTERNATIVAS) {
         alert("Uma questão pode ter no máximo 6 alternativas");
@@ -284,6 +240,11 @@ function adicionarAlternativa(listaAlternativas) {
 
     corpo.append(texto, ehCorreta, btnRmvAlternativa);
     listaAlternativas.appendChild(corpo);
+
+    if (alt != null) {
+        texto.value = alt.texto;
+        ehCorreta.value = alt.correta;
+    }
 }
 
 function expandirTextarea(textarea) {
@@ -293,81 +254,77 @@ function expandirTextarea(textarea) {
     });
 }
 
-function tipotimerD() {
-    const numHoras = sessao.querySelector("#num-horas");
-    const numMinutos = sessao.querySelector("#num-minutos");
-    const tipoTimer = sessao.querySelector("#tipo-timer");
-    numHoras.disabled = true;
-    numMinutos.disabled = true;
+function desabilitarCampoTempoTimer() {
+    const numHoras = document.querySelector("#num-horas");
+    const numMinutos = document.querySelector("#num-minutos");
+    const tipoTimer = document.querySelector("#tipo-timer");
+    if (tipoTimer.value == "none") {
+        numHoras.disabled = true;
+        numMinutos.disabled = true;
+    }
     tipoTimer.addEventListener("input", () => {
-        numHoras.disabled = tipoTimer.value == "none";
-        numMinutos.disabled = tipoTimer.value == "none";
+        numHoras.disabled = tipoTimer.value === "none";
+        numMinutos.disabled = tipoTimer.value === "none";
     });
 }
 
 function enviar() {
-    if (idxSegmento === -1 || idxSegmento < listaSegmentos.length - 1) {
-        alert("Finalize todos os segmentos antes de enviar.");
-        return;
-    }
-
     const dados = {
-        nome: form.nome.value || "",
-        tipo: tipos[form.tipo.value] || "",
-        valor: form.valor.value || "",
-        dataEncerramento: form.data.value || "",
-        horaEncerramento: form.horas.value || "",
-        enunciado: "",
-        questoes: "[]",
+        nome: dadosForm.get("nome"),
+        tipo: tipos[dadosForm.get("tipo")],
+        valor: dadosForm.get("valor"),
+        dataEncerramento: dadosForm.get("dataEncerramento"),
+        horaEncerramento: dadosForm.get("horaEncerramento"),
+        enunciado: null,
+        questoes: null,
         tentativas: "1",
-        tempoDeDuracao: JSON.stringify({ numHoras: 1, numMinutos: 0 }),
-        tipoTimer: ""
+        tempoDeDuracao: null,
+        tipoTimer: null
     };
 
-    if (form.tipo.value === "questionario") {
-        const listaQuestoes = document.querySelectorAll("#lista-questoes .questao");
-        const questoesArray = [];
+    if (dadosForm.get("tipo") !== "envioArquivo") {
+        dados.tipoTimer = dadosAtividade.tipoTimer;
+        if (dados.tipoTimer !== "none" && dados.tipoTimer != null) {
+            const numHoras = dadosAtividade.numHoras;
+            const numMinutos = dadosAtividade.numMinutos;
+            dados.tempoDeDuracao = JSON.stringify({ numHoras, numMinutos });
+        }
+    }
 
-        listaQuestoes.forEach(q => {
-            const texto = q.querySelector("textarea:nth-of-type(1)").value || "";
-            const enunciado = q.querySelector("textarea:nth-of-type(2)").value || "";
-            const alternativas = [];
-            let idxCorreta;
-
-            q.querySelectorAll("#lista-alternativas .alternativa").forEach((a, idx) => {
-                alternativas.push({
-                    texto: a.querySelector("textarea").value || ""
-                });
-                if (a.querySelector("select").value === "true") idxCorreta = idx;
+    if (dadosForm.get("tipo") === "questionario") {
+        let idxCorreta;
+        const questoesCorrigidas = questoesArray.map(questao => {
+            const alternativas = questao.alternativas.map((alt, idx) => {
+                if (alt.correta) idxCorreta = idx;
+                return { texto: alt.texto };
             });
 
-            questoesArray.push({ texto, enunciado, alternativas, idxCorreta });
+            return {
+                texto: questao.texto,
+                enunciado: questao.enunciado,
+                alternativas: alternativas,
+                idxCorreta: idxCorreta
+            };
         });
 
-        dados.questoes = JSON.stringify(questoesArray);
-        dados.tentativas = sessao.querySelector("#num-tentativas")?.value || "1";
+        dados.questoes = JSON.stringify(questoesCorrigidas);
 
-        const numHoras = sessao.querySelector("#num-horas")?.value || "1";
-        const numMinutos = sessao.querySelector("#num-minutos")?.value || "0";
-        dados.tempoDeDuracao = JSON.stringify({ numHoras, numMinutos });
+        dados.tentativas = dadosAtividade.numTentativas;
+    } else {
+        dados.enunciado = dadosAtividade.enunciado;
+    }
 
-        dados.tipoTimer = sessao.querySelector("#tipo-timer")?.value || "none";
-    }
-    else {
-        const inputEnunciado = sessao.querySelector(".inputEnunciado");
-        dados.enunciado = inputEnunciado.value;
-    }
 
     const formData = new FormData();
     formData.append("atividade", new Blob([JSON.stringify(dados)], { type: "application/json" }));
 
-    if (form.tipo.value != "questionario" && inputDeArquvios && inputDeArquvios.files.length > 0) {
+    if (dados.tipo != "questionario" && inputDeArquvios && inputDeArquvios.files.length > 0) {
         for (const file of inputDeArquvios.files) {
             if (file.size > 5 * 1024 * 1024) {
                 alert(`Arquivo muito grande: ${file.name}`);
                 return;
             }
-            const extensoesPermitidas = [".txt", ".pdf", ".docx", ".zip"];
+            const extensoesPermitidas = [".txt", ".pdf", ".docx", ".zip", ".jpg", ".png"];
             const nome = file.name.toLowerCase();
             if (!extensoesPermitidas.some(ext => nome.endsWith(ext))) {
                 alert(`Tipo de arquivo não permitido: ${file.name}`);
@@ -393,32 +350,323 @@ function enviar() {
         .catch(err => console.error("Falha no envio:", err));
 }
 
+function salvarQuestoes() {
+    const listaQuestoes = document.querySelectorAll("#lista-questoes .questao");
+    questoesArray = Array.from(listaQuestoes).map(questao => {
+        const texto = questao.querySelector("textarea:nth-of-type(1)")?.value || "";
+        const enunciado = questao.querySelector("textarea:nth-of-type(2)")?.value || "";
+
+        const alternativas = Array.from(
+            questao.querySelectorAll(".lista-alternativas .alternativa")
+        ).map(alt => ({
+            texto: alt.querySelector("textarea")?.value || "",
+            correta: alt.querySelector("select")?.value === "true"
+        }));
+
+        return { texto, enunciado, alternativas };
+    });
+
+    return questoesArray;
+}
+
+function validarQuestoes() {
+    const listaQuestoes = document.querySelectorAll("#lista-questoes .questao");
+    for (let i = 0; i < listaQuestoes.length; i++) {
+        const questao = listaQuestoes[i];
+        const alternativas = questao.querySelectorAll(".lista-alternativas .alternativa");
+
+        if (alternativas.length < 2) {
+            alert(`A questão ${i + 1} está com menos que duas alternativas`);
+            return false;
+        }
+
+        let contador = 0;
+        alternativas.forEach(alt => {
+            if (alt.querySelector("select")?.value === "true") {
+                contador++;
+            }
+        });
+
+        if (contador !== 1) {
+            if (contador > 1)
+                alert(`A questão ${i + 1} está com mais de uma alternativa marcada como correta`);
+            else
+                alert(`A questão ${i + 1} está com nenhuma alternativa marcada como correta`);
+
+            return false;
+        }
+    }
+    return true;
+}
+
+function criarHandlerProximo(validacao) {
+    const handler = () => {
+        const valido = validacao();
+        if (!valido) return;
+        avancar();
+        btnProximo.removeEventListener("click", handler);
+    };
+    handlerProximoAtual = handler;
+    return handler;
+}
+
+function montarPrimeiraTela() {
+    section.innerHTML = `
+        <form action="atividades.html" method="post">
+        <label>Nome da atividade:</label>
+        <input type="text" name="nome"><br>
+        <label>Tipo:</label>
+        <select name="tipo">
+            <option value="questionario">Questionário</option>
+            <option value="redacao">Redação</option>
+            <option value="envioArquivo">Envio de Arquivo</option>
+        </select><br>
+        <label>Valor (pontos):</label>
+        <input type="number" name="valor" min="1"><br>
+        <label>Data de encerramento:</label>
+        <input name="dataEncerramento" type="date"><br>
+        <label>Horário do encerramento:</label>
+        <input name="horaEncerramento" type="time">
+    </form>
+    `
+
+    if (dadosForm != null) restaurarPrimeiraTela();
+
+    const validacao = () => {
+        let form = document.querySelector("form");
+        if (idxSection == -1) {
+            for (let campo of form.elements) {
+                if (!validarCampo(campo)) return false;
+            }
+            if (!validarData(form.dataEncerramento.value)) {
+                alert("A data inserida é inválida");
+                destacarCampo(form.dataEncerramento);
+                return false;
+            }
+            sequenciaEscolhida = sequenciasAcoes[form.tipo.value];
+            dadosForm = new FormData(form);
+            return true;
+        }
+    };
+
+    const handlerProximo = criarHandlerProximo(validacao);
+    btnProximo.addEventListener("click", handlerProximo);
+}
+
+function restaurarPrimeiraTela() {
+    let form = document.querySelector("form");
+    form.elements["nome"].value = dadosForm.get("nome");
+    form.elements["tipo"].value = dadosForm.get("tipo");
+    form.elements["valor"].value = dadosForm.get("valor");
+    form.elements["dataEncerramento"].value = dadosForm.get("dataEncerramento");
+    form.elements["horaEncerramento"].value = dadosForm.get("horaEncerramento");
+}
+
+function montarTelaQuestoes() {
+    section.innerHTML = `
+        <div id="questoes">
+            <h3>Questões do questionário</h3>
+            <button id="btn-add-questao">Adicionar questão</button>
+            <div id="lista-questoes"></div>
+        </div>
+    `
+    console.log(questoesArray);
+    if (questoesArray && questoesArray.length != 0) restaurarTelaQuestoes();
+
+    const btnAddQuestao = document.getElementById("btn-add-questao");
+    btnAddQuestao.addEventListener("click", adicionarQuestao);
+
+    const validacao = () => {
+        if (numQuestoes < 1) {
+            alert("Um questionário deve ter pelo menos uma questões");
+            return false;
+        }
+        if (!validarQuestoes()) return false;
+        if (!validarContainer(document.querySelector("#lista-questoes"))) return false;
+        questoesArray = salvarQuestoes();
+        return true;
+    };
+
+    const handlerProximo = criarHandlerProximo(validacao);
+    btnProximo.addEventListener("click", handlerProximo);
+}
+
+function restaurarTelaQuestoes() {
+
+    // limpa o container antes de recriar
+    const container = document.querySelector("#lista-questoes");
+    container.innerHTML = "";
+
+    numQuestoes = 0;
+
+    // garante que questoesArray existe e é um array
+    if (!Array.isArray(questoesArray)) return;
+
+    // recria cada questão
+    questoesArray.forEach(q => {
+        adicionarQuestaoComDados(q);
+    });
+}
+
+
+function adicionarQuestaoComDados(dados) {
+    const div = adicionarQuestao();
+
+    div.querySelector("textarea:nth-of-type(1)").value = dados.texto;
+    div.querySelector("textarea:nth-of-type(2)").value = dados.enunciado;
+
+    const cont = div.querySelector(".lista-alternativas");
+    cont.innerHTML = "";
+    dados.alternativas.forEach(alt => {
+        adicionarAlternativa(cont, alt);
+    });
+}
+
+
+function montarTelaDuracaoETentativas(tipo = "duracao-e-tentativas") {
+    if (tipo == "duracao-e-tentativas") {
+        section.innerHTML = `
+        <div id="duracao-e-tentativas">
+            <h3>Numéro de tentativas, duração e tipo de timer</h3>
+            <label for="">Número de tentativas:</label>
+            <input id="num-tentativas" type="number" min="1" value="1"><br>
+            <label for="">Tipo de timer</label>
+            <div class="tooltip">?
+                <span class="tooltiptext">Contínuo: assim que começa, não pode ser parado. Sugerido para provas.<br><br>Interrompível: é interrompido quando usuário sai da página. Sugerido para atividades simples.</span>
+            </div>
+            <select name="tipo-timer" id="tipo-timer">
+                <option value="none" selected>Sem timer</option>
+                <option value="continuo">Contínuo</option>
+                <option value="interrompivel">Interrompível</option>
+            </select><br>
+            <label>Duração:</label>
+            <input id="num-horas" type="number" min="0" max="24" placeholder="Horas">
+            <input id="num-minutos" type="number" min="0" max="59" placeholder="Minutos"><br>
+        </div>
+    `
+    }
+    if (tipo == "duracao") {
+        section.innerHTML = `
+        <div id="duracao-e-tentativas">
+            <h3>Duração e tipo de timer</h3>
+            <label for="">Tipo de timer</label>
+            <div class="tooltip">?
+                <span class="tooltiptext">Contínuo: assim que começa, não pode ser parado. Sugerido para provas.<br><br>Interrompível: é interrompido quando usuário sai da página. Sugerido para atividades simples.</span>
+            </div>
+            <select name="tipo-timer" id="tipo-timer">
+                <option value="none" selected>Sem timer</option>
+                <option value="continuo">Contínuo</option>
+                <option value="interrompivel">Interrompível</option>
+            </select><br>
+            <label>Duração:</label>
+            <input id="num-horas" type="number" id="horas" min="0" max="24" placeholder="Horas">
+            <input id="num-minutos" type="number" id="minutos" min="0" max="59" placeholder="Minutos"><br>
+        </div>
+    `
+    }
+
+    restaurarTelaDuracaoETentativas();
+    desabilitarCampoTempoTimer();
+
+    const validacao = function () {
+        const tipoTimer = document.querySelector("#tipo-timer");
+        let valido;
+        if (tipoTimer.value == "none") valido = true;
+        else valido = validarLista(document.getElementById("duracao-e-tentativas"), { selectors: ["input"] });
+        if (valido) {
+            if (document.getElementById("num-tentativas")) dadosAtividade.numTentativas = document.getElementById("num-tentativas").value;
+            dadosAtividade.tipoTimer = document.getElementById("tipo-timer").value;
+            dadosAtividade.numHoras = document.getElementById("num-horas").value;
+            dadosAtividade.numMinutos = document.getElementById("num-minutos").value;
+            return true;
+        }
+        return false;
+    };
+
+    const handlerProximo = criarHandlerProximo(validacao);
+    btnProximo.addEventListener("click", handlerProximo);
+}
+
+function restaurarTelaDuracaoETentativas() {
+    if (document.getElementById("num-tentativas")) {
+        if (dadosAtividade.numTentativas == null || dadosAtividade.numTentativas === "")
+            document.getElementById("num-tentativas").value = "1";
+        else
+            document.getElementById("num-tentativas").value = dadosAtividade.numTentativas;
+    }
+
+    if (dadosAtividade.tipoTimer == null || dadosAtividade.tipoTimer === "")
+        document.getElementById("tipo-timer").value = "none";
+    else
+        document.getElementById("tipo-timer").value = dadosAtividade.tipoTimer;
+
+
+    const horas = document.getElementById("num-horas");
+    if (horas && dadosAtividade.numHoras !== undefined) {
+        horas.value = dadosAtividade.numHoras;
+    }
+
+    const minutos = document.getElementById("num-minutos");
+    if (minutos && dadosAtividade.numMinutos !== undefined) {
+        minutos.value = dadosAtividade.numMinutos;
+    }
+}
+
+function montarTelaElaboracaoEnunciado() {
+    section.innerHTML = `
+        <div id="elaboracao">
+            <label>Insira o enunciado:</label>
+            <input id="input-enunciado" type="textarea">
+            <button id="btn-enviar-arquivo">Inserir arquivo(s) de consulta?</button>
+        </div>
+    `
+
+    const validacao = function () {
+        console.log(document.getElementById("elaboracao"));
+        if (!validarContainer(document.getElementById("elaboracao"))) {
+            return false;
+        }
+        dadosAtividade.enunciado = document.getElementById("input-enunciado").value;
+        return true;
+    };
+
+    const handlerProximo = criarHandlerProximo(validacao);
+    btnProximo.addEventListener("click", handlerProximo);
+}
 
 function montarConfirmacao() {
+    section.innerHTML = `
+        <div id="confirmacao">
+            <p id="nome">Nome: </p>
+            <p id="tipo">Tipo: </p>
+            <p id="valor">Valor: </p>
+            <p id="dataEncerramento">Data de encerramento: </p>
+            <p id="horaEncerramento">Hora de encerramento: </p>
+    `
     btnEnviar.classList.remove("inativo");
     btnAnterior.addEventListener("click", () => {
         btnEnviar.classList.add("inativo");
     }, { once: true });
 
-    const nome = sessao.querySelector(".nome");
-    const tipo = sessao.querySelector(".tipo");
-    const valor = sessao.querySelector(".valor");
-    const dataEncerramento = sessao.querySelector(".dataEncerramento");
-    const horaEncerramento = sessao.querySelector(".horaEncerramento");
 
-    nome.innerHTML = "Nome: " + form.nome.value;
-    tipo.innerHTML = "Tipo: " + tipos[form.tipo.value];
-    valor.innerHTML = "Valor: " + form.valor.value + " pontos";
-    dataEncerramento.innerHTML = "Data de Encerramento: " + form.data.value;
-    horaEncerramento.innerHTML = "Hora de Encerramento: " + form.horas.value;
+    const nome = document.getElementById("nome");
+    const tipo = document.getElementById("tipo");
+    const valor = document.getElementById("valor");
+    const dataEncerramento = document.getElementById("dataEncerramento");
+    const horaEncerramento = document.getElementById("horaEncerramento");
 
-    if (form.tipo.value === "questionario") {
-        sessao.querySelector(".numQuestoes").innerHTML = `Número de questões: ${numQuestoes}`;
+    nome.innerHTML += dadosForm.get("nome");
+    tipo.innerHTML += tipos[dadosForm.get("tipo")];
+    valor.innerHTML += dadosForm.get("valor");
+    dataEncerramento.innerHTML += dadosForm.get("dataEncerramento");
+    horaEncerramento.innerHTML += dadosForm.get("horaEncerramento");
+
+    if (dadosForm.get("tipo") == "questionario") {
+        section.innerHTML += `<p id="numQuestoes">Número de questões: ${numQuestoes}</p>`
     } else {
-        const enunciado = sessao.querySelector(".enunciado");
-        const inputEnunciado = sessao.querySelector(".inputEnunciado");
-        enunciado.innerHTML = `Enunciado: ${inputEnunciado.value}`;
+        section.innerHTML += `<p id="enunciado">Enunciado: XD</p>`
     }
+    section.innerHTML += `</div>`
 }
 
 function confirmarSaidaDaPag() {

@@ -19,7 +19,6 @@ class Assinatura {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "documento_id", nullable=false)
     private Documento documento;

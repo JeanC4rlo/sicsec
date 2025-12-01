@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.cefetmg.sicsec.Model.Tentativa;
 import br.cefetmg.sicsec.Service.TentativaService;
+import jakarta.servlet.http.HttpSession;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,8 +25,8 @@ public class TentativaController {
     TentativaService tentativaService;
 
     @PostMapping("/salvar")
-    public ResponseEntity<Tentativa> salvarTentativa(@RequestBody Tentativa tentativa) {
-        Tentativa salva = tentativaService.salvarTentativa(tentativa);
+    public ResponseEntity<Tentativa> salvarTentativa(@RequestBody Tentativa tentativa, HttpSession session) {
+        Tentativa salva = tentativaService.salvarTentativa(tentativa, session);
         return ResponseEntity.ok(salva);
     }
 

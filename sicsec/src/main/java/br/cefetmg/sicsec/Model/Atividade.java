@@ -2,18 +2,28 @@ package br.cefetmg.sicsec.Model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import br.cefetmg.sicsec.Model.Usuario.Professor.Professor;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 public class Atividade {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne
+    @JsonIgnore
+    @JoinColumn(name = "professor_id", nullable = false)
+    private Professor professor;
 
     private String nome;
     private String tipo;
@@ -35,6 +45,14 @@ public class Atividade {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Professor getProfessor() {
+        return professor;
+    }
+
+    public void setProfessor(Professor professor) {
+        this.professor = professor;
     }
 
     public String getNome() {
@@ -124,5 +142,4 @@ public class Atividade {
     public void setNomesArquivos(List<String> nomesArquivos) {
         this.nomesArquivos = nomesArquivos;
     }
-
 }

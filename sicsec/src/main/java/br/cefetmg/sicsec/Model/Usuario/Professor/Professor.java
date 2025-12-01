@@ -18,23 +18,18 @@ import java.util.List;
 @Entity
 public class Professor extends Usuario {
     
-    @JsonManagedReference
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "doscentes")
     private List<Turma> turmas;
     
-    @JsonManagedReference
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "bolsistas")
     private List<Bolsa> bolsas;
     
-    @JsonManagedReference
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "autor")
     private List<ProducaoAcademica> producoesAcademicas;
     
-    @JsonManagedReference
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "professor")
     private List<Lecionamento> historicoLecionamento;
     
-    @JsonManagedReference
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "professor")
     private List<Afastamento> historicoAfastamento;
 
@@ -77,7 +72,4 @@ public class Professor extends Usuario {
     public void setHistoricoAfastamento(List<Afastamento> historicoAfastamento) {
         this.historicoAfastamento = historicoAfastamento;
     }
-    
-    
-    
 }

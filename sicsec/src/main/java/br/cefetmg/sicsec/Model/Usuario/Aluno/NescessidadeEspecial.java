@@ -17,7 +17,6 @@ public class NescessidadeEspecial {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "aluno_id")
     private Aluno aluno;

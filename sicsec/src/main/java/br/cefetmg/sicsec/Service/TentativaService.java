@@ -9,8 +9,11 @@ import org.springframework.stereotype.Service;
 
 import br.cefetmg.sicsec.Model.Atividade;
 import br.cefetmg.sicsec.Model.Tentativa;
+import br.cefetmg.sicsec.Model.Usuario.Usuario;
 import br.cefetmg.sicsec.Repository.AtividadeRepository;
 import br.cefetmg.sicsec.Repository.TentativaRepository;
+import br.cefetmg.sicsec.Repository.Usuarios.UsuarioRepo;
+import jakarta.servlet.http.HttpSession;
 
 @Service
 public class TentativaService {
@@ -20,9 +23,14 @@ public class TentativaService {
     @Autowired
     AtividadeRepository atividadeRepository;
 
-    public Tentativa salvarTentativa(Tentativa tentativa) {
+    @Autowired
+    UsuarioRepo usuarioRepository;
+
+    public Tentativa salvarTentativa(Tentativa tentativa, HttpSession session) {
         Atividade atividade = atividadeRepository.findById(tentativa.getAtividade().getId()).orElseThrow();
+        Usuario aluno = usuarioRepository.findById((Long) session.getAttribute("usuarioId")).get();
         tentativa.setAtividade(atividade);
+        tentativa.setAluno(aluno);
         return tentativaRepository.save(tentativa);
     }
 
@@ -31,7 +39,7 @@ public class TentativaService {
     }
 
     public Tentativa getTentativaAberta(Long atividadeId) {
-        return tentativaRepository.findByAtividadeIdAndAbertaTrue(atividadeId).get();
+        return tentativaRepository.findByAtividadeIdAndAbertaTrue(atividadeId).orElse(null);
     }
 
     public Tentativa getUltimaTentativa(Long atividadeId) {

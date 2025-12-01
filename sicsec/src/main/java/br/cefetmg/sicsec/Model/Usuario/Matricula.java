@@ -29,11 +29,11 @@ public class Matricula {
     private String telefone;
     private Long numeroMatricula;
     
-    @JsonBackReference
+    @JsonIgnore
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "matricula")
     private Usuario usuario;
 
-    @JsonBackReference
+    @JsonIgnore
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "curso_id", nullable = true)
     private Curso curso;

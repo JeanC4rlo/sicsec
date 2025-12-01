@@ -1,5 +1,8 @@
 package br.cefetmg.sicsec.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import br.cefetmg.sicsec.Model.Usuario.Usuario;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -15,16 +18,24 @@ public class Desempenho {
     Long Id;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "atividade_id", nullable = false)
     Atividade atividade;
 
     @OneToOne
+    @JsonIgnore
     @JoinColumn(name = "tentativa_id", nullable = true)
     Tentativa tentativa;
 
     @OneToOne
+    @JsonIgnore
     @JoinColumn(name = "resposta_id", nullable = false)
     Resposta resposta;
+
+    @ManyToOne
+    @JsonIgnore
+    @JoinColumn(name = "aluno_id", nullable = false)
+    private Usuario aluno;
 
     private Double nota;
     private Boolean corrigido;
@@ -59,6 +70,14 @@ public class Desempenho {
 
     public void setResposta(Resposta resposta) {
         this.resposta = resposta;
+    }
+
+    public Usuario getAluno() {
+        return aluno;
+    }
+
+    public void setAluno(Usuario aluno) {
+        this.aluno = aluno;
     }
 
     public Double getNota() {

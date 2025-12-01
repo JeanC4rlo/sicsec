@@ -25,20 +25,19 @@ public class CorrecaoService {
     public double corrigir(Resposta resposta) throws CorrecaoException {
         try {
             Atividade atividade = resposta.getAtividade();
-
             if (atividade == null) {
                 throw new EntityNotFoundException("Atividade não encontrada");
             }
-
+            System.out.println("teste 1.4");
             List<Questao> listaQuestoes = objectMapper.readValue(
                     atividade.getQuestoes(),
                     new TypeReference<List<Questao>>() {
                     });
 
             if (resposta.getAlternativasMarcadas() == null || resposta.getAlternativasMarcadas().isEmpty()) {
-                throw new CorrecaoException("Nenhum alternativa marcada foi encontrada");
+                throw new CorrecaoException("Nenhuma alternativa marcada foi encontrada");
             }
-
+            System.out.println("teste 1.5");
             validarEMarcar(resposta.getAlternativasMarcadas(), listaQuestoes);
             return calcularNota(resposta.getAlternativasMarcadas(), atividade.getValor());
 
@@ -49,14 +48,18 @@ public class CorrecaoService {
 
     private void validarEMarcar(List<AlternativaMarcada> alternativasMarcadas, List<Questao> questoes) {
         for (AlternativaMarcada alt : alternativasMarcadas) {
-
             if (alt.getNumQuestao() < 0 || alt.getNumQuestao() >= questoes.size()) {
+                System.out.println("Exceção lançada");
                 throw new CorrecaoException("Número da questão inválido: " + alt.getNumQuestao());
             }
 
+            System.out.println("teste 1.6");
             Questao questao = questoes.get(alt.getNumQuestao());
+            System.out.println("teste 1.7: " + questao.getIdxCorreta() + " " + alt.getAlternativa());
             boolean correta = questao.getIdxCorreta().equals(alt.getAlternativa());
+            System.out.println("teste 1.8");
             alt.setCorreta(correta);
+            System.out.println("teste 1.9");
         }
     }
 
