@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
 import br.cefetmg.sicsec.Model.Curso.Turma.Turma;
 import br.cefetmg.sicsec.Model.Usuario.Aluno.Aluno;
 import br.cefetmg.sicsec.Model.Usuario.Professor.Professor;
@@ -41,8 +42,8 @@ public class TurmaController {
     public String atualizarTurma(
             @RequestParam Long id,
             @RequestParam String nome,
-            @RequestParam(name="alunos") List<Long> discentes,
-            @RequestParam(name="professores") List<Long> doscentes,
+            @RequestParam(required=false, name="alunos") List<Long> discentes,
+            @RequestParam(required=false, name="professores") List<Long> doscentes,
             @RequestParam(required=false, defaultValue="false") boolean arquivar,
             HttpServletRequest request) 
             throws IOException {
@@ -56,8 +57,8 @@ public class TurmaController {
 
     @PostMapping("/registrar")
     public String registrarTurma(
-            @RequestParam(name="alunos") List<Long> discentes,
-            @RequestParam(name="professores") List<Long> doscentes,
+            @RequestParam(required=false, name="alunos") List<Long> discentes,
+            @RequestParam(required=false, name="professores") List<Long> doscentes,
             @RequestParam Long disciplina,
             @RequestParam Long curso,
             @RequestParam String nome,

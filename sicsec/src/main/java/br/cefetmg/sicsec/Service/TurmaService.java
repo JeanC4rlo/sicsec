@@ -66,17 +66,19 @@ public class TurmaService {
         List<Aluno> discentes = new ArrayList<>();
         List<Professor> doscentes = new ArrayList<>();
         
-        for(Long id : discentesId) {
-            Usuario u = (Usuario) usuarioRepo.findById(id).orElseThrow(() -> new IllegalStateException("Usuario Invalido"));
-            if (u instanceof Aluno a) discentes.add(a);
-            else throw new IllegalStateException("Id de Aluno Invalido");
-        }
+        if (discentesId != null)
+            for(Long id : discentesId) {
+                Usuario u = (Usuario) usuarioRepo.findById(id).orElseThrow(() -> new IllegalStateException("Usuario Invalido"));
+                if (u instanceof Aluno a) discentes.add(a);
+                else throw new IllegalStateException("Id de Aluno Invalido");
+            }
         
-        for(Long id : doscentesId) {
-            Usuario u = (Usuario) usuarioRepo.findById(id).orElseThrow(() -> new IllegalStateException("Usuario Invalido"));
-            if (u instanceof Professor p) doscentes.add(p);
-            else throw new IllegalStateException("Id de Professor Invalido");
-        }
+        if (doscentesId != null)
+            for(Long id : doscentesId) {
+                Usuario u = (Usuario) usuarioRepo.findById(id).orElseThrow(() -> new IllegalStateException("Usuario Invalido"));
+                if (u instanceof Professor p) doscentes.add(p);
+                else throw new IllegalStateException("Id de Professor Invalido");
+            }
         
         Turma turma = new Turma(nome, anoLetivo, true, disciplina, curso, discentes, doscentes);
         
@@ -108,7 +110,8 @@ public class TurmaService {
         
         inserirAlunos(turmaExistente, discentesId);
 
-        for (Long doscenteId : doscentesId)
+        if (doscentesId != null)
+            for (Long doscenteId : doscentesId)
             inserirProfessor(turmaExistente, doscenteId);
 
         return turmaExistente;
@@ -119,13 +122,14 @@ public class TurmaService {
         
         List<Aluno> discentes = turma.getDiscentes();
         
-        for(Long id : discentesId) {
-            Usuario u = (Usuario) usuarioRepo.findById(id).orElseThrow(() -> new IllegalStateException("Usuario Invalido"));
-            if (u instanceof Aluno a)
-                if (!discentes.contains(a))
-                    discentes.add(a);
-            else throw new IllegalStateException("Id de Aluno Invalido");
-        }
+        if (discentesId != null)
+            for(Long id : discentesId) {
+                Usuario u = (Usuario) usuarioRepo.findById(id).orElseThrow(() -> new IllegalStateException("Usuario Invalido"));
+                if (u instanceof Aluno a)
+                    if (!discentes.contains(a))
+                        discentes.add(a);
+                else throw new IllegalStateException("Id de Aluno Invalido");
+            }
         
         turma.setDiscentes(discentes);
         
