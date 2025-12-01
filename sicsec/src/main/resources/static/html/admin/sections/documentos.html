@@ -1,0 +1,98 @@
+<header>
+    <h2>Gerenciar Documentos</h2>
+    <button data-tab="criar" class="ativo">Criar</button>
+    <button data-tab="editar">Editar</button>
+</header>
+
+<div class="criar tab">
+    <form id="criarDocumentoForm">
+        <div class="form-group">
+            <label for="titulo">Título</label>
+            <input type="text" name="titulo" id="titulo" placeholder="Título do documento" required />
+        </div>
+
+        <div class="form-group">
+            <label for="conteudo">Conteúdo</label>
+            <input type="file" name="conteudo" id="conteudo" placeholder="Envio do arquivo" required></textarea>
+        </div>
+
+        <div class="usuarios-section">
+            <label>Usuários:</label>
+            <p>Tenha cautela! Uma vez registrado o documento, não poderá mudar os assinantes.</p>
+            <input type="text" id="buscarUsuario" placeholder="Buscar por nome, matrícula ou CPF..." class="buscar-input">
+            <div id="usuariosSelecionados" class="usuarios-selecionados"></div>
+            <div id="resultadosUsuarios" class="resultados-busca"></div>
+            <input type="hidden" id="usuariosIds" name="usuariosIds" value="">
+        </div>
+
+        <div class="form-group">
+            <label for="dataExpiracao">Data de Expiração (opcional)</label>
+            <input type="datetime-local" name="dataExpiracao" id="dataExpiracao">
+        </div>
+
+        <button type="submit">Criar Documento</button>
+    </form>
+</div>
+
+<div class="editar tab">
+    <div class="lista-documentos">
+        <h3>Meus Documentos</h3>
+        
+        <div class="filtro-simples">
+            <input type="text" id="buscarDocumento" placeholder="Buscar por título..." class="buscar-input">
+            <select id="filtroStatus">
+                <option value="TODOS">Todos os status</option>
+                <option value="PENDENTE">Pendente</option>
+                <option value="ASSINADO">Assinado</option>
+                <option value="EXPIRADO">Expirado</option>
+                <option value="ARQUIVADO">Arquivado</option>
+            </select>
+        </div>
+
+        <div id="listaDocumentos" class="documentos-lista">
+            <!-- Documentos carregados via JavaScript -->
+            <div class="documento-vazio">
+                <p>Nenhum documento encontrado</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Simples de Edição -->
+    <div id="modalEditarDocumento" class="modal">
+        <div class="modal-conteudo">
+            <form id="formEditarDocumento">
+                <input type="hidden" id="editarDocumentoId">
+                
+                <div class="form-group">
+                    <label for="editarTitulo">Título</label>
+                    <input type="text" id="editarTitulo" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editarDataExpiracao">Data de Expiração</label>
+                    <input type="datetime-local" id="editarDataExpiracao">
+                </div>
+                
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="editarArquivado">
+                        <span>Documento arquivado</span>
+                    </label>
+                    <small>Documentos arquivados não aparecem nas buscas normais</small>
+                </div>
+                
+                <div class="info-rapida">
+                    <h4>Informações</h4>
+                    <p><strong>Status:</strong> <span id="infoStatus"></span></p>
+                    <p><strong>Criado em:</strong> <span id="infoDataCriacao"></span></p>
+                    <p><strong>Arquivo:</strong> <span id="infoNomeArquivo"></span></p>
+                </div>
+
+                <div class="modal-rodape">
+                    <button type="button" class="btn-cancelar">Cancelar</button>
+                    <button type="submit" class="btn-salvar">Salvar Alterações</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
