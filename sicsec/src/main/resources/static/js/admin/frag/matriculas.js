@@ -1,5 +1,52 @@
+class GerenciadorMatriculas {
+    constructor() {
+        this.container = document.querySelector('#matriculas-content');
+        this.gerenciadorCriacao = null;
+        this.gerenciadorEdicao = null;
+        this.init();
+    }
+
+    init() {
+        this.gerenciadorTabs = new GerenciadorTabs(this.container);
+        this.setupTabChangeListener();
+        this.inicializarCriacao();
+    }
+
+    setupTabChangeListener() {
+        this.container.addEventListener('tabChange', (e) => {
+            const tabId = e.detail.tabId;
+
+            if (tabId === 'criar') {
+                this.inicializarCriacao();
+            } else if (tabId === 'editar') {
+                this.inicializarEdicao();
+            }
+        });
+    }
+
+    inicializarCriacao() {
+        if (!this.gerenciadorCriacao) {
+            this.gerenciadorCriacao = new GerenciadorCriacaoDocumentos();
+        }
+    }
+
+    inicializarEdicao() {
+        if (!this.gerenciadorEdicao) {
+            this.gerenciadorEdicao = new GerenciadorEdicaoDocumentos();
+        }
+    }
+
+    mudarParaTab(tabId) {
+        this.gerenciadorTabs.mudarParaTab(tabId);
+    }
+
+    getTabAtual() {
+        return this.gerenciadorTabs.getTabAtual();
+    }
+}
+
 (function initMatriculas() {
-    const secao = document.querySelector(".matriculas");
+    const secao = document.querySelector("#matriculas-content");
     if (!secao) return;
 
     setupAbasMatriculas(secao);
@@ -14,7 +61,7 @@
         const ultimaAba = localStorage.getItem("matriculasAbaAtiva") || "criar";
 
         const trocarAba = (tab) => {
-            abas.forEach(aba => aba.style.display = aba.classList.contains(tab) ? "block" : "none");
+            abas.forEach(aba => aba.classList.toggle("ativo", aba.classList.contains(tab)));
             botoes.forEach(btn => btn.classList.toggle("ativo", btn.dataset.tab === tab));
             localStorage.setItem("matriculasAbaAtiva", tab);
         };
@@ -74,9 +121,11 @@
 
             try {
                 const response = await fetch(`/api/matricula/${numeroMatricula}`);
+
                 if (!response.ok) throw new Error("Matrícula não encontrada");
 
                 const matricula = await response.json();
+                console.log("Matrícula encontrada:", matricula);
                 preencherFormularioEdicao(editarForm, matricula);
 
             } catch (error) {
@@ -96,8 +145,14 @@
         form.querySelector('input[name="numeroMatriculaNovo"]').value = matricula.numeroMatricula || '';
 
         const cursoSelect = form.querySelector('select[name="cursoId"]');
+        console.log(matricula.cursoId);
+        
         if (cursoSelect && matricula.cursoId) {
             carregarCursos(cursoSelect, matricula.cursoId);
+            console.log("Curso selecionado:", matricula.cursoId);
+        }
+        else {
+            carregarCursos(cursoSelect);
         }
 
         form.style.display = "block";

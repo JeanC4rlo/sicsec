@@ -102,7 +102,7 @@
 
 	async function carregarCursos(select) {
 		try {
-			const usuario = await fetchJSON("/api/usuario/atual/admin");
+			const usuario = await fetchJSON("/api/usuarios/atual/admin");
 			const endpoint = {
 				ROOT: "/api/curso/getAll",
 				CHEFE_DE_DEPARTAMENTO: `/api/curso/departamento/${usuario.departamento}`,
@@ -142,7 +142,7 @@
 
 	async function carregarTurmasDoUsuario(choicesBuscar) {
 		try {
-			const usuario = await fetchJSON("/api/usuario/atual/admin");
+			const usuario = await fetchJSON("/api/usuarios/atual/admin");
 			const endpoint = {
 				ROOT: "/api/turma/getAll",
 				CHEFE_DE_DEPARTAMENTO: `/api/turma/departamento/${usuario.departamento}`,

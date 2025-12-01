@@ -5,7 +5,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link th:href="@{/css/base.css}" rel="stylesheet" />
-    <link th:href="@{/css/home/home.css}" rel="stylesheet" />
+    <link th:href="@{/css/home.css}" rel="stylesheet">
+    
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -13,8 +14,9 @@
         rel="stylesheet" />
     <title>SICSEC</title>
 
-    <script th:src="@{/js/home/adicionar-secoes.js}"></script>
-    <script th:src="@{/js/home/selecionar-perfil.js}"></script>
+    <script defer th:src="@{/js/home/adicionar-secoes.js}"></script>
+    <script defer th:src="@{/js/home/selecionar-perfil.js}"></script>
+    <script defer th:src="@{/js/home/GerenciadorTabs.js}"></script>
 </head>
 
 <body>
@@ -24,9 +26,9 @@
             <h1>SICSEC</h1>
         </div>
         <div class="dropdown-perfil" th:if="${perfis != null and !perfis.isEmpty()}">
-            <form th:action="@{/login/select}" method="post" id="perfilForm">
+            <form th:action="@{/login/select}" method="post" id="perfil-form">
 
-                <select id="perfilSelect" name="idUsuario">
+                <select id="perfil-select" name="idUsuario">
                     <option disabled selected>Escolha um perfil</option>
                     <option th:each="perfil : ${perfis}" th:value="${perfil.usuario.id}"
                         th:text="${perfil.usuario.matricula.numeroMatricula + ' [' + perfil.usuario.cargo + '] (' + (perfil.logado ? 'Logado' : 'Não logado') + ')'}"
@@ -46,7 +48,8 @@
             <button th:each="secao : ${secoes}" 
                     class="secao-botao" 
                     th:classappend="${secao.isDefault} ? 'ativo' : ''"
-                    th:data-id="${secao.secao}">
+                    th:data-id="${secao.secao}"
+                    th:data-default="${secao.isDefault}">
                 <img th:src="@{${secao.icone}}" alt="" />
                 <span th:text="${secao.texto}"></span>
             </button>

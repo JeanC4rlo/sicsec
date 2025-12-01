@@ -48,10 +48,8 @@ public class RoleBasedStaticFilter extends OncePerRequestFilter {
     };
 
     private static final String[] PUBLIC_RESOURCES = {
-            // CSS público
-            "/css/base.css",
-            "/css/login/",
-            "/css/home/",
+            // CSS
+            "/css/",
             
             // JS público  
             "/js/login/",

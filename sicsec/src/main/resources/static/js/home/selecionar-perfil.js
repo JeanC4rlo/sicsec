@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const select = document.querySelector("#perfilSelect");
+    const select = document.querySelector("#perfil-select");
     select.addEventListener("change", () => {
-        document.querySelector("#perfilForm").submit();
+        document.querySelector("#perfil-form").submit();
     });
 })
