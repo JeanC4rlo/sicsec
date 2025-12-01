@@ -102,7 +102,4 @@ public class Usuario {
     public void setDocumentosAssinados(List<Assinatura> documentosAssinados) {
         this.documentosAssinados = documentosAssinados;
     }
-    
-    
-    
 }

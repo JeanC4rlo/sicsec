@@ -15,7 +15,6 @@ import br.cefetmg.sicsec.dto.Secao;
 
 @Service
 public class HomeService {
-
 	private static final Map<Cargo, List<Secao>> ROLE_SECTIONS = new HashMap<>();
 
 	static {
@@ -24,7 +23,7 @@ public class HomeService {
 						"/images/icons/homepage.svg",
 						"/html/aluno/sections/homepage.html",
 						"Página inicial",
-						Arrays.asList("/css/home/home.css"),
+						Arrays.asList(),
 						Arrays.asList("/js/aluno/frag/homepage.js"),
 						"homepage",
 						true),
@@ -32,7 +31,7 @@ public class HomeService {
 						"/images/icons/boletim.svg",
 						"/html/aluno/sections/boletim.html",
 						"Boletim",
-						Arrays.asList("/css/home/home.css"),
+						Arrays.asList(),
 						Arrays.asList("/js/aluno/frag/boletim.js"),
 						"boletim",
 						false),
@@ -40,7 +39,7 @@ public class HomeService {
 						"/images/icons/turmas.svg",
 						"/html/aluno/sections/turmas.html",
 						"Turmas",
-						Arrays.asList("/css/home/home.css"),
+						Arrays.asList(),
 						Arrays.asList("/js/aluno/frag/turmas.js"),
 						"turmas",
 						false),
@@ -48,15 +47,23 @@ public class HomeService {
 						"/images/icons/biblioteca.svg",
 						"/html/aluno/sections/biblioteca.html",
 						"Biblioteca",
-						Arrays.asList("/css/home/home.css"),
+						Arrays.asList(),
 						Arrays.asList(),
 						"biblioteca",
 						false),
 				new Secao(
+						"/images/icons/assinaturas.svg",
+						"/html/aluno/sections/assinaturas.html",
+						"Assinaturas",
+						Arrays.asList("/css/aluno/assinaturas.css"),
+						Arrays.asList("/js/aluno/frag/assinaturas.js"),
+						"assinaturas",
+						true),
+				new Secao(
 						"/images/icons/bolsas.svg",
 						"/html/aluno/sections/bolsas.html",
 						"Bolsas",
-						Arrays.asList("/css/home/home.css"),
+						Arrays.asList(),
 						Arrays.asList("/js/aluno/frag/bolsas.js"),
 						"bolsas",
 						false)));
@@ -71,12 +78,20 @@ public class HomeService {
 						"atividades",
 						false),
 				new Secao(
-						"/images/icons/turmas.svg",
-						"/html/professor/sections/turmas.html",
-						"Turmas",
-						Arrays.asList("/css/professor/turmas.css"),
-						Arrays.asList("/js/professor/home.js"),
-						"turmas",
+						"/images/icons/homepage.svg",
+						"/html/aluno/sections/homepage.html",
+						"Página inicial",
+						Arrays.asList(),
+						Arrays.asList("/js/aluno/frag/homepage.js"),
+						"homepage",
+						true),
+				new Secao(
+						"/images/icons/assinaturas.svg",
+						"/html/professor/sections/assinaturas.html",
+						"Assinaturas",
+						Arrays.asList("/css/professor/assinaturas.css"),
+						Arrays.asList("/js/professor/frag/assinaturas.js"),
+						"assinaturas",
 						false)));
 
 		ROLE_SECTIONS.put(Cargo.ADMINISTRADOR, Arrays.asList(
@@ -85,7 +100,7 @@ public class HomeService {
 						"/html/admin/sections/matriculas.html",
 						"Gestão de matrículas",
 						Arrays.asList("/css/admin/matriculas.css"),
-						Arrays.asList("/js/admin/frag/initMatriculas.js"),
+						Arrays.asList("/js/admin/frag/matriculas.js"),
 						"matriculas",
 						false),
 				new Secao(
@@ -95,6 +110,14 @@ public class HomeService {
 						Arrays.asList("/css/admin/turmas.css"),
 						Arrays.asList("/js/admin/frag/initTurmas.js"),
 						"turmas",
+						false),
+				new Secao(
+						"/images/icons/add-documentos.svg",
+						"/html/admin/sections/documentos.html",
+						"Gestão de documentos",
+						Arrays.asList("/css/admin/documentos.css"),
+						Arrays.asList("/js/admin/frag/usuarios.js", "/js/admin/frag/documentos.js"),
+						"documentos",
 						false)));
 	}
 
@@ -126,8 +149,12 @@ public class HomeService {
 		}
 
 		data.put("html", secao.getHtml());
-		data.put("css", new ArrayList<>(secao.getCss()));
-		data.put("js", new ArrayList<>(secao.getJs()));
+
+		List<String> cssFiles = new ArrayList<>(secao.getCss());
+		data.put("css", cssFiles);
+
+		List<String> jsFiles = new ArrayList<>(secao.getJs());
+		data.put("js", jsFiles);
 
 		return data;
 	}

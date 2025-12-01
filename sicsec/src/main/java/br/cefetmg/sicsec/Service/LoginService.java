@@ -112,13 +112,10 @@ public class LoginService {
 			perfilSelecionado.setLogado(true);
 		}
 
-		// Marca todos como deslogados, exceto o selecionado
-		perfis.forEach(p -> p.setLogado(false));
-		perfilSelecionado.setLogado(true);
+		perfis.forEach(p -> p.setLogado(p.getUsuario().getId().equals(idUsuario)));
 
-		// Atualiza os dados de sessão
 		session.setAttribute("perfilSelecionado", perfilSelecionado);
-		session.setAttribute("perfis", perfis);
+        session.setAttribute("perfis", perfis);
 
 		return "redirect:/home";
 	}

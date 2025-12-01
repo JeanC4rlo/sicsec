@@ -3,6 +3,7 @@ package br.cefetmg.sicsec.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -60,4 +61,15 @@ public class UsuarioService {
 
     }
 
+    public Optional<Usuario> findById(Long idUsuario) {
+        return usuarioRepo.findById(idUsuario);
+    }
+
+    public List<Usuario> buscarUsuariosPorNomeMatriculaCpf(String q) {
+        return usuarioRepo.findByNomeMatriculaCpf(q);
+    }
+
+    public List<Usuario> findAllById(List<Long> ids) {
+        return usuarioRepo.findAllById(ids);
+    }
 }
