@@ -12,7 +12,7 @@ import br.cefetmg.sicsec.Repository.AtividadeRepository;
 import br.cefetmg.sicsec.Repository.DesempenhoRepository;
 import br.cefetmg.sicsec.Repository.TentativaRepository;
 import br.cefetmg.sicsec.Repository.Usuarios.AlunoRepo;
-import br.cefetmg.sicsec.dto.DadosRespostaAlunoDTO;
+import br.cefetmg.sicsec.dto.DesempenhoDTO;
 
 @Service
 public class DesempenhoService {
@@ -37,11 +37,14 @@ public class DesempenhoService {
         return desempenhoRepository.findById(desempenhoId).orElseThrow();
     }
 
-    public List<DadosRespostaAlunoDTO> getListaDesempenhos() {
+    public List<DesempenhoDTO> getListaDesempenhos() {
         return desempenhoRepository.findAll()
                 .stream()
-                .map(desempenho -> new DadosRespostaAlunoDTO(
+                .map(desempenho -> new DesempenhoDTO(
                         desempenho.getId(),
+                        desempenho.getAluno().getMatricula().getNome(),
+                        desempenho.getAtividade().getNome(),
+                        desempenho.getNota(),
                         desempenho.getAtividade().getValor(),
                         desempenho.getAtividade().getTipo(),
                         desempenho.getResposta().getTextoRedacao(),

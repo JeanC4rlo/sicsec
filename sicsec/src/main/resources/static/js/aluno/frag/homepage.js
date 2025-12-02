@@ -66,12 +66,20 @@ function navegarManual(direcao) {
     atualizarNoticia(indiceAtual);
 }
 
-function calcularDistanciaDias(data) {
-    return Math.round((new Date(data).getTime() - new Date().getTime()) / (1000 * 3600 * 24));
+function calcularDistanciaData(data, hora = "00:00", tipo = "dias") {
+    let denominador = 1;
+    switch(tipo) {
+        case "dias":
+            denominador = 1000 * 3600 * 24;
+            break
+        case "minutos":
+            denominador = 1000 * 60;
+    }
+    return Math.round((new Date(`${data}T${hora}-03:00`).getTime() - Date.now()) / denominador);
 }
 
 function formatarDataEHora(data, hora) {
-    let distanciaEmDias = calcularDistanciaDias(data);
+    let distanciaEmDias = calcularDistanciaData(data);
     data = data.split("-");
     let mensagem = `${data[2]}/${data[1]}/${data[0]} ${hora}<br>`;
     if(distanciaEmDias > 1)
@@ -91,7 +99,7 @@ function irParaFazerAtividades(id) {
 }
 
 function atualizarAtividades(atividade) {
-    if (calcularDistanciaDias(atividade.dataEncerramento) < 0) {
+    if (calcularDistanciaData(atividade.dataEncerramento, atividade.horaEncerramento, "minutos") == 0) {
         return;
     }
     const corpoTable = document.querySelector(".minhas-atividades tbody");

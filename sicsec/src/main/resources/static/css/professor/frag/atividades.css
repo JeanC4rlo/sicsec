@@ -51,7 +51,6 @@ table {
     background-color: white;
     box-shadow: 0 4px 8px rgba(0,0,0,0.05);
     border-radius: 0.5rem;
-    overflow: hidden;
     table-layout: fixed;
 }
 
@@ -61,6 +60,10 @@ table caption {
     color: var(--primary);
     padding: 1rem;
     text-align: left;
+    position: sticky;
+    top: 0;
+    background: white;   /* importante para esconder o fundo ao rolar */
+    z-index: 3;          /* fica acima do thead */
 }
 
 table thead {
@@ -79,6 +82,28 @@ table th {
     font-weight: bold;
 }
 
+.tabela-container {
+    max-height: 60vh;
+    overflow-y: auto;
+    border-radius: 0.5rem;
+}
+
+table caption {
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 10;
+    height: 3.5rem;
+}
+
+table thead th {
+    position: sticky;
+    top: 3.5rem;
+    background: var(--primary);
+    color: white;
+    z-index: 9;
+}
+
 table tbody tr:nth-child(even):not(.encerrada) {
     background-color: var(--bg-secondary);
 }
@@ -87,12 +112,6 @@ table tbody tr:hover:not(.encerrada) {
     background-color: var(--secondary);
     color: white;
     cursor: pointer;
-}
-
-.tabela-container {
-    max-height: 60vh;
-    overflow-y: auto;
-    border-radius: 0.5rem;
 }
 
 .encerrada {

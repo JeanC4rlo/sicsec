@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.cefetmg.sicsec.Service.ArquivoService;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @RequestMapping("/api/arquivo")
@@ -26,23 +28,22 @@ public class ArquivosController {
     ArquivoService arquivoService;
 
     @GetMapping("/arquivo/{atividadeId}/{nomeArquivo}")
-public ResponseEntity<Resource> baixar(
-        @PathVariable Long atividadeId,
-        @PathVariable String nomeArquivo) throws IOException {
+    public ResponseEntity<Resource> baixar(
+            @PathVariable Long atividadeId,
+            @PathVariable String nomeArquivo) throws IOException {
 
-    Path caminho = Paths.get("uploads/atividade-" + atividadeId).resolve(nomeArquivo);
+        Path caminho = Paths.get("uploads/atividade-" + atividadeId).resolve(nomeArquivo);
 
-    if (!Files.exists(caminho)) {
-        return ResponseEntity.notFound().build();
+        if (!Files.exists(caminho)) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Resource resource = new UrlResource(caminho.toUri());
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + nomeArquivo + "\"")
+                .body(resource);
     }
-
-    Resource resource = new UrlResource(caminho.toUri());
-
-    return ResponseEntity.ok()
-            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + nomeArquivo + "\"")
-            .body(resource);
-}
-
 
     @GetMapping("/{nomeArquivo}")
     public ResponseEntity<Resource> getArquvio(@PathVariable String nomeArquivo) throws IOException {
@@ -68,5 +69,4 @@ public ResponseEntity<Resource> baixar(
         List<?> arquivos = arquivoService.listarArquivos(atividadeId);
         return ResponseEntity.ok(arquivos);
     }
-
 }

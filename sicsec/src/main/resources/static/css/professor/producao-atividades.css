@@ -164,12 +164,14 @@ section button:hover {
 }
 
 #btn-add-questao,
-.btn-add-alternativa {
+.btn-add-alternativa,
+#btn-enviar-arquivo {
     background-color: var(--accent);
 }
 
 #btn-add-questao:hover,
-.btn-add-alternativa:hover {
+.btn-add-alternativa:hover,
+#btn-enviar-arquivo:hover {
     background-color: #2ca96d;
 }
 

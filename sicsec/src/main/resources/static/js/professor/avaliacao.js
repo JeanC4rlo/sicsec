@@ -1,4 +1,4 @@
-let dadosResposta;
+let dadosDesempenho;
 const divConteudo = document.getElementById("conteudo");
 
 function carregarResposta() {
@@ -11,8 +11,8 @@ function carregarResposta() {
             return resp.json();
         })
         .then(dados => {
-            dadosResposta = dados;
-            if (dadosResposta.tipoAtividade == "Redação")
+            dadosDesempenho = dados;
+            if (dadosDesempenho.tipoAtividade == "Redação")
                 montarTelaRedacao();
             else
                 montarTelaEnvioArquivo();
@@ -31,17 +31,15 @@ function montarTelaEnvioArquivo() {
     const inputNota = document.createElement("input");
     const btnEnviarNota = document.createElement("button");
 
-    nomeAluno.innerHTML = "NOME ALUNO";
+    nomeAluno.innerHTML = dadosDesempenho.nomeAluno;
     turmaAluno.innerHTML = "TURMA ALUNO";
 
     inputArquivo.type = "file";
 
-    console.log(dadosResposta.nomeArquivo);
-
-    carregarPreview(dadosResposta.nomeArquivo, divPreview);
+    carregarPreview(dadosDesempenho.nomeArquivo, divPreview);
 
     btnBaixarArquivo.textContent = "Baixar arquivo";
-    btnBaixarArquivo.addEventListener("click", () => downloadArquivo(dadosResposta.nomeArquivo));
+    btnBaixarArquivo.addEventListener("click", () => downloadArquivo(dadosDesempenho.nomeArquivo));
 
     inputNota.id = "input-nota";
     inputNota.type = "text";
@@ -80,7 +78,7 @@ async function carregarPreview(nomeArquivo, divPreview) {
 
 
 function downloadArquivo(nomeArquivo) {
-    const url = `/arquivo/download/${nomeArquivo}`;
+    const url = `/api/arquivo/${nomeArquivo}`;
     window.open(url, "_blank");
 }
 
@@ -93,7 +91,7 @@ function montarTelaRedacao() {
 
     nomeAluno.innerHTML = "NOME ALUNO";
     turmaAluno.innerHTML = "TURMA ALUNO";
-    redacao.innerHTML = dadosResposta.redacao;
+    redacao.innerHTML = dadosDesempenho.redacao;
 
     inputNota.id = "input-nota";
     inputNota.type = "text";
@@ -126,8 +124,8 @@ function validaInputNota(inputNota) {
         valor = partes[0] + "," + partes[1];
     }
 
-    if (parseFloat(valor.replace(",", ".")) > 100) {
-        valor = "100";
+    if (parseFloat(valor.replace(",", ".")) > dadosDesempenho.valorAtividade) {
+        valor = String(dadosDesempenho.valorAtividade);
     }
 
     inputNota.value = valor;
@@ -147,7 +145,7 @@ function enviarNota() {
 
     if(confirm(`A nota ${nota} será atribuida`) == false) return;
 
-    fetch(`/api/desempenho/${dadosResposta.desempenhoId}/nota`, {
+    fetch(`/api/desempenho/${dadosDesempenho.desempenhoId}/nota`, {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json"
@@ -172,7 +170,6 @@ function destacarCampo(campo) {
     setTimeout(() => campo.classList.remove("campo-obrigatorio"), 2000);
     campo.focus();
 }
-
 
 function initAvaliacao() {
     carregarResposta();

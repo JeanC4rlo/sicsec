@@ -13,7 +13,7 @@ import br.cefetmg.sicsec.Model.Resposta;
 import br.cefetmg.sicsec.Model.Usuario.Usuario;
 import br.cefetmg.sicsec.Repository.RespostaRepository;
 import br.cefetmg.sicsec.Repository.Usuarios.UsuarioRepo;
-import br.cefetmg.sicsec.dto.DadosRespostaAlunoDTO;
+import br.cefetmg.sicsec.dto.DesempenhoDTO;
 import jakarta.servlet.http.HttpSession;
 
 @Service
@@ -53,6 +53,7 @@ public class RespostaService {
         if (resposta.getAtividade().getTipo().equals("Questionário")) {
             double nota = correcaoService.corrigir(nova);
             desempenhoService.salvarDesempenho(nova, nota, aluno);
+            return respostaRepository.save(nova); 
         }
         desempenhoService.salvarDesempenho(nova, aluno);
         return respostaRepository.save(nova);
@@ -69,13 +70,16 @@ public class RespostaService {
         return respostaRepository.save(nova);
     }
 
-    public DadosRespostaAlunoDTO getDadosResposta(Long desempenhoId) {
+    public DesempenhoDTO getDesempenhoDTO(Long desempenhoId) {
         Desempenho desempenho = desempenhoService.getDesempenho(desempenhoId);
         Atividade atividade = desempenho.getAtividade();
         Resposta resposta = desempenho.getResposta();
 
-        DadosRespostaAlunoDTO dadosRespostaAlunoDTO = new DadosRespostaAlunoDTO(
+        DesempenhoDTO dadosRespostaAlunoDTO = new DesempenhoDTO(
                 desempenhoId,
+                desempenho.getAluno().getMatricula().getNome(),
+                atividade.getNome(),
+                desempenho.getNota(),
                 atividade.getValor(),
                 atividade.getTipo(),
                 resposta.getTextoRedacao(),

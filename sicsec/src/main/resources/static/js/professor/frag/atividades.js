@@ -20,22 +20,30 @@ function formatarDataEHora(data) {
 }
 
 function atividadeAindaDisponivel(data, linha) {
-    if((new Date(data).getTime() - new Date().getTime()) / (1000 * 3600 * 24) <= 0) {
+    if ((new Date(data).getTime() - new Date().getTime()) / (1000 * 3600 * 24) <= 0) {
         linha.classList.add("encerrada");
         return false;
     }
     return true;
 }
 
+function criarElement(tipo, valor = null, classe = null, id = null) {
+    const el = document.createElement(tipo);
+    if (valor) el.innerHTML = valor;
+    if (classe) el.classList.add(classe);
+    if (id) el.id = id;
+    return el;
+}
+
 function preencherTabelaAtividades(atividade) {
 
-    const linha = document.createElement("tr");
-    const codigo = document.createElement("td");
-    const nome = document.createElement("td");
-    const tipo = document.createElement("td");
-    const valor = document.createElement("td");
-    const dataEnc = document.createElement("td");
-    const dataCri = document.createElement("td");
+    const linha = criarElement("tr", null, "atividade");
+    const codigo = criarElement("td", atividade.id, "codigo");
+    const nome = criarElement("td", atividade.nome, "nome");
+    const tipo = criarElement("td", atividade.tipo, "tipo");
+    const valor = criarElement("td", atividade.valor, "valor");
+    const dataEnc = criarElement("td");
+    const dataCri = criarElement("td");
 
     linha.classList.add("atividade");
 
@@ -43,7 +51,7 @@ function preencherTabelaAtividades(atividade) {
     nome.innerHTML = atividade.nome;
     tipo.innerHTML = atividade.tipo;
     valor.innerHTML = atividade.valor;
-    if(atividadeAindaDisponivel(atividade.dataEncerramento, linha)) {
+    if (atividadeAindaDisponivel(atividade.dataEncerramento, linha)) {
         dataEnc.innerHTML = formatarDataEHora(atividade.dataEncerramento);
     }
     else {
@@ -57,26 +65,54 @@ function preencherTabelaAtividades(atividade) {
 
 function carregarAtividades() {
     fetch("/api/atividade/atividades")
-    .then(response => {
-        if(!response.ok) throw new Error("Erro ao carregar as atividades");
-        return response.json();
-    })
-    .then(dados => {
-        dados.forEach(atividade => {
-            preencherTabelaAtividades(atividade);
-        });
-    })
-    .catch(err => {
-        console.log("Erro:", err);
-    })
+        .then(response => {
+            if (!response.ok) throw new Error("Erro ao carregar as atividades");
+            return response.json();
+        })
+        .then(dados => {
+            dados.forEach(atividade => {
+                preencherTabelaAtividades(atividade);
+                pesquisarPorAtividade();
+            });
+        })
+        .catch(err => {
+            console.log("Erro:", err);
+        })
 }
+
+function normalizar(texto) {
+    return texto
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+}
+
+function pesquisarPorAtividade() {
+    const barraDePesquisa = document.getElementById("barra-de-pesquisa");
+
+    barraDePesquisa.addEventListener("input", () => {
+
+        const texto = normalizar(barraDePesquisa.value);
+        const linhas = tabela.querySelectorAll("tbody tr");
+
+        linhas.forEach(linha => {
+            const celulaNome = linha.querySelector(".nome");
+            if (!celulaNome) return;
+
+            const nomeAtvd = normalizar(celulaNome.textContent);
+
+            linha.style.display = nomeAtvd.includes(texto) ? '' : 'none';
+        });
+    });
+}
+
 
 function initAtividades() {
     barraDePesquisa = document.getElementById("barra-de-pesquisa");;
     btnAddAtividade = document.getElementById("add-atividade");
     tabela = document.getElementById("tabela-atividades");
     corpoTable = tabela.querySelector("tbody")
-    
+
 
     btnAddAtividade.addEventListener('click', () => {
         window.location.href = "/producao-atividades";

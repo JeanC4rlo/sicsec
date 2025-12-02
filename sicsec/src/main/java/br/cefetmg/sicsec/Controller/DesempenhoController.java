@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.cefetmg.sicsec.Model.Desempenho;
 import br.cefetmg.sicsec.Service.DesempenhoService;
 import br.cefetmg.sicsec.Service.RespostaService;
-import br.cefetmg.sicsec.dto.DadosRespostaAlunoDTO;
+import br.cefetmg.sicsec.dto.DesempenhoDTO;
 import br.cefetmg.sicsec.dto.NotaDTO;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,13 +30,13 @@ public class DesempenhoController {
     private RespostaService respostaService;
 
     @GetMapping("/desempenhos")
-    public ResponseEntity<List<DadosRespostaAlunoDTO>> getDesempenhos() {
+    public ResponseEntity<List<DesempenhoDTO>> getDesempenhos() {
         return ResponseEntity.ok(desempenhoService.getListaDesempenhos());
     }
 
     @GetMapping("/{desempenhoId}")
-    public ResponseEntity<DadosRespostaAlunoDTO> getDesempenho(@PathVariable Long desempenhoId) {
-        return ResponseEntity.ok(respostaService.getDadosResposta(desempenhoId));
+    public ResponseEntity<DesempenhoDTO> getDesempenho(@PathVariable Long desempenhoId) {
+        return ResponseEntity.ok(respostaService.getDesempenhoDTO(desempenhoId));
     }
 
     @GetMapping("/tentativa/{tentativaId}/nota")

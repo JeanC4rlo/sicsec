@@ -1,20 +1,30 @@
-let btnSair, btnAnterior, btnProximo, btnEnviar;
-let dadosForm;
-let idxSection = -1;
-let questoesArray;
-let numQuestoes = 0;
-let inputDeArquvios;
-let handlerProximoAtual = null;
-let dadosAtividade = {
-    numTentativas: "",
-    tipoTimer: "",
-    numHoras: "",
-    numMinutos: "",
-    enunciado: ""
+const state = {
+    idxSection: -1,
+    sequence: [],
+    questoes: [],
+    dadosForm: null,
+    numQuestoes: null,
+    dadosAtividade: {
+        numTentativas: 1,
+        tipoTimer: "none",
+        numHoras: null,
+        numMinutos: null,
+        enunciado: ""
+    }
 }
 
-let section;
-let sequenciaEscolhida;
+const htmlDOM = {
+    btnProximo: null,
+    btnAnterior: null,
+    btnSair: null,
+    btnEnviar: null,
+    btnEnviarArquivo: null,
+    section: null
+}
+
+let inputDeArquvios;
+let handlerProximoAtual = null;
+
 const sequenciasAcoes = {
     questionario: [
         montarTelaQuestoes,
@@ -32,9 +42,11 @@ const sequenciasAcoes = {
     ]
 };
 
-const MAX_NUM_ALTERNATIVAS = 5;
-const MAX_CARACTERES_TXT_PEQUENO = 252;
-const MAX_CARACTERES_TXT_GRANDE = 2000;
+const LIMITES = {
+    numAlternativas: 5,
+    tamanhoTextosPequenos: 252,
+    tamanhoTextosGrandes: 2000
+}
 
 const tipos = {
     questionario: "Questionário",
@@ -45,23 +57,22 @@ const tipos = {
 window.onload = initProdAtividade;
 
 function initProdAtividade() {
-    section = document.querySelector("section");
-    btnSair = document.getElementById("btn-sair");
-    btnAnterior = document.getElementById("btn-anterior");
-    btnProximo = document.getElementById("btn-proximo");
-    btnEnviar = document.getElementById("btn-enviar");
+    htmlDOM.section = document.querySelector("section");
+    htmlDOM.btnSair = document.getElementById("btn-sair");
+    htmlDOM.btnAnterior = document.getElementById("btn-anterior");
+    htmlDOM.btnProximo = document.getElementById("btn-proximo");
+    htmlDOM.btnEnviar = document.getElementById("btn-enviar");
 
-    btnSair.addEventListener("click", confirmarSaidaDaPag);
+    htmlDOM.btnSair.addEventListener("click", confirmarSaidaDaPag);
     montarPrimeiraTela();
-    btnAnterior.addEventListener("click", () => {
+    htmlDOM.btnAnterior.addEventListener("click", () => {
         if (handlerProximoAtual) {
-            btnProximo.removeEventListener("click", handlerProximoAtual);
+            htmlDOM.btnProximo.removeEventListener("click", handlerProximoAtual);
             handlerProximoAtual = null;
         }
         retroceder();
     });
-    btnEnviar.addEventListener("click", enviar);
-    idxSection = -1;
+    htmlDOM.btnEnviar.addEventListener("click", enviar);
 }
 
 function destacarCampo(campo) {
@@ -123,17 +134,17 @@ function validarTempo() {
 }
 
 function avancar() {
-    idxSection = Math.min(idxSection + 1, sequenciaEscolhida.length - 1);
-    sequenciaEscolhida[idxSection]();
+    state.idxSection = Math.min(state.idxSection + 1, state.sequence.length - 1);
+    state.sequence[state.idxSection]();
 }
 
 function retroceder() {
-    idxSection = Math.max(-1, idxSection - 1);
-    if (idxSection == -1) {
+    state.idxSection = Math.max(-1, state.idxSection - 1);
+    if (state.idxSection == -1) {
         montarPrimeiraTela();
         return;
     }
-    sequenciaEscolhida[idxSection]();
+    state.sequence[state.idxSection]();
 }
 
 function enviarArquivo() {
@@ -143,14 +154,13 @@ function enviarArquivo() {
     inputDeArquvios.id = "fileInput";
     inputDeArquvios.multiple = true;
     inputDeArquvios.accept = "application/zip,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain";
-    sessao.appendChild(inputDeArquvios);
+    htmlDOM.section.appendChild(inputDeArquvios);
+
+    inputDeArquvios.click()
 
     let listaArquivos = document.createElement("ul");
     listaArquivos.id = "lista-arquivos";
-    sessao.appendChild(listaArquivos);
-
-    const btnEnvArquivo = sessao.querySelector(".btn-enviar-arquivo");
-    btnEnvArquivo.addEventListener("click", () => inputDeArquvios.click());
+    htmlDOM.section.appendChild(listaArquivos);
 
     inputDeArquvios.addEventListener("change", () => {
         listaArquivos.innerHTML = "";
@@ -163,18 +173,18 @@ function enviarArquivo() {
 }
 
 function adicionarQuestao() {
-    numQuestoes++;
+    state.numQuestoes++;
 
     const corpo = document.createElement("div");
     corpo.classList.add("questao", "ativo");
 
     const numDaQuestao = document.createElement("p");
-    numDaQuestao.innerHTML = `Questão ${numQuestoes}`;
+    numDaQuestao.innerHTML = `Questão ${state.numQuestoes}`;
     numDaQuestao.classList.add("num-questao");
 
     const txtDaQuestao = document.createElement("textarea");
     txtDaQuestao.placeholder = "Texto da questão";
-    txtDaQuestao.maxLength = MAX_CARACTERES_TXT_GRANDE;
+    txtDaQuestao.maxLength = LIMITES.tamanhoTextosGrandes;
     txtDaQuestao.classList.add("texto-questao");
     expandirTextarea(txtDaQuestao);
 
@@ -205,19 +215,19 @@ function adicionarQuestao() {
 }
 
 function removerQuestao(corpo) {
-    if (numQuestoes < 2) {
+    if (state.numQuestoes < 2) {
         alert("Um questionário deve ter pelo menos uma questões");
         return;
     }
     corpo.remove();
     const listaNumDasQuestoes = document.querySelectorAll("#lista-questoes .num-questao");
     listaNumDasQuestoes.forEach((num, index) => num.innerHTML = `Questão ${index + 1}`);
-    numQuestoes--;
+    state.numQuestoes--;
 }
 
 function adicionarAlternativa(listaAlternativas, alt = null) {
     const numAlternativas = listaAlternativas.children.length;
-    if (numAlternativas >= MAX_NUM_ALTERNATIVAS) {
+    if (numAlternativas >= LIMITES.numAlternativas) {
         alert("Uma questão pode ter no máximo 6 alternativas");
         return;
     }
@@ -270,11 +280,11 @@ function desabilitarCampoTempoTimer() {
 
 function enviar() {
     const dados = {
-        nome: dadosForm.get("nome"),
-        tipo: tipos[dadosForm.get("tipo")],
-        valor: dadosForm.get("valor"),
-        dataEncerramento: dadosForm.get("dataEncerramento"),
-        horaEncerramento: dadosForm.get("horaEncerramento"),
+        nome: state.dadosForm.get("nome"),
+        tipo: tipos[state.dadosForm.get("tipo")],
+        valor: state.dadosForm.get("valor"),
+        dataEncerramento: state.dadosForm.get("dataEncerramento"),
+        horaEncerramento: state.dadosForm.get("horaEncerramento"),
         enunciado: null,
         questoes: null,
         tentativas: "1",
@@ -282,18 +292,18 @@ function enviar() {
         tipoTimer: null
     };
 
-    if (dadosForm.get("tipo") !== "envioArquivo") {
-        dados.tipoTimer = dadosAtividade.tipoTimer;
+    if (state.dadosForm.get("tipo") !== "envioArquivo") {
+        dados.tipoTimer = state.dadosAtividade.tipoTimer;
         if (dados.tipoTimer !== "none" && dados.tipoTimer != null) {
-            const numHoras = dadosAtividade.numHoras;
-            const numMinutos = dadosAtividade.numMinutos;
+            const numHoras = state.dadosAtividade.numHoras;
+            const numMinutos = state.dadosAtividade.numMinutos;
             dados.tempoDeDuracao = JSON.stringify({ numHoras, numMinutos });
         }
     }
 
-    if (dadosForm.get("tipo") === "questionario") {
+    if (state.dadosForm.get("tipo") === "questionario") {
         let idxCorreta;
-        const questoesCorrigidas = questoesArray.map(questao => {
+        const questoesCorrigidas = state.questoes.map(questao => {
             const alternativas = questao.alternativas.map((alt, idx) => {
                 if (alt.correta) idxCorreta = idx;
                 return { texto: alt.texto };
@@ -309,9 +319,9 @@ function enviar() {
 
         dados.questoes = JSON.stringify(questoesCorrigidas);
 
-        dados.tentativas = dadosAtividade.numTentativas;
+        dados.tentativas = state.dadosAtividade.numTentativas;
     } else {
-        dados.enunciado = dadosAtividade.enunciado;
+        dados.enunciado = state.dadosAtividade.enunciado;
     }
 
 
@@ -352,7 +362,7 @@ function enviar() {
 
 function salvarQuestoes() {
     const listaQuestoes = document.querySelectorAll("#lista-questoes .questao");
-    questoesArray = Array.from(listaQuestoes).map(questao => {
+    state.questoes = Array.from(listaQuestoes).map(questao => {
         const texto = questao.querySelector("textarea:nth-of-type(1)")?.value || "";
         const enunciado = questao.querySelector("textarea:nth-of-type(2)")?.value || "";
 
@@ -366,7 +376,7 @@ function salvarQuestoes() {
         return { texto, enunciado, alternativas };
     });
 
-    return questoesArray;
+    return state.questoes;
 }
 
 function validarQuestoes() {
@@ -404,15 +414,15 @@ function criarHandlerProximo(validacao) {
         const valido = validacao();
         if (!valido) return;
         avancar();
-        btnProximo.removeEventListener("click", handler);
+        htmlDOM.btnProximo.removeEventListener("click", handler);
     };
     handlerProximoAtual = handler;
     return handler;
 }
 
 function montarPrimeiraTela() {
-    section.innerHTML = `
-        <form action="atividades.html" method="post">
+    htmlDOM.section.innerHTML = `
+        <form id="form-principal" action="atividades.html" method="post">
         <label>Nome da atividade:</label>
         <input type="text" name="nome"><br>
         <label>Tipo:</label>
@@ -430,11 +440,11 @@ function montarPrimeiraTela() {
     </form>
     `
 
-    if (dadosForm != null) restaurarPrimeiraTela();
+    if (state.dadosForm != null) restaurarPrimeiraTela();
 
     const validacao = () => {
         let form = document.querySelector("form");
-        if (idxSection == -1) {
+        if (state.idxSection == -1) {
             for (let campo of form.elements) {
                 if (!validarCampo(campo)) return false;
             }
@@ -443,52 +453,51 @@ function montarPrimeiraTela() {
                 destacarCampo(form.dataEncerramento);
                 return false;
             }
-            sequenciaEscolhida = sequenciasAcoes[form.tipo.value];
-            dadosForm = new FormData(form);
+            state.sequence = sequenciasAcoes[form.tipo.value];
+            state.dadosForm = new FormData(form);
             return true;
         }
     };
 
     const handlerProximo = criarHandlerProximo(validacao);
-    btnProximo.addEventListener("click", handlerProximo);
+    htmlDOM.btnProximo.addEventListener("click", handlerProximo);
 }
 
 function restaurarPrimeiraTela() {
     let form = document.querySelector("form");
-    form.elements["nome"].value = dadosForm.get("nome");
-    form.elements["tipo"].value = dadosForm.get("tipo");
-    form.elements["valor"].value = dadosForm.get("valor");
-    form.elements["dataEncerramento"].value = dadosForm.get("dataEncerramento");
-    form.elements["horaEncerramento"].value = dadosForm.get("horaEncerramento");
+    form.elements["nome"].value = state.dadosForm.get("nome");
+    form.elements["tipo"].value = state.dadosForm.get("tipo");
+    form.elements["valor"].value = state.dadosForm.get("valor");
+    form.elements["dataEncerramento"].value = state.dadosForm.get("dataEncerramento");
+    form.elements["horaEncerramento"].value = state.dadosForm.get("horaEncerramento");
 }
 
 function montarTelaQuestoes() {
-    section.innerHTML = `
+    htmlDOM.section.innerHTML = `
         <div id="questoes">
             <h3>Questões do questionário</h3>
             <button id="btn-add-questao">Adicionar questão</button>
             <div id="lista-questoes"></div>
         </div>
     `
-    console.log(questoesArray);
-    if (questoesArray && questoesArray.length != 0) restaurarTelaQuestoes();
+    if (state.questoes && state.questoes.length != 0) restaurarTelaQuestoes();
 
     const btnAddQuestao = document.getElementById("btn-add-questao");
     btnAddQuestao.addEventListener("click", adicionarQuestao);
 
     const validacao = () => {
-        if (numQuestoes < 1) {
+        if (state.numQuestoes < 1) {
             alert("Um questionário deve ter pelo menos uma questões");
             return false;
         }
         if (!validarQuestoes()) return false;
         if (!validarContainer(document.querySelector("#lista-questoes"))) return false;
-        questoesArray = salvarQuestoes();
+        state.questoes = salvarQuestoes();
         return true;
     };
 
     const handlerProximo = criarHandlerProximo(validacao);
-    btnProximo.addEventListener("click", handlerProximo);
+    htmlDOM.btnProximo.addEventListener("click", handlerProximo);
 }
 
 function restaurarTelaQuestoes() {
@@ -497,17 +506,16 @@ function restaurarTelaQuestoes() {
     const container = document.querySelector("#lista-questoes");
     container.innerHTML = "";
 
-    numQuestoes = 0;
+    state.numQuestoes = 0;
 
     // garante que questoesArray existe e é um array
-    if (!Array.isArray(questoesArray)) return;
+    if (!Array.isArray(state.questoes)) return;
 
     // recria cada questão
-    questoesArray.forEach(q => {
+    state.questoes.forEach(q => {
         adicionarQuestaoComDados(q);
     });
 }
-
 
 function adicionarQuestaoComDados(dados) {
     const div = adicionarQuestao();
@@ -522,10 +530,9 @@ function adicionarQuestaoComDados(dados) {
     });
 }
 
-
 function montarTelaDuracaoETentativas(tipo = "duracao-e-tentativas") {
     if (tipo == "duracao-e-tentativas") {
-        section.innerHTML = `
+        htmlDOM.section.innerHTML = `
         <div id="duracao-e-tentativas">
             <h3>Numéro de tentativas, duração e tipo de timer</h3>
             <label for="">Número de tentativas:</label>
@@ -546,7 +553,7 @@ function montarTelaDuracaoETentativas(tipo = "duracao-e-tentativas") {
     `
     }
     if (tipo == "duracao") {
-        section.innerHTML = `
+        htmlDOM.section.innerHTML = `
         <div id="duracao-e-tentativas">
             <h3>Duração e tipo de timer</h3>
             <label for="">Tipo de timer</label>
@@ -574,68 +581,68 @@ function montarTelaDuracaoETentativas(tipo = "duracao-e-tentativas") {
         if (tipoTimer.value == "none") valido = true;
         else valido = validarLista(document.getElementById("duracao-e-tentativas"), { selectors: ["input"] });
         if (valido) {
-            if (document.getElementById("num-tentativas")) dadosAtividade.numTentativas = document.getElementById("num-tentativas").value;
-            dadosAtividade.tipoTimer = document.getElementById("tipo-timer").value;
-            dadosAtividade.numHoras = document.getElementById("num-horas").value;
-            dadosAtividade.numMinutos = document.getElementById("num-minutos").value;
+            if (document.getElementById("num-tentativas")) state.dadosAtividade.numTentativas = document.getElementById("num-tentativas").value;
+            state.dadosAtividade.tipoTimer = document.getElementById("tipo-timer").value;
+            state.dadosAtividade.numHoras = document.getElementById("num-horas").value;
+            state.dadosAtividade.numMinutos = document.getElementById("num-minutos").value;
             return true;
         }
         return false;
     };
 
     const handlerProximo = criarHandlerProximo(validacao);
-    btnProximo.addEventListener("click", handlerProximo);
+    htmlDOM.btnProximo.addEventListener("click", handlerProximo);
 }
 
 function restaurarTelaDuracaoETentativas() {
     if (document.getElementById("num-tentativas")) {
-        if (dadosAtividade.numTentativas == null || dadosAtividade.numTentativas === "")
+        if (state.dadosAtividade.numTentativas == null || state.dadosAtividade.numTentativas === "")
             document.getElementById("num-tentativas").value = "1";
         else
-            document.getElementById("num-tentativas").value = dadosAtividade.numTentativas;
+            document.getElementById("num-tentativas").value = state.dadosAtividade.numTentativas;
     }
 
-    if (dadosAtividade.tipoTimer == null || dadosAtividade.tipoTimer === "")
+    if (state.dadosAtividade.tipoTimer == null || state.dadosAtividade.tipoTimer === "")
         document.getElementById("tipo-timer").value = "none";
     else
-        document.getElementById("tipo-timer").value = dadosAtividade.tipoTimer;
+        document.getElementById("tipo-timer").value = state.dadosAtividade.tipoTimer;
 
 
     const horas = document.getElementById("num-horas");
-    if (horas && dadosAtividade.numHoras !== undefined) {
-        horas.value = dadosAtividade.numHoras;
+    if (horas && state.dadosAtividade.numHoras !== undefined) {
+        horas.value = state.dadosAtividade.numHoras;
     }
 
     const minutos = document.getElementById("num-minutos");
-    if (minutos && dadosAtividade.numMinutos !== undefined) {
-        minutos.value = dadosAtividade.numMinutos;
+    if (minutos && state.dadosAtividade.numMinutos !== undefined) {
+        minutos.value = state.dadosAtividade.numMinutos;
     }
 }
 
 function montarTelaElaboracaoEnunciado() {
-    section.innerHTML = `
+    htmlDOM.section.innerHTML = `
         <div id="elaboracao">
             <label>Insira o enunciado:</label>
             <input id="input-enunciado" type="textarea">
-            <button id="btn-enviar-arquivo">Inserir arquivo(s) de consulta?</button>
+            <button onclick="enviarArquivo()" id="btn-enviar-arquivo">Inserir arquivo(s) de consulta?</button>
         </div>
     `
-
+    
     const validacao = function () {
         console.log(document.getElementById("elaboracao"));
         if (!validarContainer(document.getElementById("elaboracao"))) {
             return false;
         }
-        dadosAtividade.enunciado = document.getElementById("input-enunciado").value;
+        state.dadosAtividade.enunciado = document.getElementById("input-enunciado").value;
         return true;
     };
 
     const handlerProximo = criarHandlerProximo(validacao);
-    btnProximo.addEventListener("click", handlerProximo);
+    htmlDOM.btnProximo.addEventListener("click", handlerProximo);
 }
 
 function montarConfirmacao() {
-    section.innerHTML = `
+    htmlDOM.section.innerHTML = `
         <div id="confirmacao">
             <p id="nome">Nome: </p>
             <p id="tipo">Tipo: </p>
@@ -643,11 +650,10 @@ function montarConfirmacao() {
             <p id="dataEncerramento">Data de encerramento: </p>
             <p id="horaEncerramento">Hora de encerramento: </p>
     `
-    btnEnviar.classList.remove("inativo");
-    btnAnterior.addEventListener("click", () => {
-        btnEnviar.classList.add("inativo");
+    htmlDOM.btnEnviar.classList.remove("inativo");
+    htmlDOM.btnAnterior.addEventListener("click", () => {
+        htmlDOM.btnEnviar.classList.add("inativo");
     }, { once: true });
-
 
     const nome = document.getElementById("nome");
     const tipo = document.getElementById("tipo");
@@ -655,18 +661,18 @@ function montarConfirmacao() {
     const dataEncerramento = document.getElementById("dataEncerramento");
     const horaEncerramento = document.getElementById("horaEncerramento");
 
-    nome.innerHTML += dadosForm.get("nome");
-    tipo.innerHTML += tipos[dadosForm.get("tipo")];
-    valor.innerHTML += dadosForm.get("valor");
-    dataEncerramento.innerHTML += dadosForm.get("dataEncerramento");
-    horaEncerramento.innerHTML += dadosForm.get("horaEncerramento");
+    nome.innerHTML += state.dadosForm.get("nome");
+    tipo.innerHTML += tipos[state.dadosForm.get("tipo")];
+    valor.innerHTML += state.dadosForm.get("valor");
+    dataEncerramento.innerHTML += state.dadosForm.get("dataEncerramento");
+    horaEncerramento.innerHTML += state.dadosForm.get("horaEncerramento");
 
-    if (dadosForm.get("tipo") == "questionario") {
-        section.innerHTML += `<p id="numQuestoes">Número de questões: ${numQuestoes}</p>`
+    if (state.dadosForm.get("tipo") == "questionario") {
+        htmlDOM.section.innerHTML += `<p id="numQuestoes">Número de questões: ${state.numQuestoes}</p>`
     } else {
-        section.innerHTML += `<p id="enunciado">Enunciado: XD</p>`
+        htmlDOM.section.innerHTML += `<p id="enunciado">Enunciado: XD</p>`
     }
-    section.innerHTML += `</div>`
+    htmlDOM.section.innerHTML += `</div>`
 }
 
 function confirmarSaidaDaPag() {

@@ -1,16 +1,26 @@
-let atividade;
-let contador = 0;
-let containerPrincipal;
-let tempoTotal = 0;
-let btnAnterior;
-let btnProximo;
-let btnEnviar;
-let listaContainers = [];
-let temporizador;
-let tentativasFeitas;
-let tempoAcabou = false;
-let tentativa;
-const LIMITE_CARACTERES = 2000;
+const state = {
+    atividade: null,
+    questoes: [],
+    numQuestoes: 0,
+    tempoTotal: 0,
+    numTentativasFeitas: 0,
+    objTentativa: null,
+    temporizador: null,
+    LIMITE_CARACTERES: 2000,
+    containerPrinci: null,
+    timerEncerrado: false
+}
+
+const htmlDOM = {
+    containerPrincipal: null,
+    btnAnterior: null,
+    btnProximo: null,
+    btnEnviar: null
+}
+
+const LIMITES = {
+    numCaracteres: 2000
+}
 
 function formatarData(data) {
     data = data.split("-");
@@ -18,13 +28,13 @@ function formatarData(data) {
 }
 
 function carregarAtividade() {
-    atividade = JSON.parse(localStorage.getItem("atividade"));
-    atividade.questoes = JSON.parse(atividade.questoes);
-    atividade.tempoDeDuracao = JSON.parse(atividade.tempoDeDuracao);
+    state.atividade = JSON.parse(localStorage.getItem("atividade"));
+    state.atividade.questoes = JSON.parse(state.atividade.questoes);
+    state.atividade.tempoDeDuracao = JSON.parse(state.atividade.tempoDeDuracao);
 }
 
 function checkQuestaoMarcada() {
-    const selecionado = listaContainers[contador].querySelector(`input[name="alternativa_questao_${contador + 1}"]:checked`);
+    const selecionado = state.questoes[state.numQuestoes].querySelector(`input[name="alternativa_questao_${state.numQuestoes + 1}"]:checked`);
     if (!selecionado) {
         alert("Marque alguma alternativa antes de continuar!");
         return false;
@@ -43,27 +53,33 @@ function checkRedacaoEscrita() {
 
 function caracteresRestantes() {
     const numCaracteres = document.getElementById("textarea-redacao").value.length;
-    return LIMITE_CARACTERES - numCaracteres;
+    return LIMITES.numCaracteres - numCaracteres;
 }
 
 async function carregarOuCriarTentativa() {
+    /*fetch(`/api/tentativa/atividade/${atividade.id}/tentativa-aberta`)
+    .then(resp => {
+        if (!response.ok) throw new Error("Erro ao verificar tentativa aberta");
+        return resp.text();
+    })
+    .then()*/
     try {
-        let response = await fetch(`/api/tentativa/atividade/${atividade.id}/tentativa-aberta`);
+        let response = await fetch(`/api/tentativa/atividade/${state.atividade.id}/tentativa-aberta`);
         if (!response.ok) throw new Error("Erro ao verificar tentativa aberta");
 
         const text = await response.text();
         const _tentativa = text && text.trim().length > 0 ? JSON.parse(text) : null;
 
         if (_tentativa && _tentativa.id && _tentativa.tempoRestante > 0) {
-            tentativa = _tentativa;
-            console.log("Tentativa aberta encontrada:", tentativa);
+            state.objTentativa = _tentativa;
+            console.log("Tentativa aberta encontrada:", state.objTentativa);
         } else {
             const dados = {
-                atividade: { id: atividade.id },
+                atividade: { id: state.atividade.id },
                 horarioInicio: new Date().toLocaleString("sv-SE",
                     { timeZone: "America/Sao_Paulo" }).replace(" ", "T") + ".000000",
                 tempoRestante: converterTempoDaAtividade(),
-                numTentativa: tentativasFeitas + 1,
+                numTentativa: state.numTentativasFeitas + 1,
                 aberta: true
             }
             console.log(dados.atividade.id);
@@ -76,10 +92,10 @@ async function carregarOuCriarTentativa() {
 
             if (!response.ok) throw new Error("Erro ao criar nova tentativa");
 
-            tentativa = await response.json();
-            console.log("Nova tentativa criada:", tentativa);
+            state.objTentativa = await response.json();
+            console.log("Nova tentativa criada:", state.objTentativa);
         }
-        tempoTotal = tentativa.tempoRestante || converterTempoDaAtividade();
+        state.tempoTotal = state.objTentativa.tempoRestante || converterTempoDaAtividade();
     } catch (err) {
         console.error(err);
         alert("Não foi possível carregar a tentativa");
@@ -87,17 +103,17 @@ async function carregarOuCriarTentativa() {
 }
 
 function AddBotaoEnviar() {
-    btnEnviar.classList.remove("inativo");
-    btnProximo.classList.add("inativo");
+    htmlDOM.btnEnviar.classList.remove("inativo");
+    htmlDOM.btnProximo.classList.add("inativo");
 }
 
 function RemoverBotaoEnviar() {
-    btnEnviar.classList.add("inativo");
-    btnProximo.classList.remove("inativo");
+    htmlDOM.btnEnviar.classList.add("inativo");
+    htmlDOM.btnProximo.classList.remove("inativo");
 }
 
 function criarTimer(timer) {
-    switch (atividade.tipoTimer) {
+    switch (state.atividade.tipoTimer) {
         case "continuo":
             criarTimerContinuo(timer);
             break;
@@ -108,25 +124,25 @@ function criarTimer(timer) {
 }
 
 function criarTimerInterrompivel(timer) {
-    temporizador = setInterval(() => {
-        let horas = Math.floor(tempoTotal / 3600);
-        let minutos = Math.floor((tempoTotal % 3600) / 60);
-        let segundos = Math.floor((tempoTotal % 60));
+    state.temporizador = setInterval(() => {
+        let horas = Math.floor(state.tempoTotal / 3600);
+        let minutos = Math.floor((state.tempoTotal % 3600) / 60);
+        let segundos = Math.floor((state.tempoTotal % 60));
 
         timer.innerHTML = `${horas.toString().padStart(2, "0")}:${minutos.toString()
             .padStart(2, "0")}:${segundos.toString().padStart(2, "0")}`;
 
-        tempoTotal--;
+        state.tempoTotal--;
 
-        if (tempoTotal <= 0) timeOut();
+        if (state.tempoTotal <= 0) timeOut();
     }, 1000);
 }
 
 async function criarTimerContinuo(timer) {
-    const resposta = await fetch(`/api/tentativa/tempo-restante/${tentativa.id}`);
+    const resposta = await fetch(`/api/tentativa/tempo-restante/${state.objTentativa.id}`);
     let tempoRestante = await resposta.json();
 
-    temporizador = setInterval(() => {
+    state.temporizador = setInterval(() => {
         if (tempoRestante <= 0) timeOut();
         else {
             let horas = Math.floor(tempoRestante / 3600);
@@ -147,7 +163,7 @@ function criarOptions(questao, container) {
         const label = document.createElement("label");
 
         opcao.type = "radio";
-        opcao.name = "alternativa_questao_" + (listaContainers.length + 1);
+        opcao.name = "alternativa_questao_" + (state.questoes.length + 1);
         opcao.value = idx;
         opcao.id = `alt_${idx}`;
 
@@ -171,25 +187,24 @@ function montarQuestao(questao) {
     criarOptions(questao, container);
 
     container.classList.add("inativo");
-    listaContainers.push(container);
-    containerPrincipal.append(container);
-    if (contador === atividade.questoes.length - 1) AddBotaoEnviar();
+    state.questoes.push(container);
+    htmlDOM.containerPrincipal.append(container);
+    if (state.numQuestoes === state.atividade.questoes.length - 1) AddBotaoEnviar();
 }
 
 function navegarEntreQuestoes(sentido) {
     if (sentido == 1 && !checkQuestaoMarcada()) return;
 
-    if (contador + sentido >= 0 && contador + sentido < atividade.questoes.length) {
-        listaContainers[contador].classList.add("inativo");
-        contador += sentido;
+    if (state.numQuestoes + sentido >= 0 && state.numQuestoes + sentido < state.atividade.questoes.length) {
+        state.questoes[state.numQuestoes].classList.add("inativo");
+        state.numQuestoes += sentido;
         const p = document.querySelector("#numQuestao");
-        p.innerHTML = "Questão " + (contador + 1);
-        if (contador === atividade.questoes.length - 1) AddBotaoEnviar();
-        else if (!btnEnviar.classList.contains("inativo")) RemoverBotaoEnviar();
-        listaContainers[contador].classList.remove("inativo");
+        p.innerHTML = "Questão " + (state.numQuestoes + 1);
+        if (state.numQuestoes === state.atividade.questoes.length - 1) AddBotaoEnviar();
+        else if (!htmlDOM.btnEnviar.classList.contains("inativo")) RemoverBotaoEnviar();
+        state.questoes[state.numQuestoes].classList.remove("inativo");
     }
 }
-
 
 function converterTempoParaSegundos(horas = 0, minutos = 0, segundos = 0) {
     horas *= 3600;
@@ -198,8 +213,8 @@ function converterTempoParaSegundos(horas = 0, minutos = 0, segundos = 0) {
 }
 
 function converterTempoDaAtividade() {
-    if(!atividade.tempoDeDuracao) return null;
-    return converterTempoParaSegundos(Number(atividade.tempoDeDuracao.numHoras), Number(atividade.tempoDeDuracao.numMinutos));
+    if(!state.atividade.tempoDeDuracao) return null;
+    return converterTempoParaSegundos(Number(state.atividade.tempoDeDuracao.numHoras), Number(state.atividade.tempoDeDuracao.numMinutos));
 }
 
 function montarListaAlternativasMarcadas(alternativas) {
@@ -217,18 +232,18 @@ function montarListaAlternativasMarcadas(alternativas) {
 async function enviarRespostasQuestionario() {
     if (!checkQuestaoMarcada()) return;
 
-    if (tempoAcabou) {
+    if (state.timerEncerrado) {
         window.location.reload();
         return;
     }
 
-    clearInterval(temporizador);
+    clearInterval(state.temporizador);
 
     const alternativasMarcadas = document.querySelectorAll("input:checked");
 
     const respostaAluno = {
-        atividade: { id: atividade.id },
-        tentativa: { id: tentativa.id },
+        atividade: { id: state.atividade.id },
+        tentativa: { id: state.objTentativa.id },
         alternativasMarcadas: montarListaAlternativasMarcadas(alternativasMarcadas),
         textoRedacao: null,
         nomeArquivo: null
@@ -266,7 +281,7 @@ async function enviarRedacao() {
     console.log(document.getElementById("textarea-redacao").value);
 
     const respostaAluno = {
-        atividade: { id: atividade.id },
+        atividade: { id: state.atividade.id },
         tentativa: null,
         alternativasMarcadas: null,
         textoRedacao: document.getElementById("textarea-redacao").value,
@@ -297,7 +312,7 @@ async function enviarArquivo() {
 
 
     const respostaAluno = {
-        atividade: { id: atividade.id },
+        atividade: { id: state.atividade.id },
         tentativa: null,
         alternativasMarcadas: null,
         textoRedacao: null,
@@ -341,45 +356,45 @@ async function enviarArquivo() {
 }
 
 async function resgatarNota() {
-    const resposta = await fetch(`/api/desempenho/tentativa/${tentativa.id}/nota`);
+    const resposta = await fetch(`/api/desempenho/tentativa/${state.objTentativa.id}/nota`);
     const valor = await resposta.json();
     return Number(valor);
 }
 
 function montarPaginaResultado(nota) {
-    containerPrincipal.innerHTML = `
+    htmlDOM.containerPrincipal.innerHTML = `
     <h1>Resposta enviada</h1>
     <p>Nota: ${nota}</p>
     `
 }
 
 async function timeOut() {
-    clearInterval(temporizador);
+    clearInterval(state.temporizador);
 
-    if (tentativa && tentativa.id) {
+    if (state.objTentativa && state.objTentativa.id) {
         await fecharTentativa();
     }
     alert("O tempo desta tentativa acabou. Reinicie a página para começar uma nova");
-    tempoAcabou = true;
+    state.timerEncerrado = true;
 }
 
 function carregarTelaQuestionario() {
-    containerPrincipal.innerHTML = `
+    htmlDOM.containerPrincipal.innerHTML = `
     <div class="first-screen-questionario">
-      <h2>${atividade.nome}</h2>
-      <p>Você está prestes a iniciar o questionário: ${atividade.nome}</p>
-      <p>Valor: <strong>${atividade.valor} ponto${atividade.valor > 1 ? "s" : ""}</strong></p>
-      <p>Número máximo de tentativas: ${atividade.tentativas}</p>
-      <p>Tentativas restantes: ${atividade.tentativas - tentativasFeitas}</p>
+      <h2>${state.atividade.nome}</h2>
+      <p>Você está prestes a iniciar o questionário: ${state.atividade.nome}</p>
+      <p>Valor: <strong>${state.atividade.valor} ponto${state.atividade.valor > 1 ? "s" : ""}</strong></p>
+      <p>Número máximo de tentativas: ${state.atividade.tentativas}</p>
+      <p>Tentativas restantes: ${state.atividade.tentativas - state.numTentativasFeitas}</p>
       
-      <p>Término: ${formatarData(atividade.dataEncerramento)}</p>
+      <p>Término: ${formatarData(state.atividade.dataEncerramento)}</p>
       <button id="btn-iniciar-tentativa">Iniciar tentativa</button>
     </div>
   `;
 
     const btnIniciar = document.getElementById("btn-iniciar-tentativa");
     btnIniciar.addEventListener("click", async () => {
-        if (tentativasFeitas >= atividade.tentativas) {
+        if (state.numTentativasFeitas >= state.atividade.tentativas) {
             telaQuestionarioJaFeito();
             return;
         }
@@ -389,10 +404,10 @@ function carregarTelaQuestionario() {
 }
 
 function telaQuestionarioJaFeito() {
-    containerPrincipal.innerHTML = `
+    htmlDOM.containerPrincipal.innerHTML = `
     <div class="first-screen-questionario">
       <p>Você já fez este questionário</p>
-      <p>O questionário <strong>${atividade.nome}</strong> já foi feito e enviado por você</p>
+      <p>O questionário <strong>${state.atividade.nome}</strong> já foi feito e enviado por você</p>
       <p>A nota será desponibilizada em breve</p>
     </div>
   `;
@@ -402,15 +417,15 @@ function carregarTelaRedacao() {
     const nome = document.createElement("p");
     const enunciado = document.createElement("p");
     const textareaRedacao = document.createElement("textarea");
-    const btnEnviar = document.createElement("button");
+    htmlDOM.btnEnviar = document.createElement("button");
     const numCaracteresRestantes = document.createElement("p");
 
     numCaracteresRestantes.style.fontSize = "15px";
 
-    nome.innerHTML = atividade.nome;
-    enunciado.innerHTML = atividade.enunciado;
-    btnEnviar.textContent = "Enviar";
-    textareaRedacao.maxLength = LIMITE_CARACTERES;
+    nome.innerHTML = state.atividade.nome;
+    enunciado.innerHTML = state.atividade.enunciado;
+    htmlDOM.btnEnviar.textContent = "Enviar";
+    textareaRedacao.maxLength = LIMITES.numCaracteres;
 
     textareaRedacao.id = "textarea-redacao";
     textareaRedacao.addEventListener("input", () => {
@@ -419,33 +434,33 @@ function carregarTelaRedacao() {
 
     carregarArquivos();
 
-    containerPrincipal.append(nome, enunciado, textareaRedacao, numCaracteresRestantes, btnEnviar);
+    htmlDOM.containerPrincipal.append(nome, enunciado, textareaRedacao, numCaracteresRestantes, htmlDOM.btnEnviar);
 
-    btnEnviar.addEventListener("click", enviarRedacao);
+    htmlDOM.btnEnviar.addEventListener("click", enviarRedacao);
 }
 
 function carregarTelaEnvioArquivo() {
     const nome = document.createElement("p");
     const enunciado = document.createElement("p");
     const inputArquivo = document.createElement("input");
-    const btnEnviar = document.createElement("button");
+    htmlDOM.btnEnviar = document.createElement("button");
 
-    nome.innerHTML = atividade.nome;
-    enunciado.innerHTML = atividade.enunciado;
-    btnEnviar.textContent = "Enviar";
+    nome.innerHTML = state.atividade.nome;
+    enunciado.innerHTML = state.atividade.enunciado;
+    htmlDOM.btnEnviar.textContent = "Enviar";
 
     inputArquivo.id = "input-arquivo";
     inputArquivo.type = "file";
 
     carregarArquivos();
 
-    containerPrincipal.append(nome, enunciado, inputArquivo, btnEnviar);
+    htmlDOM.containerPrincipal.append(nome, enunciado, inputArquivo, htmlDOM.btnEnviar);
 
-    btnEnviar.addEventListener("click", enviarArquivo);
+    htmlDOM.btnEnviar.addEventListener("click", enviarArquivo);
 }
 
 async function primeiraTela() {
-    switch (atividade.tipo) {
+    switch (state.atividade.tipo) {
         case ("Questionário"):
             await contarTentativas();
             carregarTelaQuestionario();
@@ -472,7 +487,7 @@ function formatarDataHora(date) {
 }
 
 async function contarTentativas() {
-    await fetch(`/api/tentativa/atividade/${atividade.id}/num-tentativas`)
+    await fetch(`/api/tentativa/atividade/${state.atividade.id}/num-tentativas`)
         .then(response => {
             if (!response.ok) {
                 throw new Error("Erro ao consultar o número de tentativas");
@@ -480,14 +495,14 @@ async function contarTentativas() {
             return response.json();
         })
         .then(dado => {
-            tentativasFeitas = dado;
+            state.numTentativasFeitas = dado;
         })
         .catch(err => console.error("Falha na requisição:", err));
 }
 
 async function fecharTentativa() {
     try {
-        const response = await fetch(`/api/tentativa/fechar/${tentativa.id}`, {
+        const response = await fetch(`/api/tentativa/fechar/${state.objTentativa.id}`, {
             method: "PATCH"
         });
         if (!response.ok) throw new Error("Erro ao fechar a tentativa");
@@ -498,10 +513,10 @@ async function fecharTentativa() {
 
 async function atualizarTempo() {
     try {
-        const response = await fetch(`/api/tentativa/atualizar-timer/${tentativa.id}`, {
+        const response = await fetch(`/api/tentativa/atualizar-timer/${state.objTentativa.id}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ tempoRestante: tempoTotal })
+            body: JSON.stringify({ tempoRestante: state.tempoTotal })
         });
 
         if (!response.ok) throw new Error("Não foi possível atualizar o tempo");
@@ -514,13 +529,13 @@ async function atualizarTempo() {
 }
 
 function salvarStatusTentativa() {
-    clearInterval(temporizador);
+    clearInterval(state.temporizador);
 
     const dados = {
-        atividade: atividade.id,
+        atividade: state.atividade.id,
         horarioInicio: new Date().toISOString(),
-        tempoRestante: tempoTotal,
-        numTentativa: tentativasFeitas + 1,
+        tempoRestante: state.tempoTotal,
+        numTentativa: state.numTentativasFeitas + 1,
         aberta: true
     };
 
@@ -533,8 +548,8 @@ function salvarStatusTentativa() {
 }
 
 function tratamentoPreFechamentoDaPagina() {
-    if (tempoTotal > 0) {
-        if (atividade.tipoTimer === "interrompivel") {
+    if (state.tempoTotal > 0) {
+        if (state.atividade.tipoTimer === "interrompivel") {
             atualizarTempo();
         }
     }
@@ -545,7 +560,7 @@ function tratamentoPreFechamentoDaPagina() {
 function iniciarTentativa() {
     window.addEventListener("beforeunload", tratamentoPreFechamentoDaPagina);
 
-    containerPrincipal.innerHTML = "";
+    htmlDOM.containerPrincipal.innerHTML = "";
 
     const cabecalho = document.createElement("div");
     const numQuestao = document.createElement("p");
@@ -557,35 +572,32 @@ function iniciarTentativa() {
     numQuestao.id = "numQuestao";
 
     cabecalho.append(numQuestao, timer);
-    containerPrincipal.append(cabecalho);
+    htmlDOM.containerPrincipal.append(cabecalho);
+
+    htmlDOM.btnAnterior = document.createElement("button");
+    htmlDOM.btnProximo = document.createElement("button");
+    htmlDOM.btnEnviar = document.createElement("button");
+
+    htmlDOM.btnAnterior.textContent = "Anterior";
+    htmlDOM.btnProximo.textContent = "Próximo";
+    htmlDOM.btnEnviar.textContent = "Enviar";
+
+    htmlDOM.btnEnviar.classList.add("inativo");
+
+    htmlDOM.btnAnterior.addEventListener("click", () => navegarEntreQuestoes(-1));
+    htmlDOM.btnProximo.addEventListener("click", () => navegarEntreQuestoes(1));
+    htmlDOM.btnEnviar.addEventListener("click", enviarRespostasQuestionario);
 
     criarTimer(timer);
-
-    atividade.questoes.forEach(questao => {
+    state.atividade.questoes.forEach(questao => {
         montarQuestao(questao);
     })
-
-    listaContainers[0].classList.remove("inativo")
-
-    btnAnterior = document.createElement("button");
-    btnProximo = document.createElement("button");
-    btnEnviar = document.createElement("button");
-
-    btnAnterior.textContent = "Anterior";
-    btnProximo.textContent = "Próximo";
-    btnEnviar.textContent = "Enviar";
-
-    btnEnviar.classList.add("inativo");
-
-    btnAnterior.addEventListener("click", () => navegarEntreQuestoes(-1));
-    btnProximo.addEventListener("click", () => navegarEntreQuestoes(1));
-    btnEnviar.addEventListener("click", enviarRespostasQuestionario);
-
-    containerPrincipal.append(btnAnterior, btnProximo, btnEnviar);
+    state.questoes[0].classList.remove("inativo")
+    htmlDOM.containerPrincipal.append(htmlDOM.btnAnterior, htmlDOM.btnProximo, htmlDOM.btnEnviar);
 }
 
 async function carregarArquivos() {
-    const response = await fetch(`/api/arquivo/listar/${atividade.id}`);
+    const response = await fetch(`/api/arquivo/listar/${state.atividade.id}`);
     if (!response.ok) throw new Error("Não foi possível carregar os arquivos");
     const arquivos = await response.json();
 
@@ -603,11 +615,11 @@ async function carregarArquivos() {
         link.target = "_blank";
         lista.append(ul);
     });
-    containerPrincipal.append(lista);
+    htmlDOM.containerPrincipal.append(lista);
 }
 
 function initFazerAtividades() {
-    containerPrincipal = document.getElementById("main-container");
+    htmlDOM.containerPrincipal = document.getElementById("main-container");
     carregarAtividade();
     primeiraTela();
 

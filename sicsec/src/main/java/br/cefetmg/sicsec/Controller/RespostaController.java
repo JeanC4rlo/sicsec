@@ -18,7 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import br.cefetmg.sicsec.Exceptions.CorrecaoException;
 import br.cefetmg.sicsec.Model.Resposta;
 import br.cefetmg.sicsec.Service.RespostaService;
-import br.cefetmg.sicsec.dto.DadosRespostaAlunoDTO;
+import br.cefetmg.sicsec.dto.DesempenhoDTO;
 import jakarta.servlet.http.HttpSession;
 
 @RestController
@@ -40,8 +40,8 @@ public class RespostaController {
     }
 
     @GetMapping("/dados/{desempenhoId}")
-    public ResponseEntity<DadosRespostaAlunoDTO> getDadosResposta(@PathVariable Long desempenhoId) {
-        return ResponseEntity.ok(respostaService.getDadosResposta(desempenhoId));
+    public ResponseEntity<DesempenhoDTO> getDadosResposta(@PathVariable Long desempenhoId) {
+        return ResponseEntity.ok(respostaService.getDesempenhoDTO(desempenhoId));
     }
 
     @PostMapping("/enviar")
