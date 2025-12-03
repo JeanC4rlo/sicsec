@@ -48,7 +48,8 @@ public class DesempenhoService {
                         desempenho.getAtividade().getValor(),
                         desempenho.getAtividade().getTipo(),
                         desempenho.getResposta().getTextoRedacao(),
-                        desempenho.getResposta().getNomeArquivo()))
+                        desempenho.getResposta().getId(),
+                        desempenho.getResposta().getArquivoId()))
                 .toList();
     }
 

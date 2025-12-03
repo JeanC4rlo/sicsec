@@ -597,21 +597,21 @@ function iniciarTentativa() {
 }
 
 async function carregarArquivos() {
-    const response = await fetch(`/api/arquivo/listar/${state.atividade.id}`);
+    const response = await fetch(`/api/arquivo/listar/atividade/${state.atividade.id}`);
     if (!response.ok) throw new Error("Não foi possível carregar os arquivos");
     const arquivos = await response.json();
 
     const lista = document.createElement("list");
     lista.innerHTML = "";
 
-    arquivos.forEach(nome => {
-        console.log(nome);
+    arquivos.forEach(arquivo => {
+        console.log(arquivo);
         const ul = document.createElement("ul");
         const link = document.createElement("a");
         ul.append(link);
 
-        link.href = `/api/arquivo/download/${nome}`;
-        link.textContent = nome;
+        link.href = `/api/arquivo/${arquivo.id}/atividade/${arquivo.donoId}`;
+        link.textContent = arquivo.nomeSalvo;
         link.target = "_blank";
         lista.append(ul);
     });

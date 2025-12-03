@@ -2,27 +2,48 @@ package br.cefetmg.sicsec.Service;
 
 import java.io.IOException;
 import java.nio.file.*;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import br.cefetmg.sicsec.Model.Atividade;
-import br.cefetmg.sicsec.Model.Resposta;
+import br.cefetmg.sicsec.Model.Arquivo;
+import br.cefetmg.sicsec.Model.FileOwner;
+import br.cefetmg.sicsec.Model.FileOwnerTypes;
+import br.cefetmg.sicsec.Repository.ArquivoRepository;
 import br.cefetmg.sicsec.Repository.AtividadeRepository;
 
 @Service
 public class ArquivoService {
+
+    @Autowired
+    ArquivoRepository arquivoRepository;
+
     @Autowired
     AtividadeRepository atividadeRepository;
 
     private static final long TAMANHO_MAX = 10 * 1024 * 1024;
     private static final List<String> EXTENSOES_PERMITIDAS = List.of(".txt", ".pdf", ".jpg", ".png", ".jpeg", ".docx");
 
-    public void salvarArquivoResposta(Resposta resposta, MultipartFile arquivo) throws IOException {
+    public Arquivo getArquivo(Long arquivoId) {
+        return arquivoRepository.findById(arquivoId).get();
+    }
 
+    private void popularArquivoEntidade(Arquivo arquivoEntidade, Long tamanho, String nomeOriginal,
+            String nomeFinal, FileOwnerTypes tipoDonoArquivo, long donoId) throws IOException {
+
+        arquivoEntidade.setTipoDonoArquivo(tipoDonoArquivo);
+        arquivoEntidade.setDonoId(donoId);
+        arquivoEntidade.setNomeOriginal(nomeOriginal);
+        arquivoEntidade.setNomeSalvo(nomeFinal);
+        arquivoEntidade.setTamanho(tamanho);
+        arquivoEntidade.setDataUpload(ZonedDateTime.now(ZoneId.of("America/Sao_Paulo")));
+    }
+
+    public Arquivo salvarArquivo(FileOwner donoArquivo, MultipartFile arquivo) throws IOException {
         if (arquivo == null || arquivo.isEmpty()) {
             throw new IllegalArgumentException("Nenhum arquivo foi enviado.");
         }
@@ -31,40 +52,48 @@ public class ArquivoService {
             throw new IllegalArgumentException("O arquivo enviado não é permitido.");
         }
 
-        Path pastaAtividade = Paths.get("uploads/resposta-" + resposta.getId());
-        Files.createDirectories(pastaAtividade);
+        Path pastaDono = Paths.get(
+                "uploads/" + donoArquivo.getTipoDonoArquivo().toString().toLowerCase() + "-" + donoArquivo.getId());
+        Files.createDirectories(pastaDono);
 
         String nomeOriginal = limparNome(arquivo.getOriginalFilename());
-        String nomeFinal = gerarNomeSeguro(pastaAtividade, nomeOriginal);
+        String nomeFinal = gerarNomeSeguro(pastaDono, nomeOriginal);
 
-        Path destino = pastaAtividade.resolve(nomeFinal);
+        Path destino = pastaDono.resolve(nomeFinal);
         Files.copy(arquivo.getInputStream(), destino, StandardCopyOption.REPLACE_EXISTING);
 
-        resposta.setNomeArquivo(nomeFinal);
+        Arquivo arquivoEntidade = new Arquivo();
+        popularArquivoEntidade(arquivoEntidade, arquivo.getSize(), nomeOriginal, nomeFinal,
+                donoArquivo.getTipoDonoArquivo(), donoArquivo.getId());
+
+        return arquivoRepository.save(arquivoEntidade);
     }
 
-    public void salvarListaArquivos(Atividade atividade, MultipartFile[] arquivos) throws IOException {
-        Path pastaAtividade = Paths.get("uploads/atividade-" + atividade.getId());
-        Files.createDirectories(pastaAtividade);
-        List<String> nomesSalvos = new ArrayList<>();
+    public void salvarListaArquivos(FileOwner donoArquivo, MultipartFile[] arquivos) throws IOException {
+        Path pastaDono = Paths.get(
+                "uploads/" + donoArquivo.getTipoDonoArquivo().toString().toLowerCase() + "-" + donoArquivo.getId());
+        Files.createDirectories(pastaDono);
+        List<Arquivo> listaArquivos = new ArrayList<>();
 
         for (MultipartFile arquivo : arquivos) {
-            if (arquivo != null && !arquivo.isEmpty()) {
-                if (!validarArquivo(arquivo)) {
-                    continue;
-                }
-                String nomeOriginal = limparNome(arquivo.getOriginalFilename());
-                String nomeFinal = gerarNomeSeguro(pastaAtividade, nomeOriginal);
+            if (arquivo == null || arquivo.isEmpty())
+                continue;
+            if (!validarArquivo(arquivo))
+                continue;
 
-                Path destino = pastaAtividade.resolve(nomeFinal);
+            String nomeOriginal = limparNome(arquivo.getOriginalFilename());
+            String nomeFinal = gerarNomeSeguro(pastaDono, nomeOriginal);
 
-                Files.copy(arquivo.getInputStream(), destino, StandardCopyOption.REPLACE_EXISTING);
+            Path destino = pastaDono.resolve(nomeFinal);
 
-                nomesSalvos.add(nomeFinal);
-            }
+            Arquivo arquivoEntidade = new Arquivo();
+            popularArquivoEntidade(arquivoEntidade, arquivo.getSize(), nomeOriginal, nomeFinal,
+                    donoArquivo.getTipoDonoArquivo(), donoArquivo.getId());
+
+            Files.copy(arquivo.getInputStream(), destino, StandardCopyOption.REPLACE_EXISTING);
+            listaArquivos.add(arquivoEntidade);
         }
-
-        atividade.setNomesArquivos(nomesSalvos);
+        arquivoRepository.saveAll(listaArquivos);
     }
 
     public boolean validarArquivo(MultipartFile arquivo) throws IOException {
@@ -80,7 +109,15 @@ public class ArquivoService {
     }
 
     private String limparNome(String nome) {
-        return nome.replaceAll("[^a-zA-Z0-9\\.\\-_]", "_");
+        String limpo = nome.trim()
+                .replaceAll("[\\\\/]", "_")
+                .replaceAll("[^a-zA-Z0-9._-]", "_");
+
+        if (limpo.equals(".") || limpo.equals("..")) {
+            limpo = "_" + limpo + "_";
+        }
+
+        return limpo;
     }
 
     public String gerarNomeSeguro(Path pastaAtividade, String nomeBase) {
@@ -109,14 +146,8 @@ public class ArquivoService {
         return novoNome;
     }
 
-    public List<?> listarArquivos(Long atividadeId) {
-        return atividadeRepository.findById(atividadeId)
-                .map(atividade -> {
-                    List<String> arquivos = atividade.getNomesArquivos();
-                    return arquivos != null ? arquivos : List.of();
-                })
-                .orElseGet(() -> {
-                    return List.of();
-                });
+    public List<Arquivo> listarArquivos(String tipoDonoArquivo, Long donoId) {
+        FileOwnerTypes tipo = FileOwnerTypes.valueOf(tipoDonoArquivo.toUpperCase());
+        return arquivoRepository.findByTipoDonoArquivoAndDonoId(tipo, donoId);
     }
 }

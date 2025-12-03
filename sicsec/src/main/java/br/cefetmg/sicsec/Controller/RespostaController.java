@@ -56,6 +56,6 @@ public class RespostaController {
             @RequestPart("resposta") Resposta resposta,
             @RequestPart("arquivo") MultipartFile arquivo,
             HttpSession session) throws IOException {
-        return ResponseEntity.ok(respostaService.salvarResposta(resposta, arquivo, session));
+        return ResponseEntity.ok(respostaService.salvarRespostaComArquivo(resposta, arquivo, session));
     }
 }

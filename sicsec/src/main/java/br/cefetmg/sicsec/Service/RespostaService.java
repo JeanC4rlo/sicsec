@@ -50,7 +50,7 @@ public class RespostaService {
         resposta.setAluno(aluno);
         resposta.setAtividade(atividade);
         Resposta nova = respostaRepository.save(resposta);
-        if (resposta.getAtividade().getTipo().equals("Questionário")) {
+        if (nova.getAtividade().getTipo().equals("Questionário")) {
             double nota = correcaoService.corrigir(nova);
             desempenhoService.salvarDesempenho(nova, nota, aluno);
             return respostaRepository.save(nova); 
@@ -59,13 +59,15 @@ public class RespostaService {
         return respostaRepository.save(nova);
     }
 
-    public Resposta salvarResposta(Resposta resposta, MultipartFile arquivo, HttpSession session) throws IOException {
+    public Resposta salvarRespostaComArquivo(Resposta resposta, MultipartFile arquivo, HttpSession session) throws IOException {
         if (arquivo == null || !arquivoService.validarArquivo(arquivo))
             throw new IOException();
         Usuario aluno = usuarioRepository.findById((Long) session.getAttribute("usuarioId")).get();
         resposta.setAluno(aluno);
+
         Resposta nova = respostaRepository.save(resposta);
-        arquivoService.salvarArquivoResposta(nova, arquivo);
+
+        arquivoService.salvarArquivo(nova, arquivo);
         desempenhoService.salvarDesempenho(nova, aluno);
         return respostaRepository.save(nova);
     }
@@ -83,7 +85,8 @@ public class RespostaService {
                 atividade.getValor(),
                 atividade.getTipo(),
                 resposta.getTextoRedacao(),
-                resposta.getNomeArquivo());
+                resposta.getId(),
+                resposta.getArquivoId());
 
         return dadosRespostaAlunoDTO;
     }

@@ -5,6 +5,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import br.cefetmg.sicsec.Model.Usuario.Professor.Professor;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -13,9 +14,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 
 @Entity
-public class Atividade {
+public class Atividade implements FileOwner {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -32,13 +34,13 @@ public class Atividade {
     private String horaEncerramento;
     @Lob
     private String enunciado;
+    @Lob
     private String questoes;
     private Integer tentativas;
     private String tempoDeDuracao;
     private String tipoTimer;
-    @ElementCollection
-    private List<String> nomesArquivos;
 
+    @Override
     public Long getId() {
         return id;
     }
@@ -135,11 +137,7 @@ public class Atividade {
         this.tipoTimer = tipoTimer;
     }
 
-    public List<String> getNomesArquivos() {
-        return nomesArquivos;
-    }
-
-    public void setNomesArquivos(List<String> nomesArquivos) {
-        this.nomesArquivos = nomesArquivos;
+    public FileOwnerTypes getTipoDonoArquivo() {
+        return FileOwnerTypes.ATIVIDADE;
     }
 }

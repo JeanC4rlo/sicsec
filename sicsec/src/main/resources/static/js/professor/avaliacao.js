@@ -36,10 +36,10 @@ function montarTelaEnvioArquivo() {
 
     inputArquivo.type = "file";
 
-    carregarPreview(dadosDesempenho.nomeArquivo, divPreview);
+    carregarPreview(dadosDesempenho.arquivoId, dadosDesempenho.respostaId, divPreview);
 
     btnBaixarArquivo.textContent = "Baixar arquivo";
-    btnBaixarArquivo.addEventListener("click", () => downloadArquivo(dadosDesempenho.nomeArquivo));
+    btnBaixarArquivo.addEventListener("click", () => downloadArquivo(dadosDesempenho.arquivoId));
 
     inputNota.id = "input-nota";
     inputNota.type = "text";
@@ -54,8 +54,8 @@ function montarTelaEnvioArquivo() {
     divConteudo.append(nomeAluno, turmaAluno, divPreview, btnBaixarArquivo, inputNota, btnEnviarNota);
 }
 
-async function carregarPreview(nomeArquivo, divPreview) {
-    const resp = await fetch(`/api/arquivo/${nomeArquivo}`);
+async function carregarPreview(arquivoId, respostaId, divPreview) {
+    const resp = await fetch(`/api/arquivo/${arquivoId}/resposta/${respostaId}`);
     const blob = await resp.blob();
     const blobUrl = URL.createObjectURL(blob);
 

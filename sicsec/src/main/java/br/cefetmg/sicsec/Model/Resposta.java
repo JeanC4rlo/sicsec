@@ -16,7 +16,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 
 @Entity
-public class Resposta {
+public class Resposta implements FileOwner {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -39,8 +39,9 @@ public class Resposta {
 
     @Lob
     private String textoRedacao;
-    private String nomeArquivo;
+    private Long arquivoId;
 
+    @Override
     public Long getId() {
         return id;
     }
@@ -89,11 +90,15 @@ public class Resposta {
         this.textoRedacao = textoRedacao;
     }
 
-    public String getNomeArquivo() {
-        return nomeArquivo;
+    public Long getArquivoId() {
+        return arquivoId;
     }
 
-    public void setNomeArquivo(String nomeArquivo) {
-        this.nomeArquivo = nomeArquivo;
+    public void setArquivoId(Long arquivoId) {
+        this.arquivoId = arquivoId;
+    }
+
+    public FileOwnerTypes getTipoDonoArquivo() {
+        return FileOwnerTypes.RESPOSTA;
     }
 }

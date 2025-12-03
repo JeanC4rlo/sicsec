@@ -8,5 +8,6 @@ public record DesempenhoDTO(
     Double valorAtividade,
     String tipoAtividade,
     String redacao,
-    String nomeArquivo
+    Long respostaId,
+    Long arquivoId
 ) {}

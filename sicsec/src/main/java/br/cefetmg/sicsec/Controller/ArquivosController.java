@@ -16,9 +16,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.cefetmg.sicsec.Model.Arquivo;
 import br.cefetmg.sicsec.Service.ArquivoService;
-import org.springframework.web.bind.annotation.RequestParam;
-
 
 @RestController
 @RequestMapping("/api/arquivo")
@@ -27,30 +26,28 @@ public class ArquivosController {
     @Autowired
     ArquivoService arquivoService;
 
-    @GetMapping("/arquivo/{atividadeId}/{nomeArquivo}")
-    public ResponseEntity<Resource> baixar(
-            @PathVariable Long atividadeId,
-            @PathVariable String nomeArquivo) throws IOException {
+    @GetMapping("/listar/{tipoDono}/{donoId}")
+    public ResponseEntity<List<Arquivo>> listarArquivos(@PathVariable String tipoDono, @PathVariable Long donoId) {
+        List<Arquivo> arquivos = arquivoService.listarArquivos(tipoDono, donoId);
+        return ResponseEntity.ok(arquivos);
+    }
 
-        Path caminho = Paths.get("uploads/atividade-" + atividadeId).resolve(nomeArquivo);
+    @GetMapping("{arquivoId}/{tipoDono}/{donoId}")
+    public ResponseEntity<Resource> baixarArquivo(
+            @PathVariable String tipoDono,
+            @PathVariable Long donoId,
+            @PathVariable Long arquivoId) throws IOException {
+
+        Arquivo arquivo = arquivoService.getArquivo(arquivoId);
+        String nomeArquivo = arquivo.getNomeSalvo();
+
+        Path caminho = Paths.get("uploads/" + tipoDono + "-" + donoId)
+                .resolve(nomeArquivo)
+                .normalize();
 
         if (!Files.exists(caminho)) {
             return ResponseEntity.notFound().build();
         }
-
-        Resource resource = new UrlResource(caminho.toUri());
-
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + nomeArquivo + "\"")
-                .body(resource);
-    }
-
-    @GetMapping("/{nomeArquivo}")
-    public ResponseEntity<Resource> getArquvio(@PathVariable String nomeArquivo) throws IOException {
-        Path caminho = Paths.get("uploads").resolve(nomeArquivo).normalize();
-
-        if (!Files.exists(caminho))
-            return ResponseEntity.notFound().build();
 
         Resource resource = new UrlResource(caminho.toUri());
 
@@ -62,11 +59,5 @@ public class ArquivosController {
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_TYPE, contentType)
                 .body(resource);
-    }
-
-    @GetMapping("/listar/{atividadeId}")
-    public ResponseEntity<List<?>> listarArquivos(@PathVariable Long atividadeId) {
-        List<?> arquivos = arquivoService.listarArquivos(atividadeId);
-        return ResponseEntity.ok(arquivos);
     }
 }
