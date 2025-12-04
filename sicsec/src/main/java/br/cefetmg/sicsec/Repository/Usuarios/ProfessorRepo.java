@@ -1,5 +1,6 @@
 package br.cefetmg.sicsec.Repository.Usuarios;
 
+import br.cefetmg.sicsec.Model.Usuario.Usuario;
 import br.cefetmg.sicsec.Model.Usuario.Professor.Professor;
 import br.cefetmg.sicsec.Model.Util.Enum.Cargo;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,4 +1,4 @@
-const baseURL = `${window.location.origin}/images/campus/`;
+const baseURL = `/images/campus/`;
 
 const arrayCampus = [
     {

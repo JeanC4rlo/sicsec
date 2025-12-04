@@ -159,7 +159,7 @@ function enviarNota() {
         })
         .then(() => {
             alert("Nota submetida com sucesso");
-            window.location.href = "/homeProfessor";
+            window.location.href = "/home";
         })
         .catch(err => {
             alert("Erro: " + err.message);

@@ -3,32 +3,21 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<<<<<<< HEAD:sicsec/src/main/resources/static/html/admin/home.html
-    <link href="/css/home.css" rel="stylesheet" />
-    <link href="/css/base.css" rel="stylesheet" />
-    <link href="/css/admin/matricula.css" rel="stylesheet" />
-=======
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
     <link th:href="@{/css/home.css}" rel="stylesheet" />
     <link th:href="@{/css/base.css}" rel="stylesheet" />
     <link th:href="@{/css/matriculas.css}" rel="stylesheet" />
     <link th:href="@{/css/turmas.css}" rel="stylesheet" />
->>>>>>> 134e6c4a21eab52e8ee4829b60f329d3983d54a5:sicsec/src/main/resources/templates/homeAdmin.html
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Red+Hat+Display:ital,wght@0,300..900;1,300..900&display=swap"
       rel="stylesheet"
     />
-<<<<<<< HEAD:sicsec/src/main/resources/static/html/admin/home.html
-    <script src="/js/admin/inits/initGestao.js"></script>
-    <script src="/js/admin/section-manager.js"></script>
-=======
     <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
     <script th:src="@{/js/homeAdmin/inits/initMatriculas.js}"></script>
     <script th:src="@{/js/homeAdmin/inits/initTurmas.js}"></script>
     <script th:src="@{/js/homeAdmin/SectionManager.js}"></script>
->>>>>>> 134e6c4a21eab52e8ee4829b60f329d3983d54a5:sicsec/src/main/resources/templates/homeAdmin.html
     <title>SICSEC</title>
   </head>
   <body>
@@ -42,13 +31,8 @@
           <img src="/images/home/homepage.svg" alt="" />
           Home
         </button>
-<<<<<<< HEAD:sicsec/src/main/resources/static/html/admin/home.html
-        <button data-section="matricula">
-          <img src="/images/home/turmas.svg" alt="" />
-=======
         <button data-section="matriculas">
           <img th:src="@{/images/home/pessoa.svg}" alt="" />
->>>>>>> 134e6c4a21eab52e8ee4829b60f329d3983d54a5:sicsec/src/main/resources/templates/homeAdmin.html
           Gestão de Usuários
         </button>
         <button data-section="turmas">

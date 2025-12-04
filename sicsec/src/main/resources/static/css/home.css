@@ -13,14 +13,15 @@ body {
 }
 
 body {
-    display: grid;
-    grid-template-columns: 20rem 5fr;
+    display: flex;
 }
 
 body>header {
     background-color: var(--primary);
-    display: grid;
-    grid-template-rows: 10rem 1fr;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     padding: 2rem;
     height: 100vh;
 }
@@ -46,6 +47,57 @@ body>header {
 
 #logo-cefet {
     filter: brightness(0) invert(1);
+}
+
+#perfil-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: 1rem;
+}
+
+#perfil-form > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .5rem;
+}
+
+#perfil-form button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: bold;
+    background-color: var(--secondary);
+    color: white;
+    border: none;
+    padding: .5rem 0;
+    border-radius: 4px;
+    width: 100%;
+    transition: 200ms ease all;
+}
+
+#perfil-form button:hover {
+    opacity: 0.9;
+    transform: scale(1.05);
+    cursor: pointer;
+}
+
+#perfil-select {
+    border: 2px solid white;
+    background-color: var(--secondary);
+    padding: .5rem 1rem;
+    font-size: 1rem;
+    transition: 500ms ease all;
+    color: white;
+}
+
+#perfil-select:focus {
+    background-color: white;
+    color: black;
 }
 
 nav {
@@ -157,13 +209,38 @@ main>section.ativo {
     align-items: center;
 }
 
+#content {
+    width: 100%;
+    min-height: 100%;
+}
+
 .wrapper {
     height: 100%;
     width: 100%;
 }
 
+.secao-conteudo {
+    height: 100%;
+    width: 100%;
+}
+
+.secao-conteudo > * {
+    min-width: 0;
+    max-height: 100vh;
+    overflow-x: auto;
+    overflow-y: scroll;
+}
+
+.secao-conteudo .tab {
+    flex: 1;
+}
+
+.invisivel {
+    display: none !important;
+}
+
 /* Personalização da Homepage */
-#homepage .wrapper {
+#homepage-content {
     display: grid;
     grid-template-columns: 1fr auto;
     gap: 2rem;
@@ -444,7 +521,7 @@ main>section.ativo {
     cursor: pointer;
 }
 
-#boletim .wrapper {
+#boletim-content {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -537,7 +614,7 @@ td {
     user-select: none;
 }
 
-#biblioteca .wrapper {
+#biblioteca-content {
     display: flex;
     width: 100%;
     height: 100%;
@@ -596,7 +673,6 @@ td {
     padding: 2rem 5vw;
     height: 100%;
     width: 100%;
-    overflow-y: auto;
 }
 
 #biblioteca .tab.ativo {
@@ -955,24 +1031,23 @@ td {
     transform: scale(1.05);
 }
 
-#turmas .wrapper {
+#turmas-content {
     display: flex;
 }
 
-#turmas .wrapper header {
+#turmas-content header {
     display: flex;
     flex-direction: column;
     background-color: var(--secondary);
     color: white;
     padding: 2rem;
-    gap: 2rem;
 }
 
-#turmas .wrapper section {
+#turmas-content section {
     display: none;
 }
 
-#turmas .wrapper section.ativo {
+#turmas-content section.ativo {
     display: flex;
     flex-direction: column;
 }
@@ -1304,10 +1379,9 @@ td {
     gap: 2rem;
     padding: 2rem 5vw;
     flex: 1;
-    overflow-y: auto;
 }
 
-#bolsas .wrapper {
+#bolsas-content {
     display: flex;
 }
 
@@ -1321,7 +1395,7 @@ td {
     gap: 1rem;
 }
 
-#bolsas .wrapper>div:not(.ativo) {
+#bolsas-content>div:not(.ativo) {
     display: none;
 }
 
@@ -1578,7 +1652,6 @@ td {
     width: 100%;
     height: 100%;
     padding: 2rem 5vw;
-    overflow-y: auto;
 }
 
 .detalhes-bolsa {
