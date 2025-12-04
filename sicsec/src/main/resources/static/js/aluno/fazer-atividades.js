@@ -70,9 +70,11 @@ async function carregarOuCriarTentativa() {
         const text = await response.text();
         const _tentativa = text && text.trim().length > 0 ? JSON.parse(text) : null;
 
-        if (_tentativa && _tentativa.id && _tentativa.tempoRestante > 0) {
-            state.objTentativa = _tentativa;
-            console.log("Tentativa aberta encontrada:", state.objTentativa);
+        if (_tentativa) {
+            if (state.atividade.tipoTimer == "none" || (state.atividade.tipoTimer != "none" && _tentativa.tempoRestante > 0)) {
+                state.objTentativa = _tentativa;
+                console.log("Tentativa aberta encontrada:", state.objTentativa);
+            }
         } else {
             const dados = {
                 atividade: { id: state.atividade.id },
@@ -82,8 +84,6 @@ async function carregarOuCriarTentativa() {
                 numTentativa: state.numTentativasFeitas + 1,
                 aberta: true
             }
-            console.log(dados.atividade.id);
-            console.log(JSON.stringify(dados, null, 2));
             response = await fetch("/api/tentativa/salvar", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -213,7 +213,7 @@ function converterTempoParaSegundos(horas = 0, minutos = 0, segundos = 0) {
 }
 
 function converterTempoDaAtividade() {
-    if(!state.atividade.tempoDeDuracao) return null;
+    if (!state.atividade.tempoDeDuracao) return null;
     return converterTempoParaSegundos(Number(state.atividade.tempoDeDuracao.numHoras), Number(state.atividade.tempoDeDuracao.numMinutos));
 }
 
@@ -229,7 +229,7 @@ function montarListaAlternativasMarcadas(alternativas) {
     return lista;
 }
 
-async function enviarRespostasQuestionario() {
+async function enviarQuestionario() {
     if (!checkQuestaoMarcada()) return;
 
     if (state.timerEncerrado) {
@@ -246,7 +246,7 @@ async function enviarRespostasQuestionario() {
         tentativa: { id: state.objTentativa.id },
         alternativasMarcadas: montarListaAlternativasMarcadas(alternativasMarcadas),
         textoRedacao: null,
-        nomeArquivo: null
+        arquivoId: null
     };
 
     const resposta = await fetch("/api/resposta/enviar", {
@@ -282,10 +282,10 @@ async function enviarRedacao() {
 
     const respostaAluno = {
         atividade: { id: state.atividade.id },
-        tentativa: null,
+        tentativa: { id: state.objTentativa.id },
         alternativasMarcadas: null,
         textoRedacao: document.getElementById("textarea-redacao").value,
-        nomeArquivo: null
+        arquivoId: null
     };
 
     const resposta = await fetch("/api/resposta/enviar", {
@@ -298,7 +298,7 @@ async function enviarRedacao() {
         throw new Error("Erro desconhecido do servidor");
     try {
         alert("Redação enviada com sucesso!");
-        //fecharTentativa();
+        fecharTentativa();
         window.location.href = "/home";
     } catch (err) {
         console.error("Erro ao enviar a redação:", err);
@@ -313,10 +313,10 @@ async function enviarArquivo() {
 
     const respostaAluno = {
         atividade: { id: state.atividade.id },
-        tentativa: null,
+        tentativa: { id: state.objTentativa.id },
         alternativasMarcadas: null,
         textoRedacao: null,
-        nomeArquivo: null
+        arquivoId: null
     };
 
     const formData = new FormData();
@@ -333,7 +333,7 @@ async function enviarArquivo() {
             alert(`Tipo de arquivo não permitido: ${file.name}`);
             return;
         }
-        respostaAluno.nomeArquivo = file.name;
+
         formData.append("resposta", new Blob([JSON.stringify(respostaAluno)], { type: "application/json" }));
         formData.append("arquivo", file);
     }
@@ -346,8 +346,8 @@ async function enviarArquivo() {
     if (!resposta.ok)
         throw new Error("Erro desconhecido do servidor");
     try {
-        alert("Redação enviada com sucesso!");
-        //fecharTentativa();
+        alert("Arquivo enviado com sucesso!");
+        fecharTentativa();
         window.location.href = "/home";
     } catch (err) {
         console.error("Erro ao enviar o arquivo:", err);
@@ -378,12 +378,13 @@ async function timeOut() {
     state.timerEncerrado = true;
 }
 
-function carregarTelaQuestionario() {
+function telaInfoAtividade() {
     htmlDOM.containerPrincipal.innerHTML = `
-    <div class="first-screen-questionario">
+    <div class="first-screen">
       <h2>${state.atividade.nome}</h2>
-      <p>Você está prestes a iniciar o questionário: ${state.atividade.nome}</p>
+      <p>Você está prestes a iniciar a atividade: ${state.atividade.nome}</p>
       <p>Valor: <strong>${state.atividade.valor} ponto${state.atividade.valor > 1 ? "s" : ""}</strong></p>
+      <p>Tipo: <strong>${state.atividade.tipo}</strong></p>
       <p>Número máximo de tentativas: ${state.atividade.tentativas}</p>
       <p>Tentativas restantes: ${state.atividade.tentativas - state.numTentativasFeitas}</p>
       
@@ -395,36 +396,38 @@ function carregarTelaQuestionario() {
     const btnIniciar = document.getElementById("btn-iniciar-tentativa");
     btnIniciar.addEventListener("click", async () => {
         if (state.numTentativasFeitas >= state.atividade.tentativas) {
-            telaQuestionarioJaFeito();
+            telaAtividadeJaFeita();
             return;
         }
-        await carregarOuCriarTentativa();
+        htmlDOM.containerPrincipal.innerHTML = "";
         iniciarTentativa();
     });
 }
 
-function telaQuestionarioJaFeito() {
+function telaAtividadeJaFeita() {
     htmlDOM.containerPrincipal.innerHTML = `
-    <div class="first-screen-questionario">
-      <p>Você já fez este questionário</p>
-      <p>O questionário <strong>${state.atividade.nome}</strong> já foi feito e enviado por você</p>
+    <div class="first-screen">
+      <p>Você já fez esta atividade</p>
+      <p>A atividade <strong>${state.atividade.nome}</strong> já foi feita e enviada por você</p>
       <p>A nota será desponibilizada em breve</p>
     </div>
   `;
 }
 
 function carregarTelaRedacao() {
+    if (state.numTentativasFeitas > state.atividade.tentativas) {
+        telaAtividadeJaFeita();
+        return false;
+    }
     const nome = document.createElement("p");
     const enunciado = document.createElement("p");
     const textareaRedacao = document.createElement("textarea");
-    htmlDOM.btnEnviar = document.createElement("button");
     const numCaracteresRestantes = document.createElement("p");
 
     numCaracteresRestantes.style.fontSize = "15px";
 
     nome.innerHTML = state.atividade.nome;
     enunciado.innerHTML = state.atividade.enunciado;
-    htmlDOM.btnEnviar.textContent = "Enviar";
     textareaRedacao.maxLength = LIMITES.numCaracteres;
 
     textareaRedacao.id = "textarea-redacao";
@@ -432,14 +435,18 @@ function carregarTelaRedacao() {
         numCaracteresRestantes.innerHTML = caracteresRestantes()
     });
 
+    htmlDOM.containerPrincipal.append(nome, enunciado, textareaRedacao, numCaracteresRestantes);
+
     carregarArquivos();
-
-    htmlDOM.containerPrincipal.append(nome, enunciado, textareaRedacao, numCaracteresRestantes, htmlDOM.btnEnviar);
-
-    htmlDOM.btnEnviar.addEventListener("click", enviarRedacao);
+    return true;
 }
 
-function carregarTelaEnvioArquivo() {
+async function carregarTelaEnvioArquivo() {
+    await contarTentativas();
+    if (state.numTentativasFeitas > state.atividade.tentativas) {
+        telaAtividadeJaFeita();
+        return;
+    }
     const nome = document.createElement("p");
     const enunciado = document.createElement("p");
     const inputArquivo = document.createElement("input");
@@ -453,6 +460,7 @@ function carregarTelaEnvioArquivo() {
     inputArquivo.type = "file";
 
     carregarArquivos();
+    carregarOuCriarTentativa();
 
     htmlDOM.containerPrincipal.append(nome, enunciado, inputArquivo, htmlDOM.btnEnviar);
 
@@ -463,11 +471,12 @@ async function primeiraTela() {
     switch (state.atividade.tipo) {
         case ("Questionário"):
             await contarTentativas();
-            carregarTelaQuestionario();
+            telaInfoAtividade();
             break;
 
         case ("Redação"):
-            carregarTelaRedacao();
+            await contarTentativas();
+            telaInfoAtividade();
             break;
         case ("Envio de Arquivo"):
             carregarTelaEnvioArquivo();
@@ -553,47 +562,68 @@ function tratamentoPreFechamentoDaPagina() {
             atualizarTempo();
         }
     }
-    else
-        fecharTentativa();
 }
 
-function iniciarTentativa() {
-    window.addEventListener("beforeunload", tratamentoPreFechamentoDaPagina);
+function createBotao(nome, func, ...params) {
+    const btn = document.createElement("button");
+    btn.textContent = nome;
+    btn.addEventListener("click", () => func(...params));
+    return btn;
+}
 
-    htmlDOM.containerPrincipal.innerHTML = "";
+function addBotoesNavegacaoEBotaoEnviarResposta() {
+    htmlDOM.btnAnterior = createBotao("Anterior", navegarEntreQuestoes, -1);
+    htmlDOM.btnProximo = createBotao("Próximo", navegarEntreQuestoes, 1);
+    htmlDOM.containerPrincipal.append(htmlDOM.btnAnterior, htmlDOM.btnProximo);
+    addBotaoEnviarResposta(false);
+}
 
+function addBotaoEnviarResposta(ativo = true) {
+    if (state.atividade.tipo == "Questionário")
+        htmlDOM.btnEnviar = createBotao("Enviar", enviarQuestionario);
+    if (state.atividade.tipo == "Redação")
+        htmlDOM.btnEnviar = createBotao("Enviar", enviarRedacao);
+    else
+        htmlDOM.btnEnviar = createBotao("Enviar", enviarArquivo);
+    htmlDOM.containerPrincipal.append(htmlDOM.btnEnviar);
+    if (!ativo) htmlDOM.btnEnviar.classList.add("inativo");
+}
+
+function addCabecalho() {
     const cabecalho = document.createElement("div");
-    const numQuestao = document.createElement("p");
-    const timer = document.createElement("p");
-
     cabecalho.id = "cabecalho";
+    if (state.atividade.tipo == "Questionário") {
+        const numQuestao = document.createElement("p");
+        numQuestao.id = "numQuestao";
+        numQuestao.innerHTML = "Questão 1";
 
-    numQuestao.innerHTML = "Questão 1";
-    numQuestao.id = "numQuestao";
-
-    cabecalho.append(numQuestao, timer);
-    htmlDOM.containerPrincipal.append(cabecalho);
-
-    htmlDOM.btnAnterior = document.createElement("button");
-    htmlDOM.btnProximo = document.createElement("button");
-    htmlDOM.btnEnviar = document.createElement("button");
-
-    htmlDOM.btnAnterior.textContent = "Anterior";
-    htmlDOM.btnProximo.textContent = "Próximo";
-    htmlDOM.btnEnviar.textContent = "Enviar";
-
-    htmlDOM.btnEnviar.classList.add("inativo");
-
-    htmlDOM.btnAnterior.addEventListener("click", () => navegarEntreQuestoes(-1));
-    htmlDOM.btnProximo.addEventListener("click", () => navegarEntreQuestoes(1));
-    htmlDOM.btnEnviar.addEventListener("click", enviarRespostasQuestionario);
-
+        cabecalho.append(numQuestao);
+    }
+    const timer = document.createElement("p");
+    cabecalho.append(timer);
     criarTimer(timer);
-    state.atividade.questoes.forEach(questao => {
-        montarQuestao(questao);
-    })
-    state.questoes[0].classList.remove("inativo")
-    htmlDOM.containerPrincipal.append(htmlDOM.btnAnterior, htmlDOM.btnProximo, htmlDOM.btnEnviar);
+    htmlDOM.containerPrincipal.append(cabecalho);
+}
+
+async function iniciarTentativa() {
+    await carregarOuCriarTentativa();
+    window.addEventListener("beforeunload", tratamentoPreFechamentoDaPagina);
+    addCabecalho();
+    if (state.atividade.tipo == "Questionário") {
+        state.atividade.questoes.forEach(questao => {
+            montarQuestao(questao);
+        })
+        state.questoes[0].classList.remove("inativo")
+        addBotoesNavegacaoEBotaoEnviarResposta();
+        return;
+    }
+    else if (state.atividade.tipo == "Redação") {
+        carregarTelaRedacao();
+    }
+    else {
+        carregarTelaEnvioArquivo();
+    }
+    addBotaoEnviarResposta();
 }
 
 async function carregarArquivos() {
@@ -605,7 +635,6 @@ async function carregarArquivos() {
     lista.innerHTML = "";
 
     arquivos.forEach(arquivo => {
-        console.log(arquivo);
         const ul = document.createElement("ul");
         const link = document.createElement("a");
         ul.append(link);

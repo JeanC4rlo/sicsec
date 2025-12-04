@@ -33,9 +33,9 @@ public class GlobalExceptionHandler {
                 .body("Erro ao processar arquivos: " + ex.getMessage());
     }
 
-    @ExceptionHandler(Exception.class)
+    /*@ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleGeneric(Exception e) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of("erro", "Erro inesperado", "detalhes", e.getMessage()));
-    }
+    }*/
 }

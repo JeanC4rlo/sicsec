@@ -1,7 +1,7 @@
-let listaDesempenhosHTML;
+let tabelaDesempenhos;
 
 function initTurmas() {
-    listaDesempenhosHTML = document.getElementById("lista-desempenhos");
+    tabelaDesempenhos = document.getElementById("tabela-desempenhos");
     carregarDesempenho();
 }
 
@@ -12,27 +12,34 @@ async function carregarDesempenho() {
 
         const desempenhos = await resp.json();
         console.log(JSON.stringify(desempenhos, null, 2));
-        desempenhos.forEach(desempenho => preencherLista(desempenho));
+        desempenhos.forEach(desempenho => preencherTabela(desempenho));
 
     } catch (erro) {
         console.error("Erro:", erro);
     }
 }
 
-function preencherLista(desempenho) {
-    const itemLista = document.createElement("li");
-    const nome = document.createElement("span");
-    const atividade = document.createElement("span");
-    const tipo = document.createElement("span");
-    const nota = document.createElement("span");
+function preencherTabela(desempenho) {
+    const linha = document.createElement("tr");
+    const nome = document.createElement("td");
+    const atividade = document.createElement("td");
+    const tipo = document.createElement("td");
+    const nota = document.createElement("td");
 
     nome.textContent = desempenho.nomeAluno;
     atividade.textContent = desempenho.nomeAtividade;
     tipo.textContent = desempenho.tipoAtividade;
-    nota.textContent = desempenho.notaAluno != null? desempenho.notaAluno + "/" + desempenho.valorAtividade : "A definir";
+    if(desempenho.notaAluno != null) nota.textContent = desempenho.notaAluno + "/" + desempenho.valorAtividade
+    else nota.append(botaoAvaliar(desempenho));
 
-    itemLista.append(nome, atividade, tipo, nota);
-    listaDesempenhosHTML.append(itemLista);
+    linha.append(nome, atividade, tipo, nota);
+    tabelaDesempenhos.append(linha);
+}
 
-    montarDescricao(desempenho.tipoAtividade, itemLista, listaDesempenhosHTML, desempenho.desempenhoId);
+function botaoAvaliar(desempenho) {
+    const btn = document.createElement("button");
+    btn.classList.add("botao-avaliar");
+    btn.textContent = "Avaliar";
+    btn.addEventListener("click", () => redirectParaPaginaAvaliacao(desempenho.desempenhoId, desempenho.tipoAtividade))
+    return btn;
 }

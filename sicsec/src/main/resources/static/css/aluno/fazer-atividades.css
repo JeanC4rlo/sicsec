@@ -38,7 +38,7 @@ h2 {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.first-screen-questionario {
+.first-screen {
     display: flex;
     flex-direction: column;
     gap: 1rem;
@@ -46,13 +46,13 @@ h2 {
     text-align: center;
 }
 
-.first-screen-questionario p {
+.first-screen p {
     font-size: 1rem;
     line-height: 1.5;
     color: #333;
 }
 
-.first-screen-questionario button {
+.first-screen button {
     margin-top: 1rem;
     padding: 0.75rem 2rem;
     background-color: var(--primary);
@@ -64,7 +64,7 @@ h2 {
     cursor: pointer;
 }
 
-.first-screen-questionario button:hover {
+.first-screen button:hover {
     background-color: var(--secondary);
     transform: scale(1.05);
 }

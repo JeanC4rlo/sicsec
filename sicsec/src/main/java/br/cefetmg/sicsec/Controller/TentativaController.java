@@ -39,13 +39,14 @@ public class TentativaController {
     @GetMapping("/atividade/{atividadeId}/tentativa-aberta")
     public ResponseEntity<Tentativa> getTentativaAberta(@PathVariable Long atividadeId) {
         Tentativa aberta = tentativaService.getTentativaAberta(atividadeId);
-        return ResponseEntity.ok(aberta);
+        System.out.println("Tentativa: " + aberta);
+        return ResponseEntity.ok().body(aberta);
     }
 
     @GetMapping("/atividade/{atividadeId}/ultima-tentativa")
     public ResponseEntity<Tentativa> getUltimaTentativa(@PathVariable Long atividadeId) {
-         Tentativa ultima = tentativaService.getUltimaTentativa(atividadeId);
-         return ResponseEntity.ok(ultima);
+        Tentativa ultima = tentativaService.getUltimaTentativa(atividadeId);
+        return ResponseEntity.ok(ultima);
     }
 
     @PatchMapping("/atualizar-timer/{tentativaId}")

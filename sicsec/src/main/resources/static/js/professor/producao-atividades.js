@@ -158,9 +158,7 @@ function enviarArquivo() {
 
     inputDeArquvios.click()
 
-    let listaArquivos = document.createElement("ul");
-    listaArquivos.id = "lista-arquivos";
-    htmlDOM.section.appendChild(listaArquivos);
+    const listaArquivos = document.getElementById("lista-arquivos");
 
     inputDeArquvios.addEventListener("change", () => {
         listaArquivos.innerHTML = "";
@@ -289,12 +287,12 @@ function enviar() {
         questoes: null,
         tentativas: "1",
         tempoDeDuracao: null,
-        tipoTimer: null
+        tipoTimer: "none"
     };
 
     if (state.dadosForm.get("tipo") !== "envioArquivo") {
         dados.tipoTimer = state.dadosAtividade.tipoTimer;
-        if (dados.tipoTimer !== "none" && dados.tipoTimer != null) {
+        if (dados.tipoTimer !== "none") {
             const numHoras = state.dadosAtividade.numHoras;
             const numMinutos = state.dadosAtividade.numMinutos;
             dados.tempoDeDuracao = JSON.stringify({ numHoras, numMinutos });
@@ -625,9 +623,12 @@ function montarTelaElaboracaoEnunciado() {
             <label>Insira o enunciado:</label>
             <input id="input-enunciado" type="textarea">
             <button onclick="enviarArquivo()" id="btn-enviar-arquivo">Inserir arquivo(s) de consulta?</button>
+            <ul id="lista-arquivos"></ul>
         </div>
     `
-    
+
+    restaurarTelaElaboracaoEnunciado();
+
     const validacao = function () {
         console.log(document.getElementById("elaboracao"));
         if (!validarContainer(document.getElementById("elaboracao"))) {
@@ -639,6 +640,20 @@ function montarTelaElaboracaoEnunciado() {
 
     const handlerProximo = criarHandlerProximo(validacao);
     htmlDOM.btnProximo.addEventListener("click", handlerProximo);
+}
+
+function restaurarTelaElaboracaoEnunciado() {
+    if (inputDeArquvios == null || inputDeArquvios.files.length == 0) return;
+
+    const enunciado = document.getElementById("input-enunciado");
+    enunciado.value = state.dadosAtividade.enunciado;
+
+    const listaArquivos = document.getElementById("lista-arquivos");
+    Array.from(inputDeArquvios.files).forEach(file => {
+        const li = document.createElement("li");
+        li.textContent = file.name;
+        listaArquivos.appendChild(li);
+    });
 }
 
 function montarConfirmacao() {

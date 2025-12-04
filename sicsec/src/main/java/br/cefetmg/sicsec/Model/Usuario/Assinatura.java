@@ -4,7 +4,6 @@
  */
 package br.cefetmg.sicsec.Model.Usuario;
 
-import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import java.util.Date;
 

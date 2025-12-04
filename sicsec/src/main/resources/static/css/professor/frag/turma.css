@@ -1,6 +1,6 @@
-li {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 80px;
+/*
+
+td {
     padding: 10px;
     border-bottom: 1px solid #ddd;
     cursor: pointer;
@@ -8,16 +8,12 @@ li {
     width: 50vw;
 }
 
-#cabecalho {
+thead {
     color: white;
     background-color: var(--primary);
     border-radius: 5px 5px 0 0;
-}
+}*/
 
-li:hover {
-    background-color: #f3f3f3;
-}
-
-.inativo {
-    display: none;
+.tabela-container {
+    margin: 2vh 5vw 0 5vw;
 }

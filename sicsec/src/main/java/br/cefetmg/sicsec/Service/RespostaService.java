@@ -7,9 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import br.cefetmg.sicsec.Model.Arquivo;
 import br.cefetmg.sicsec.Model.Atividade;
 import br.cefetmg.sicsec.Model.Desempenho;
 import br.cefetmg.sicsec.Model.Resposta;
+import br.cefetmg.sicsec.Model.Tentativa;
 import br.cefetmg.sicsec.Model.Usuario.Usuario;
 import br.cefetmg.sicsec.Repository.RespostaRepository;
 import br.cefetmg.sicsec.Repository.Usuarios.UsuarioRepo;
@@ -36,6 +38,9 @@ public class RespostaService {
     @Autowired
     AtividadeService atividadeService;
 
+    @Autowired
+    TentativaService tentativaService;
+
     public Resposta getResposta(Long id) {
         return respostaRepository.findById(id).get();
     }
@@ -46,9 +51,14 @@ public class RespostaService {
 
     public Resposta salvarResposta(Resposta resposta, HttpSession session) {
         Usuario aluno = usuarioRepository.findById((Long) session.getAttribute("usuarioId")).get();
-        Atividade atividade = atividadeService.getAtividade(resposta.getAtividade().getId());
         resposta.setAluno(aluno);
+
+        Atividade atividade = atividadeService.getAtividade(resposta.getAtividade().getId());
         resposta.setAtividade(atividade);
+
+        Tentativa tentativa = tentativaService.getTentativa(resposta.getTentativa().getId());
+        resposta.setTentativa(tentativa);
+        
         Resposta nova = respostaRepository.save(resposta);
         if (nova.getAtividade().getTipo().equals("Questionário")) {
             double nota = correcaoService.corrigir(nova);
@@ -67,7 +77,8 @@ public class RespostaService {
 
         Resposta nova = respostaRepository.save(resposta);
 
-        arquivoService.salvarArquivo(nova, arquivo);
+        Arquivo arquivoEntidade = arquivoService.salvarArquivo(nova, arquivo);
+        nova.setArquivoId(arquivoEntidade.getId());
         desempenhoService.salvarDesempenho(nova, aluno);
         return respostaRepository.save(nova);
     }

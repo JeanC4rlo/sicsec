@@ -26,6 +26,10 @@ public class TentativaService {
     @Autowired
     UsuarioRepo usuarioRepository;
 
+    public Tentativa getTentativa(Long tentativaId) {
+        return tentativaRepository.findById(tentativaId).get();
+    }
+
     public Tentativa salvarTentativa(Tentativa tentativa, HttpSession session) {
         Atividade atividade = atividadeRepository.findById(tentativa.getAtividade().getId()).orElseThrow();
         Usuario aluno = usuarioRepository.findById((Long) session.getAttribute("usuarioId")).get();
@@ -39,7 +43,11 @@ public class TentativaService {
     }
 
     public Tentativa getTentativaAberta(Long atividadeId) {
-        return tentativaRepository.findByAtividadeIdAndAbertaTrue(atividadeId).orElse(null);
+        System.out.println("Buscando tentativa...");
+        Tentativa t = tentativaRepository.findByAtividade_IdAndAbertaTrue(atividadeId).orElse(null);
+        System.out.println("Resultado = " + t);
+        System.out.println("Terminou a busca");
+        return t;
     }
 
     public Tentativa getUltimaTentativa(Long atividadeId) {

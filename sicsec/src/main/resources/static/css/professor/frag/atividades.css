@@ -62,8 +62,8 @@ table caption {
     text-align: left;
     position: sticky;
     top: 0;
-    background: white;   /* importante para esconder o fundo ao rolar */
-    z-index: 3;          /* fica acima do thead */
+    background: white;
+    z-index: 3;
 }
 
 table thead {

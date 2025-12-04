@@ -20,6 +20,18 @@ function montarDescricao(tipoAtividade, itemLista, listaDesempenhosHTML, desempe
     listaDesempenhosHTML.append(linhaAvaliar);
 }
 
+function normalizar(texto) {
+    return texto
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase();
+}
+
+function redirectParaPaginaAvaliacao(desempenhoId, tipoAtividade) {
+    tipoAtividade = normalizar(tipoAtividade);
+    window.location.href = `/html/professor/avaliacao.html?id=${desempenhoId}&tipo=${tipoAtividade}`;
+}
+
 function montarDescricaoRedacao(linhaDescricao, btnAvaliar, id) {
     btnAvaliar.textContent = "Avaliar";
     linhaDescricao.append(btnAvaliar);

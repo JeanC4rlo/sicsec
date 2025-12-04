@@ -12,6 +12,7 @@ function carregarResposta() {
         })
         .then(dados => {
             dadosDesempenho = dados;
+            console.log(dadosDesempenho);
             if (dadosDesempenho.tipoAtividade == "Redação")
                 montarTelaRedacao();
             else
