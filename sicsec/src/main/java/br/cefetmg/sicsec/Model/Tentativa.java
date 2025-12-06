@@ -10,8 +10,7 @@ import jakarta.persistence.ManyToOne;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import br.cefetmg.sicsec.Model.Usuario.Usuario;
+import br.cefetmg.sicsec.Model.Usuario.Aluno.Aluno;
 
 @Entity
 public class Tentativa {
@@ -26,7 +25,7 @@ public class Tentativa {
     @ManyToOne
     @JsonIgnore
     @JoinColumn(name = "aluno_id", nullable = false)
-    private Usuario aluno;
+    private Aluno aluno;
 
     private LocalDateTime horarioInicio;
     private Integer tempoRestante;
@@ -49,11 +48,11 @@ public class Tentativa {
         this.atividade = atividade;
     }
     
-    public Usuario getAluno() {
+    public Aluno getAluno() {
         return aluno;
     }
 
-    public void setAluno(Usuario aluno) {
+    public void setAluno(Aluno aluno) {
         this.aluno = aluno;
     }
 

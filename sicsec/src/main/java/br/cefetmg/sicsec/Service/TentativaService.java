@@ -10,9 +10,11 @@ import org.springframework.stereotype.Service;
 import br.cefetmg.sicsec.Model.Atividade;
 import br.cefetmg.sicsec.Model.Tentativa;
 import br.cefetmg.sicsec.Model.Usuario.Usuario;
+import br.cefetmg.sicsec.Model.Usuario.Aluno.Aluno;
 import br.cefetmg.sicsec.Repository.AtividadeRepository;
 import br.cefetmg.sicsec.Repository.TentativaRepository;
-import br.cefetmg.sicsec.Repository.Usuarios.UsuarioRepo;
+import br.cefetmg.sicsec.Repository.Usuarios.AlunoRepo;
+import br.cefetmg.sicsec.dto.Perfil;
 import jakarta.servlet.http.HttpSession;
 
 @Service
@@ -24,7 +26,7 @@ public class TentativaService {
     AtividadeRepository atividadeRepository;
 
     @Autowired
-    UsuarioRepo usuarioRepository;
+    AlunoRepo alunoRepository;
 
     public Tentativa getTentativa(Long tentativaId) {
         return tentativaRepository.findById(tentativaId).get();
@@ -32,9 +34,12 @@ public class TentativaService {
 
     public Tentativa salvarTentativa(Tentativa tentativa, HttpSession session) {
         Atividade atividade = atividadeRepository.findById(tentativa.getAtividade().getId()).orElseThrow();
-        Usuario aluno = usuarioRepository.findById((Long) session.getAttribute("usuarioId")).get();
         tentativa.setAtividade(atividade);
+
+        Usuario usuario = ((Perfil) session.getAttribute("perfilSelecionado")).getUsuario();
+        Aluno aluno = alunoRepository.findById(usuario.getMatricula().getId()).get();
         tentativa.setAluno(aluno);
+
         return tentativaRepository.save(tentativa);
     }
 
@@ -43,11 +48,8 @@ public class TentativaService {
     }
 
     public Tentativa getTentativaAberta(Long atividadeId) {
-        System.out.println("Buscando tentativa...");
-        Tentativa t = tentativaRepository.findByAtividade_IdAndAbertaTrue(atividadeId).orElse(null);
-        System.out.println("Resultado = " + t);
-        System.out.println("Terminou a busca");
-        return t;
+        Tentativa tentativa = tentativaRepository.findByAtividade_IdAndAbertaTrue(atividadeId).orElse(null);
+        return tentativa;
     }
 
     public Tentativa getUltimaTentativa(Long atividadeId) {

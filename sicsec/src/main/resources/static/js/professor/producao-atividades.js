@@ -352,7 +352,7 @@ function initSectionProducaoAtividades() {
                 return response.json();
             })
             .then(data => {
-                window.location.href = "/homeProfessor";
+                window.location.href = "/home";
             })
             .catch(err => console.error("Falha no envio:", err));
     }
@@ -684,14 +684,14 @@ function initSectionProducaoAtividades() {
         if (state.dadosForm.get("tipo") == "questionario") {
             htmlDOM.section.innerHTML += `<p id="numQuestoes">Número de questões: ${state.numQuestoes}</p>`
         } else {
-            htmlDOM.section.innerHTML += `<p id="enunciado">Enunciado: XD</p>`
+            htmlDOM.section.innerHTML += `<p id="enunciado">Enunciado: ${state.dadosAtividade.enunciado}</p>`
         }
         htmlDOM.section.innerHTML += `</div>`
     }
 
     function confirmarSaidaDaPag() {
         if (confirm("Tem certeza que deseja sair da página? Os dados da atividade serão perdidos?")) {
-            window.location.href = "/html/professor/home.html";
+            window.location.href = "/home";
         }
     }
 

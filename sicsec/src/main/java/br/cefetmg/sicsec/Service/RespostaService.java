@@ -13,9 +13,13 @@ import br.cefetmg.sicsec.Model.Desempenho;
 import br.cefetmg.sicsec.Model.Resposta;
 import br.cefetmg.sicsec.Model.Tentativa;
 import br.cefetmg.sicsec.Model.Usuario.Usuario;
+import br.cefetmg.sicsec.Model.Usuario.Aluno.Aluno;
+import br.cefetmg.sicsec.Model.Usuario.Professor.Professor;
 import br.cefetmg.sicsec.Repository.RespostaRepository;
+import br.cefetmg.sicsec.Repository.Usuarios.AlunoRepo;
 import br.cefetmg.sicsec.Repository.Usuarios.UsuarioRepo;
 import br.cefetmg.sicsec.dto.DesempenhoDTO;
+import br.cefetmg.sicsec.dto.Perfil;
 import jakarta.servlet.http.HttpSession;
 
 @Service
@@ -33,7 +37,7 @@ public class RespostaService {
     ArquivoService arquivoService;
 
     @Autowired
-    UsuarioRepo usuarioRepository;
+    AlunoRepo alunoRepository;
 
     @Autowired
     AtividadeService atividadeService;
@@ -50,7 +54,8 @@ public class RespostaService {
     }
 
     public Resposta salvarResposta(Resposta resposta, HttpSession session) {
-        Usuario aluno = usuarioRepository.findById((Long) session.getAttribute("usuarioId")).get();
+        Usuario usuario = ((Perfil) session.getAttribute("perfilSelecionado")).getUsuario();
+        Aluno aluno = alunoRepository.findById(usuario.getMatricula().getId()).get();
         resposta.setAluno(aluno);
 
         Atividade atividade = atividadeService.getAtividade(resposta.getAtividade().getId());
@@ -58,21 +63,23 @@ public class RespostaService {
 
         Tentativa tentativa = tentativaService.getTentativa(resposta.getTentativa().getId());
         resposta.setTentativa(tentativa);
-        
+
         Resposta nova = respostaRepository.save(resposta);
         if (nova.getAtividade().getTipo().equals("Questionário")) {
             double nota = correcaoService.corrigir(nova);
             desempenhoService.salvarDesempenho(nova, nota, aluno);
-            return respostaRepository.save(nova); 
+            return respostaRepository.save(nova);
         }
         desempenhoService.salvarDesempenho(nova, aluno);
         return respostaRepository.save(nova);
     }
 
-    public Resposta salvarRespostaComArquivo(Resposta resposta, MultipartFile arquivo, HttpSession session) throws IOException {
+    public Resposta salvarRespostaComArquivo(Resposta resposta, MultipartFile arquivo, HttpSession session)
+            throws IOException {
         if (arquivo == null || !arquivoService.validarArquivo(arquivo))
             throw new IOException();
-        Usuario aluno = usuarioRepository.findById((Long) session.getAttribute("usuarioId")).get();
+        Usuario usuario = ((Perfil) session.getAttribute("perfilSelecionado")).getUsuario();
+        Aluno aluno = alunoRepository.findById(usuario.getMatricula().getId()).get();
         resposta.setAluno(aluno);
 
         Resposta nova = respostaRepository.save(resposta);

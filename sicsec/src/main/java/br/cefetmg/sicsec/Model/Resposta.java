@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import br.cefetmg.sicsec.Model.Usuario.Usuario;
+import br.cefetmg.sicsec.Model.Usuario.Aluno.Aluno;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -32,7 +32,7 @@ public class Resposta implements FileOwner {
     @ManyToOne
     @JsonIgnore
     @JoinColumn(name = "aluno_id", nullable = false)
-    private Usuario aluno;
+    private Aluno aluno;
 
     @ElementCollection
     private List<AlternativaMarcada> alternativasMarcadas;
@@ -66,11 +66,11 @@ public class Resposta implements FileOwner {
         this.tentativa = tentativa;
     }
 
-    public Usuario getAluno() {
+    public Aluno getAluno() {
         return aluno;
     }
 
-    public void setAluno(Usuario aluno) {
+    public void setAluno(Aluno aluno) {
         this.aluno = aluno;
     }
 

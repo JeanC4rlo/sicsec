@@ -8,10 +8,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import br.cefetmg.sicsec.Model.Atividade;
+import br.cefetmg.sicsec.Model.Usuario.Matricula;
+import br.cefetmg.sicsec.Model.Usuario.Usuario;
 import br.cefetmg.sicsec.Model.Usuario.Professor.Professor;
 import br.cefetmg.sicsec.Repository.AtividadeRepository;
 import br.cefetmg.sicsec.Repository.Usuarios.ProfessorRepo;
 import br.cefetmg.sicsec.dto.HomeAtividadesDTO;
+import br.cefetmg.sicsec.dto.Perfil;
 import jakarta.servlet.http.HttpSession;
 
 @Service
@@ -31,7 +34,8 @@ public class AtividadeService {
 
     public Atividade salvarAtividade(Atividade atividade, MultipartFile[] arquivos, HttpSession session)
             throws IOException {
-        Professor professor = professorRepository.findById((Long) session.getAttribute("usuarioId")).get();
+        Usuario usuario = ((Perfil) session.getAttribute("perfilSelecionado")).getUsuario();
+        Professor professor = professorRepository.findById(usuario.getMatricula().getId()).get();
         atividade.setProfessor(professor);
         Atividade nova = atividadeRepository.save(atividade);
         if (arquivos != null && arquivos.length > 0 && !arquivos[0].isEmpty()) {
