@@ -302,7 +302,7 @@ async function enviarRedacao() {
 
 async function enviarArquivo() {
     const inputArquivo = document.getElementById("input-arquivo");
-    if (inputArquivo.files.length == 0) return;
+    if (inputArquivo == null || inputArquivo.files.length == 0) return;
 
 
     const respostaAluno = {
@@ -571,8 +571,6 @@ function createBotao(nome, func, ...params) {
 function addBotoesNavegacaoEBotaoEnviarResposta() {
     htmlDOM.btnAnterior = createBotao("Anterior", navegarEntreQuestoes, -1);
     htmlDOM.btnProximo = createBotao("Próximo", navegarEntreQuestoes, 1);
-    htmlDOM.containerPrincipal.append(htmlDOM.btnAnterior, htmlDOM.btnProximo);
-    addBotaoEnviarResposta(false);
 }
 
 function addBotaoEnviarResposta(ativo = true) {
@@ -580,9 +578,8 @@ function addBotaoEnviarResposta(ativo = true) {
         htmlDOM.btnEnviar = createBotao("Enviar", enviarQuestionario);
     if (state.atividade.tipo == "Redação")
         htmlDOM.btnEnviar = createBotao("Enviar", enviarRedacao);
-    else
+    else if (state.atividade.tipo == "Envio de Arquivo")
         htmlDOM.btnEnviar = createBotao("Enviar", enviarArquivo);
-    htmlDOM.containerPrincipal.append(htmlDOM.btnEnviar);
     if (!ativo) htmlDOM.btnEnviar.classList.add("inativo");
 }
 
@@ -607,11 +604,14 @@ async function iniciarTentativa() {
     window.addEventListener("beforeunload", tratamentoPreFechamentoDaPagina);
     addCabecalho();
     if (state.atividade.tipo == "Questionário") {
+        addBotoesNavegacaoEBotaoEnviarResposta();
+        addBotaoEnviarResposta(false);
         state.atividade.questoes.forEach(questao => {
             montarQuestao(questao);
         })
         state.questoes[0].classList.remove("inativo")
-        addBotoesNavegacaoEBotaoEnviarResposta();
+        htmlDOM.containerPrincipal.append(htmlDOM.btnAnterior, htmlDOM.btnProximo);
+        htmlDOM.containerPrincipal.append(htmlDOM.btnEnviar);
         return;
     }
     else if (state.atividade.tipo == "Redação") {

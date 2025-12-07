@@ -679,8 +679,10 @@ function initSectionProducaoAtividades() {
         </div>
     `
         htmlDOM.btnEnviar.classList.remove("inativo");
+        htmlDOM.btnProximo.classList.add("inativo");
         htmlDOM.btnAnterior.addEventListener("click", () => {
             htmlDOM.btnEnviar.classList.add("inativo");
+            htmlDOM.btnProximo.classList.remove("inativo");
         }, { once: true });
 
         const divConfirmacao = document.getElementById("confirmacao");
@@ -698,7 +700,7 @@ function initSectionProducaoAtividades() {
 
         if (state.dadosForm.get("tipo") == "questionario") {
             const numQuestoes = document.createElement("p");
-            numQuestoes.textContent = `Número de questões: <span>${state.numQuestoes}</span>`;
+            numQuestoes.innerHTML = `Número de questões: <span>${state.numQuestoes}</span>`;
             divConfirmacao.append(numQuestoes);
         } else {
             const enunciado = document.createElement("p");
