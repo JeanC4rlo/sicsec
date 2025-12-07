@@ -153,6 +153,8 @@ async function criarTimerContinuo(timer) {
 
 function criarOptions(questao, container) {
     questao.alternativas.forEach((alternativa, idx) => {
+        const containerAlternativa = document.createElement("div");
+        containerAlternativa.classList.add("alternativa");
         const opcao = document.createElement("input");
         const label = document.createElement("label");
 
@@ -163,26 +165,32 @@ function criarOptions(questao, container) {
 
         label.htmlFor = opcao.id;
         label.textContent = alternativa.texto;
-
-        container.append(opcao, label, document.createElement("br"));
+        containerAlternativa.append(opcao, label);
+        container.append(containerAlternativa);
     });
 }
 
 function montarQuestao(questao) {
-    const container = document.createElement("div");
+    const containerQuestao = document.createElement("div");
+    containerQuestao.classList.add("questao");
+
+    const containerTexto = document.createElement("div");
+    containerTexto.id = "container-texto";
 
     const texto = document.createElement("p");
+    containerTexto.append(texto);
+
     const enunciado = document.createElement("p");
 
     texto.innerHTML = questao.texto;
     enunciado.innerHTML = questao.enunciado;
 
-    container.append(texto, enunciado);
-    criarOptions(questao, container);
+    containerQuestao.append(containerTexto, enunciado);
+    criarOptions(questao, containerQuestao);
 
-    container.classList.add("inativo");
-    state.questoes.push(container);
-    htmlDOM.containerPrincipal.append(container);
+    containerQuestao.classList.add("inativo");
+    state.questoes.push(containerQuestao);
+    htmlDOM.containerPrincipal.append(containerQuestao);
     if (state.numQuestoes === state.atividade.questoes.length - 1) AddBotaoEnviar();
 }
 
@@ -265,12 +273,12 @@ async function enviarQuestionario() {
 async function enviarRedacao() {
     if (!checkRedacaoEscrita()) return;
 
-    /*if (tempoAcabou) {
+    if (state.timerEncerrado) {
         window.location.reload();
         return;
-    }*/
+    }
 
-    //clearInterval(temporizador);
+    clearInterval(state.temporizador);
 
     console.log(document.getElementById("textarea-redacao").value);
 
@@ -357,8 +365,10 @@ async function resgatarNota() {
 
 function montarPaginaResultado(nota) {
     htmlDOM.containerPrincipal.innerHTML = `
-    <h1>Resposta enviada</h1>
-    <p>Nota: ${nota}</p>
+    <div id="resultado">
+        <h1>Resposta enviada</h1>
+        <p>Nota: ${nota}</p>
+    </div>
     `
 }
 
@@ -411,7 +421,7 @@ function telaAtividadeJaFeita() {
 function carregarTelaRedacao() {
     if (state.numTentativasFeitas > state.atividade.tentativas) {
         telaAtividadeJaFeita();
-        return false;
+        return;
     }
     const nome = document.createElement("p");
     const labelEnunciado = document.createElement("h4");
@@ -435,7 +445,8 @@ function carregarTelaRedacao() {
     htmlDOM.containerPrincipal.append(nome, labelEnunciado, enunciado, textareaRedacao, numCaracteresRestantes);
 
     carregarArquivos();
-    return true;
+    carregarOuCriarTentativa();
+    addBotaoEnviarResposta();
 }
 
 async function carregarTelaEnvioArquivo() {
@@ -616,6 +627,8 @@ async function iniciarTentativa() {
     }
     else if (state.atividade.tipo == "Redação") {
         carregarTelaRedacao();
+        addBotaoEnviarResposta();
+        htmlDOM.containerPrincipal.append(htmlDOM.btnEnviar);
     }
     else {
         carregarTelaEnvioArquivo();

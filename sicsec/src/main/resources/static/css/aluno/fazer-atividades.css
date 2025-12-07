@@ -82,7 +82,7 @@ h2 {
     gap: 1.4rem;
 }
 
-#main-container > p:nth-of-type(1) {
+#main-container>p:nth-of-type(1) {
     font-size: 1.4rem;
     font-weight: 700;
     color: #2c2c2c;
@@ -90,7 +90,7 @@ h2 {
     letter-spacing: 0.5px;
 }
 
-#main-container > p:nth-of-type(2) {
+#main-container>p:nth-of-type(2) {
     align-self: left;
     font-size: 1rem;
     line-height: 1.6;
@@ -118,6 +118,7 @@ h2 {
 
     transition: all 0.2s ease;
 }
+
 #textarea-redacao:focus {
     outline: none;
     border-color: var(--primary, #4a6cf7);
@@ -125,14 +126,13 @@ h2 {
     background: #fff;
 }
 
-#main-container > p:last-of-type {
+#main-container>p:last-of-type {
     font-size: 0.9rem;
     color: #777;
-
-    max-width: 100%;              /* em vez de fit-content */
-    word-wrap: break-word;        /* quebra palavras longas */
-    overflow-wrap: break-word;    /* compatibilidade moderna */
-    white-space: normal;          /* garante quebra de linha */
+    max-width: 100%;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
 }
 
 
@@ -147,7 +147,6 @@ h2 {
     padding: 0.6rem 1rem;
     font-size: 0.95rem;
     color: #333;
-
     display: flex;
     align-items: center;
     gap: 0.6rem;
@@ -155,6 +154,25 @@ h2 {
 
 #main-container a::before {
     content: "📎";
+}
+
+.questao {
+    display: flex;
+    gap: 1.5rem;
+    flex-direction: column;
+}
+
+.alternativa {
+    padding: 1.2rem 1.4rem;
+    background-color: #f3f3f3;
+    border-radius: 0.6rem;
+    box-shadow: 0 2px 7px rgba(0, 0, 0, 0.05);
+    animation: fadeIn 0.2s ease;
+}
+
+.alternativa label {
+    font-size: 1rem;
+    line-height: 1.55;
 }
 
 input[type="radio"] {
@@ -179,6 +197,17 @@ label:hover {
 #cabecalho {
     display: flex;
     justify-content: space-between;
+}
+
+#container-texto p {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: #333;
+    white-space: pre-wrap;
+    padding: 1rem 1.2rem;
+    background-color: #fafafa;
+    border-left: 4px solid var(--primary, #3273dc);
+    border-radius: 0.5rem;
 }
 
 button {
@@ -214,6 +243,16 @@ button:not(#btn-sair):hover {
 #btn-sair:hover {
     background-color: red;
     transform: scale(1.05);
+}
+
+#resultado {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    width: 100%;
+    margin: 0 auto;
+    animation: fadeIn 0.35s ease;
 }
 
 textarea {

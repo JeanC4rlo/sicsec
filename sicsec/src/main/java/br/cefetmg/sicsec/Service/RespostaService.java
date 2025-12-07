@@ -14,10 +14,8 @@ import br.cefetmg.sicsec.Model.Resposta;
 import br.cefetmg.sicsec.Model.Tentativa;
 import br.cefetmg.sicsec.Model.Usuario.Usuario;
 import br.cefetmg.sicsec.Model.Usuario.Aluno.Aluno;
-import br.cefetmg.sicsec.Model.Usuario.Professor.Professor;
 import br.cefetmg.sicsec.Repository.RespostaRepository;
 import br.cefetmg.sicsec.Repository.Usuarios.AlunoRepo;
-import br.cefetmg.sicsec.Repository.Usuarios.UsuarioRepo;
 import br.cefetmg.sicsec.dto.DesempenhoDTO;
 import br.cefetmg.sicsec.dto.Perfil;
 import jakarta.servlet.http.HttpSession;
@@ -94,6 +92,7 @@ public class RespostaService {
         Desempenho desempenho = desempenhoService.getDesempenho(desempenhoId);
         Atividade atividade = desempenho.getAtividade();
         Resposta resposta = desempenho.getResposta();
+        Tentativa tentativa = desempenho.getTentativa();
 
         DesempenhoDTO dadosRespostaAlunoDTO = new DesempenhoDTO(
                 desempenhoId,
@@ -104,7 +103,8 @@ public class RespostaService {
                 atividade.getTipo(),
                 resposta.getTextoRedacao(),
                 resposta.getId(),
-                resposta.getArquivoId());
+                resposta.getArquivoId(),
+                tentativa.getNumTentativa());
 
         return dadosRespostaAlunoDTO;
     }

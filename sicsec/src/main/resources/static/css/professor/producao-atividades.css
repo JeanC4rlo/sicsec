@@ -141,8 +141,6 @@ div {
     display: none;
 }
 
-
-
 #container-botoes {
     display: flex !important;
 }
@@ -255,6 +253,8 @@ section button:hover {
     border: 1.5px solid var(--secondary);
     border-radius: 0.6rem;
     padding: 1rem;
+    display: inline-grid;
+    gap: 1rem;
     transition: 0.25s ease;
 }
 
@@ -313,6 +313,14 @@ section button:hover {
 
 #lista-arquivos .btn-remover:hover {
     text-decoration: underline;
+}
+
+#questoes {
+    display: inline-flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    flex-direction: column;
 }
 
 
