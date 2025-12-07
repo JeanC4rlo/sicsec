@@ -39,7 +39,6 @@ public class TentativaController {
     @GetMapping("/atividade/{atividadeId}/tentativa-aberta")
     public ResponseEntity<Tentativa> getTentativaAberta(@PathVariable Long atividadeId) {
         Tentativa aberta = tentativaService.getTentativaAberta(atividadeId);
-        System.out.println("Tentativa: " + aberta);
         return ResponseEntity.ok().body(aberta);
     }
 

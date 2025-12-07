@@ -18,11 +18,14 @@ body {
     padding: 2rem;
     font-family: "Inter", system-ui, sans-serif;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
     min-height: 100vh;
 }
 
-/* ===== Container principal ===== */
+h1 {
+    color: var(--secondary);
+}
 
 #conteudo {
     background-color: var(--card-bg);
@@ -37,15 +40,54 @@ body {
     gap: 2rem;
 }
 
-/* ===== Título da página ===== */
+button {
+    background-color: var(--primary);
+    font-weight: 600;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.6rem 1.2rem;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    color: white;
+}
+
+button:hover {
+    transform: translateY(-2px);
+}
+
+#btn-sair {
+    align-self: flex-end;
+}
+
+#btn-sair:hover {
+    background-color: #ff2a00;
+}
+
+#btn-enviar {
+    align-self: center;
+    width: 20vw;
+}
+
+#btn-enviar:hover {
+    background-color: var(--accent);
+}
+
+#btn-baixar {
+    align-self: left;
+    background-color: var(--accent);
+    width: 10vw;
+}
+
+span {
+    font-weight: normal;
+}
 
 .titulo-avaliacao {
     font-size: 1.8rem;
     font-weight: 700;
     color: var(--primary);
 }
-
-/* ===== Área da redação ou arquivo ===== */
 
 .conteudo-aluno {
     background: #f7faff;
@@ -61,7 +103,6 @@ body {
     margin-bottom: 1rem;
 }
 
-/* Redação (texto grande) */
 .texto-redacao {
     background: white;
     border: 1px solid #d0d7e2;
@@ -74,7 +115,6 @@ body {
     font-size: 1rem;
 }
 
-/* Arquivo enviado */
 .arquivo-link {
     display: inline-block;
     padding: 0.6rem 1rem;
@@ -91,8 +131,6 @@ body {
     background-color: var(--secondary);
     transform: translateY(-2px);
 }
-
-/* ===== Área da nota ===== */
 
 .avaliacao-box {
     display: flex;
@@ -123,8 +161,6 @@ body {
     box-shadow: 0 0 0 3px rgba(38, 132, 255, 0.15);
 }
 
-/* ===== Botão de envio ===== */
-
 .btn-enviar-nota {
     width: fit-content;
     background-color: var(--accent);
@@ -144,7 +180,6 @@ body {
     transform: translateY(-2px);
 }
 
-/* Botão desativado */
 .btn-enviar-nota.inativo {
     background-color: #c9c9c9;
     color: #666 !important;
@@ -152,8 +187,6 @@ body {
     transform: none !important;
     box-shadow: none;
 }
-
-/* ===== Feedback ===== */
 
 .feedback-sucesso {
     background-color: #f2fff8;
@@ -178,8 +211,15 @@ body {
 
 /* ===== Animação ===== */
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to   { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* ===== Responsividade ===== */

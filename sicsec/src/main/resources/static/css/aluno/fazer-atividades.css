@@ -69,8 +69,92 @@ h2 {
     transform: scale(1.05);
 }
 
-#main-container p {
-    margin-bottom: 1rem;
+#main-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 2.5rem;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+
+    display: flex;
+    flex-direction: column;
+    gap: 1.4rem;
+}
+
+#main-container > p:nth-of-type(1) {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #2c2c2c;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+#main-container > p:nth-of-type(2) {
+    align-self: left;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #555;
+    background: #f7f8fa;
+    padding: 1rem 1.2rem;
+    border-radius: 10px;
+    border-left: 4px solid var(--primary, #4a6cf7);
+}
+
+#textarea-redacao {
+    width: 100%;
+    min-height: 250px;
+    resize: none;
+
+    padding: 1.2rem 1.4rem;
+    font-size: 1rem;
+    line-height: 1.6;
+
+    border-radius: 14px;
+    border: 1px solid #ddd;
+
+    background: #fafafa;
+    color: #333;
+
+    transition: all 0.2s ease;
+}
+#textarea-redacao:focus {
+    outline: none;
+    border-color: var(--primary, #4a6cf7);
+    box-shadow: 0 0 0 3px rgba(74, 108, 247, 0.1);
+    background: #fff;
+}
+
+#main-container > p:last-of-type {
+    font-size: 0.9rem;
+    color: #777;
+
+    max-width: 100%;              /* em vez de fit-content */
+    word-wrap: break-word;        /* quebra palavras longas */
+    overflow-wrap: break-word;    /* compatibilidade moderna */
+    white-space: normal;          /* garante quebra de linha */
+}
+
+
+#main-container a:hover {
+    color: blue;
+}
+
+#main-container a {
+    background: #f1f3f5;
+    border: 1px solid #e2e5e9;
+    border-radius: 10px;
+    padding: 0.6rem 1rem;
+    font-size: 0.95rem;
+    color: #333;
+
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+#main-container a::before {
+    content: "📎";
 }
 
 input[type="radio"] {
@@ -88,18 +172,8 @@ label:hover {
     color: var(--secondary);
 }
 
-#main-container>p:first-child {
-    text-align: right;
-    font-weight: bold;
-    color: var(--secondary);
-}
-
 .inativo {
     display: none;
-}
-
-#main-container button {
-    margin-top: 1.5rem;
 }
 
 #cabecalho {

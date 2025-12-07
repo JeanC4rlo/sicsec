@@ -3,6 +3,7 @@ function initSectionProducaoAtividades() {
         idxSection: -1,
         sequence: [],
         questoes: [],
+        arquivos: [],
         dadosForm: null,
         numQuestoes: null,
         dadosAtividade: {
@@ -23,7 +24,7 @@ function initSectionProducaoAtividades() {
         section: null
     }
 
-    let inputDeArquvios;
+    let inputDeArquivos;
     let handlerProximoAtual = null;
 
     const sequenciasAcoes = {
@@ -147,25 +148,30 @@ function initSectionProducaoAtividades() {
     }
 
     function enviarArquivo() {
-        inputDeArquvios = document.createElement("input");
-        inputDeArquvios.type = "file";
-        inputDeArquvios.style.display = "none";
-        inputDeArquvios.id = "fileInput";
-        inputDeArquvios.multiple = true;
-        inputDeArquvios.accept = "application/zip,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain";
-        htmlDOM.section.appendChild(inputDeArquvios);
+        inputDeArquivos = document.createElement("input");
+        inputDeArquivos.type = "file";
+        inputDeArquivos.multiple = true;
+        inputDeArquivos.accept = "application/zip,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain";
 
-        inputDeArquvios.click()
+        inputDeArquivos.click();
 
-        const listaArquivos = document.getElementById("lista-arquivos");
-
-        inputDeArquvios.addEventListener("change", () => {
-            listaArquivos.innerHTML = "";
-            for (let i = 0; i < inputDeArquvios.files.length; i++) {
-                let li = document.createElement("li");
-                li.textContent = inputDeArquvios.files[i].name;
-                listaArquivos.appendChild(li);
+        inputDeArquivos.addEventListener("change", () => {
+            for (const file of inputDeArquivos.files) {
+                state.arquivos.push(file);
             }
+
+            atualizarListaArquivos();
+        });
+    }
+
+    function atualizarListaArquivos() {
+        const lista = document.getElementById("lista-arquivos");
+        lista.innerHTML = "";
+
+        state.arquivos.forEach(file => {
+            const li = document.createElement("li");
+            li.textContent = file.name;
+            lista.appendChild(li);
         });
     }
 
@@ -325,8 +331,8 @@ function initSectionProducaoAtividades() {
         const formData = new FormData();
         formData.append("atividade", new Blob([JSON.stringify(dados)], { type: "application/json" }));
 
-        if (dados.tipo != "questionario" && inputDeArquvios && inputDeArquvios.files.length > 0) {
-            for (const file of inputDeArquvios.files) {
+        if (dados.tipo != "questionario" && inputDeArquivos && inputDeArquivos.files.length > 0) {
+            for (const file of inputDeArquivos.files) {
                 if (file.size > 5 * 1024 * 1024) {
                     alert(`Arquivo muito grande: ${file.name}`);
                     return;
@@ -338,7 +344,7 @@ function initSectionProducaoAtividades() {
                     return;
                 }
             }
-            for (const file of inputDeArquvios.files) {
+            for (const file of inputDeArquivos.files) {
                 formData.append("arquivos", file);
             }
         }
@@ -499,16 +505,13 @@ function initSectionProducaoAtividades() {
 
     function restaurarTelaQuestoes() {
 
-        // limpa o container antes de recriar
         const container = document.querySelector("#lista-questoes");
         container.innerHTML = "";
 
         state.numQuestoes = 0;
 
-        // garante que questoesArray existe e é um array
         if (!Array.isArray(state.questoes)) return;
 
-        // recria cada questão
         state.questoes.forEach(q => {
             adicionarQuestaoComDados(q);
         });
@@ -621,15 +624,15 @@ function initSectionProducaoAtividades() {
         <div id="elaboracao">
             <label>Insira o enunciado:</label>
             <input id="input-enunciado" type="textarea">
-            <button onclick="enviarArquivo()" id="btn-enviar-arquivo">Inserir arquivo(s) de consulta?</button>
+            <button id="btn-enviar-arquivo">Inserir arquivo(s) de consulta?</button>
             <ul id="lista-arquivos"></ul>
         </div>
     `
-
+        document.getElementById("btn-enviar-arquivo").addEventListener("click", enviarArquivo);
         restaurarTelaElaboracaoEnunciado();
+        atualizarListaArquivos();
 
         const validacao = function () {
-            console.log(document.getElementById("elaboracao"));
             if (!validarContainer(document.getElementById("elaboracao"))) {
                 return false;
             }
@@ -642,59 +645,82 @@ function initSectionProducaoAtividades() {
     }
 
     function restaurarTelaElaboracaoEnunciado() {
-        if (inputDeArquvios == null || inputDeArquvios.files.length == 0) return;
-
         const enunciado = document.getElementById("input-enunciado");
         enunciado.value = state.dadosAtividade.enunciado;
 
+        if (inputDeArquivos == null || inputDeArquivos.files.length == 0) return;
         const listaArquivos = document.getElementById("lista-arquivos");
-        Array.from(inputDeArquvios.files).forEach(file => {
+        Array.from(inputDeArquivos.files).forEach(file => {
             const li = document.createElement("li");
             li.textContent = file.name;
             listaArquivos.appendChild(li);
         });
     }
 
+    function formatarData(data) {
+        if (!data) return "";
+
+        const partes = data.split("-");
+        const ano = partes[0];
+        const mes = partes[1];
+        const dia = partes[2];
+
+        return `${dia}/${mes}/${ano}`;
+    }
+
     function montarConfirmacao() {
         htmlDOM.section.innerHTML = `
         <div id="confirmacao">
-            <p id="nome">Nome: </p>
-            <p id="tipo">Tipo: </p>
+            <h3 id="nome">Nome: </h3>
+            <h3 id="tipo">Tipo: </h3>
             <p id="valor">Valor: </p>
             <p id="dataEncerramento">Data de encerramento: </p>
             <p id="horaEncerramento">Hora de encerramento: </p>
+        </div>
     `
         htmlDOM.btnEnviar.classList.remove("inativo");
         htmlDOM.btnAnterior.addEventListener("click", () => {
             htmlDOM.btnEnviar.classList.add("inativo");
         }, { once: true });
 
+        const divConfirmacao = document.getElementById("confirmacao");
         const nome = document.getElementById("nome");
         const tipo = document.getElementById("tipo");
         const valor = document.getElementById("valor");
         const dataEncerramento = document.getElementById("dataEncerramento");
         const horaEncerramento = document.getElementById("horaEncerramento");
 
-        nome.innerHTML += state.dadosForm.get("nome");
-        tipo.innerHTML += tipos[state.dadosForm.get("tipo")];
-        valor.innerHTML += state.dadosForm.get("valor");
-        dataEncerramento.innerHTML += state.dadosForm.get("dataEncerramento");
-        horaEncerramento.innerHTML += state.dadosForm.get("horaEncerramento");
+        nome.innerHTML += `<span>${state.dadosForm.get("nome")}</span>`;
+        tipo.innerHTML += `<span>${tipos[state.dadosForm.get("tipo")]}</span>`;
+        valor.innerHTML += `<span>${state.dadosForm.get("valor")}</span>`;
+        dataEncerramento.innerHTML += `<span>${formatarData(state.dadosForm.get("dataEncerramento"))}</span>`;
+        horaEncerramento.innerHTML += `<span>${state.dadosForm.get("horaEncerramento")}</span>`;
 
         if (state.dadosForm.get("tipo") == "questionario") {
-            htmlDOM.section.innerHTML += `<p id="numQuestoes">Número de questões: ${state.numQuestoes}</p>`
+            const numQuestoes = document.createElement("p");
+            numQuestoes.textContent = `Número de questões: <span>${state.numQuestoes}</span>`;
+            divConfirmacao.append(numQuestoes);
         } else {
-            htmlDOM.section.innerHTML += `<p id="enunciado">Enunciado: ${state.dadosAtividade.enunciado}</p>`
+            const enunciado = document.createElement("p");
+            enunciado.innerHTML = `Enunciado: <span>${state.dadosAtividade.enunciado}</span>`;
+            divConfirmacao.append(enunciado);
+
+            if(state.arquivos.length != 0) {
+                const arquivos = document.createElement("p");
+                const lista = document.createElement("ul");
+                arquivos.innerHTML = "Arquivos: ";
+                lista.id = "lista-arquivos"
+                divConfirmacao.append(arquivos, lista);
+                atualizarListaArquivos();
+            }
         }
-        htmlDOM.section.innerHTML += `</div>`
     }
 
     function confirmarSaidaDaPag() {
-        if (confirm("Tem certeza que deseja sair da página? Os dados da atividade serão perdidos?")) {
+        if (confirm("Tem certeza que deseja sair da página? Os dados da atividade serão perdidos")) {
             window.location.href = "/home";
         }
     }
-
     window.onload = initProdAtividade;
 }
 

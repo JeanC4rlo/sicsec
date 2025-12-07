@@ -1,7 +1,7 @@
 function initSectionAtividadesProfessor () {
     let barraDePesquisa;
     let btnAddAtividade;
-    let tabela;
+    let tabelaAtividades;
     let corpoTable;
 
     const input = (placeholder, type = "text", name = "") => {
@@ -37,7 +37,6 @@ function initSectionAtividadesProfessor () {
     }
 
     function preencherTabelaAtividades(atividade) {
-
         const linha = criarElement("tr", null, "atividade");
         const codigo = criarElement("td", atividade.id, "codigo");
         const nome = criarElement("td", atividade.nome, "nome");
@@ -71,6 +70,7 @@ function initSectionAtividadesProfessor () {
                 return response.json();
             })
             .then(dados => {
+                corpoTable.innerHTML = "";
                 dados.forEach(atividade => {
                     preencherTabelaAtividades(atividade);
                     pesquisarPorAtividade();
@@ -94,7 +94,7 @@ function initSectionAtividadesProfessor () {
         barraDePesquisa.addEventListener("input", () => {
 
             const texto = normalizar(barraDePesquisa.value);
-            const linhas = tabela.querySelectorAll("tbody tr");
+            const linhas = tabelaAtividades.querySelectorAll("tbody tr");
 
             linhas.forEach(linha => {
                 const celulaNome = linha.querySelector(".nome");
@@ -111,8 +111,8 @@ function initSectionAtividadesProfessor () {
     function initAtividades() {
         barraDePesquisa = document.getElementById("barra-de-pesquisa");;
         btnAddAtividade = document.getElementById("add-atividade");
-        tabela = document.getElementById("tabela-atividades");
-        corpoTable = tabela.querySelector("tbody")
+        tabelaAtividades = document.getElementById("tabela-atividades");
+        corpoTable = tabelaAtividades.querySelector("tbody")
 
         btnAddAtividade.addEventListener('click', () => {
             window.location.href = "/producao-atividades";

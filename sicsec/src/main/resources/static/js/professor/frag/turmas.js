@@ -1,5 +1,19 @@
 function initSectionTurmas() {
     let tabelaDesempenhos;
+    const estruturaTabela = `
+    <table id="tabela-desempenhos">
+        <caption>Desempenho da turma</caption>
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Atividade</th>
+                <th>Tipo</th>
+                <th>Nota</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    `
 
     function initTurmas() {
         tabelaDesempenhos = document.getElementById("tabela-desempenhos");
@@ -12,7 +26,7 @@ function initSectionTurmas() {
             if (!resp.ok) throw new Error("Erro ao carregar as respostas");
 
             const desempenhos = await resp.json();
-            console.log(JSON.stringify(desempenhos, null, 2));
+            tabelaDesempenhos.innerHTML = estruturaTabela;
             desempenhos.forEach(desempenho => preencherTabela(desempenho));
 
         } catch (erro) {

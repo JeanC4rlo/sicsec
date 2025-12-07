@@ -57,12 +57,6 @@ function caracteresRestantes() {
 }
 
 async function carregarOuCriarTentativa() {
-    /*fetch(`/api/tentativa/atividade/${atividade.id}/tentativa-aberta`)
-    .then(resp => {
-        if (!response.ok) throw new Error("Erro ao verificar tentativa aberta");
-        return resp.text();
-    })
-    .then()*/
     try {
         let response = await fetch(`/api/tentativa/atividade/${state.atividade.id}/tentativa-aberta`);
         if (!response.ok) throw new Error("Erro ao verificar tentativa aberta");
@@ -420,6 +414,7 @@ function carregarTelaRedacao() {
         return false;
     }
     const nome = document.createElement("p");
+    const labelEnunciado = document.createElement("h4");
     const enunciado = document.createElement("p");
     const textareaRedacao = document.createElement("textarea");
     const numCaracteresRestantes = document.createElement("p");
@@ -427,15 +422,17 @@ function carregarTelaRedacao() {
     numCaracteresRestantes.style.fontSize = "15px";
 
     nome.innerHTML = state.atividade.nome;
+    labelEnunciado.innerHTML = "Enunciado:";
     enunciado.innerHTML = state.atividade.enunciado;
     textareaRedacao.maxLength = LIMITES.numCaracteres;
+    textareaRedacao.placeholder = "Escreva seu texto aqui!";
 
     textareaRedacao.id = "textarea-redacao";
     textareaRedacao.addEventListener("input", () => {
         numCaracteresRestantes.innerHTML = caracteresRestantes()
     });
 
-    htmlDOM.containerPrincipal.append(nome, enunciado, textareaRedacao, numCaracteresRestantes);
+    htmlDOM.containerPrincipal.append(nome, labelEnunciado, enunciado, textareaRedacao, numCaracteresRestantes);
 
     carregarArquivos();
     return true;

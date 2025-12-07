@@ -78,16 +78,6 @@ INSERT INTO `aluno` (`id`) VALUES
 -- --------------------------------------------------------
 
 --
-<<<<<<< HEAD
--- Estrutura para tabela `assinatura`
---
-
-CREATE TABLE `assinatura` (
-  `id` bigint(20) NOT NULL,
-  `data_assinatura` date DEFAULT NULL,
-  `documento_id` bigint(20) NOT NULL,
-  `usuario_id` bigint(20) NOT NULL
-=======
 -- Estrutura para tabela `assinaturas`
 --
 
@@ -98,7 +88,6 @@ CREATE TABLE `assinaturas` (
   `data_criacao` datetime DEFAULT NULL,
   `data_assinatura` datetime DEFAULT NULL,
   `status` ENUM('CONFIRMADA','PENDENTE','REJEITADA', 'ATRASADA') DEFAULT 'PENDENTE'
->>>>>>> 3327154c888b1ce4ac8388a6832543a086b7b74d
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -836,15 +825,9 @@ ALTER TABLE `aluno`
   ADD PRIMARY KEY (`id`);
 
 --
-<<<<<<< HEAD
--- Índices de tabela `assinatura`
---
-ALTER TABLE `assinatura`
-=======
 -- Índices de tabela `assinaturas`
 --
 ALTER TABLE `assinaturas`
->>>>>>> 3327154c888b1ce4ac8388a6832543a086b7b74d
   ADD PRIMARY KEY (`id`),
   ADD KEY `FKptyue4cqc0qw05ggov7buawmh` (`documento_id`),
   ADD KEY `FK3em2vxh4af8j06wu6rp2re6t7` (`usuario_id`);
@@ -1105,15 +1088,9 @@ ALTER TABLE `afastamento`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
-<<<<<<< HEAD
--- AUTO_INCREMENT de tabela `assinatura`
---
-ALTER TABLE `assinatura`
-=======
 -- AUTO_INCREMENT de tabela `assinaturas`
 --
 ALTER TABLE `assinaturas`
->>>>>>> 3327154c888b1ce4ac8388a6832543a086b7b74d
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
@@ -1277,13 +1254,6 @@ ALTER TABLE `aluno`
   ADD CONSTRAINT `FKc8wsngo14dwn23nvgsty37bfx` FOREIGN KEY (`id`) REFERENCES `usuario` (`id`);
 
 --
-<<<<<<< HEAD
--- Restrições para tabelas `assinatura`
---
-ALTER TABLE `assinatura`
-  ADD CONSTRAINT `FK3em2vxh4af8j06wu6rp2re6t7` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`),
-  ADD CONSTRAINT `FKptyue4cqc0qw05ggov7buawmh` FOREIGN KEY (`documento_id`) REFERENCES `documento` (`id`);
-=======
 -- Restrições para tabelas `assinaturas`
 --
 --
@@ -1292,7 +1262,6 @@ ALTER TABLE `assinatura`
 ALTER TABLE `assinaturas`
   ADD CONSTRAINT `FK_assinatura_documento` FOREIGN KEY (`documento_id`) REFERENCES `documento` (`id`),
   ADD CONSTRAINT `FK_assinatura_usuario` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`);
->>>>>>> 3327154c888b1ce4ac8388a6832543a086b7b74d
 
 --
 -- Restrições para tabelas `aula`
@@ -1368,15 +1337,12 @@ ALTER TABLE `disciplina`
   ADD CONSTRAINT `FKsnmpurmkvs693joxmqld4fq2b` FOREIGN KEY (`departamento_id`) REFERENCES `departamento` (`id`);
 
 --
-<<<<<<< HEAD
-=======
 -- Restrições para tabelas `documento`
 --
 ALTER TABLE `documento`
   ADD CONSTRAINT `FK_documento_criador` FOREIGN KEY (`criador_id`) REFERENCES `usuario` (`id`);
 
 --
->>>>>>> 3327154c888b1ce4ac8388a6832543a086b7b74d
 -- Restrições para tabelas `emprestimo`
 --
 ALTER TABLE `emprestimo`

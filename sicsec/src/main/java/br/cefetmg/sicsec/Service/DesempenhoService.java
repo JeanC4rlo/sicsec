@@ -83,6 +83,7 @@ public class DesempenhoService {
     public Desempenho atribuirNota(Long desempenhoId, Double nota) {
         Desempenho desempenho = desempenhoRepository.findById(desempenhoId).orElseThrow();
         desempenho.setNota(nota);
+        desempenho.setCorrigido(true);
         return desempenhoRepository.save(desempenho);
     }
 }

@@ -13,46 +13,71 @@ function carregarResposta() {
         .then(dados => {
             dadosDesempenho = dados;
             console.log(dadosDesempenho);
-            if (dadosDesempenho.tipoAtividade == "Redação")
-                montarTelaRedacao();
-            else
-                montarTelaEnvioArquivo();
+            telaAvaliacao();
         })
         .catch(err => {
             console.error(err);
         })
 }
 
-function montarTelaEnvioArquivo() {
-    const nomeAluno = document.createElement("p");
-    const turmaAluno = document.createElement("p");
-    const inputArquivo = document.createElement("input");
-    const divPreview = document.createElement("div");
-    const btnBaixarArquivo = document.createElement("button");
+function telaAvaliacao() {
+    const nomeAluno = document.getElementById("nome");
+    const turmaAluno = document.getElementById("turma");
     const inputNota = document.createElement("input");
     const btnEnviarNota = document.createElement("button");
 
     nomeAluno.innerHTML = dadosDesempenho.nomeAluno;
-    turmaAluno.innerHTML = "TURMA ALUNO";
-
-    inputArquivo.type = "file";
-
-    carregarPreview(dadosDesempenho.arquivoId, dadosDesempenho.respostaId, divPreview);
-
-    btnBaixarArquivo.textContent = "Baixar arquivo";
-    btnBaixarArquivo.addEventListener("click", () => downloadArquivo(dadosDesempenho.arquivoId));
+    turmaAluno.innerHTML = "INF-2A";
 
     inputNota.id = "input-nota";
     inputNota.type = "text";
     inputNota.placeholder = "Insirir nota";
     inputNota.min = 0;
-    inputNota.max = 100;
+    inputNota.max = dadosDesempenho.valorAtividade;
     inputNota.addEventListener("input", () => validaInputNota(inputNota));
 
     btnEnviarNota.textContent = "Submeter nota";
+    btnEnviarNota.id = "btn-enviar";
     btnEnviarNota.addEventListener("click", enviarNota);
 
-    divConteudo.append(nomeAluno, turmaAluno, divPreview, btnBaixarArquivo, inputNota, btnEnviarNota);
+    switch (dadosDesempenho.tipoAtividade) {
+        case "Redação":
+            addRedacao(inputNota, btnEnviarNota);
+            break;
+
+        case "Envio de Arquivo":
+            addArquivo(inputNota, btnEnviarNota);
+            break;
+    }
+
+    document.getElementById("btn-sair").addEventListener("click", confirmarSaidaDaPag);
+}
+
+function addRedacao(inpNota, btnEnviar) {
+    const conteudoAluno = document.querySelector(".conteudo-aluno");
+
+    const redacao = document.createElement("p");
+    redacao.classList.add("texto-redacao");
+    conteudoAluno.append(redacao);
+
+    redacao.innerHTML = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
+    divConteudo.append(conteudoAluno, inpNota, btnEnviar);
+}
+
+function addArquivo(inpNota, btnEnviar) {
+    const conteudoAluno = document.querySelector(".conteudo-aluno");
+    const inputArquivo = document.createElement("input");
+    const divPreview = document.createElement("div");
+    const btnBaixarArquivo = document.createElement("button");
+
+    conteudoAluno.append(divPreview);
+
+    inputArquivo.type = "file";
+    carregarPreview(dadosDesempenho.arquivoId, dadosDesempenho.respostaId, divPreview);
+    btnBaixarArquivo.textContent = "Baixar arquivo";
+    btnBaixarArquivo.id = "btn-baixar";
+    btnBaixarArquivo.addEventListener("click", () => downloadArquivo(dadosDesempenho.arquivoId));
+    divConteudo.append(btnBaixarArquivo, inpNota, btnEnviar);
 }
 
 async function carregarPreview(arquivoId, respostaId, divPreview) {
@@ -81,30 +106,6 @@ async function carregarPreview(arquivoId, respostaId, divPreview) {
 function downloadArquivo(nomeArquivo) {
     const url = `/api/arquivo/${nomeArquivo}`;
     window.open(url, "_blank");
-}
-
-function montarTelaRedacao() {
-    const nomeAluno = document.createElement("p");
-    const turmaAluno = document.createElement("p");
-    const redacao = document.createElement("p");
-    const inputNota = document.createElement("input");
-    const btnEnviarNota = document.createElement("button");
-
-    nomeAluno.innerHTML = "NOME ALUNO";
-    turmaAluno.innerHTML = "TURMA ALUNO";
-    redacao.innerHTML = dadosDesempenho.redacao;
-
-    inputNota.id = "input-nota";
-    inputNota.type = "text";
-    inputNota.placeholder = "Insirir nota";
-    inputNota.min = 0;
-    inputNota.max = 100;
-    inputNota.addEventListener("input", () => validaInputNota(inputNota));
-
-    btnEnviarNota.textContent = "Submeter nota";
-    btnEnviarNota.addEventListener("click", enviarNota);
-
-    divConteudo.append(nomeAluno, turmaAluno, redacao, inputNota, btnEnviarNota);
 }
 
 function validaInputNota(inputNota) {
@@ -144,7 +145,7 @@ function enviarNota() {
 
     nota = Number(nota.replace(",", "."));
 
-    if(confirm(`A nota ${nota} será atribuida`) == false) return;
+    if (confirm(`A nota ${nota} será atribuida`) == false) return;
 
     fetch(`/api/desempenho/${dadosDesempenho.desempenhoId}/nota`, {
         method: "PATCH",
@@ -170,6 +171,12 @@ function destacarCampo(campo) {
     campo.classList.add("campo-obrigatorio");
     setTimeout(() => campo.classList.remove("campo-obrigatorio"), 2000);
     campo.focus();
+}
+
+function confirmarSaidaDaPag() {
+    if (confirm("Tem certeza que deseja sair da página? Os dados da atividade serão perdidos?")) {
+        window.location.href = "/home";
+    }
 }
 
 function initAvaliacao() {

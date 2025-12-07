@@ -39,6 +39,7 @@ body {
     transition: all 0.25s ease;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
 }
+
 #btn-sair:hover {
     transform: translateY(-2px);
     background-color: #ff2a00;
@@ -68,8 +69,8 @@ select {
 
 input:disabled {
     background-color: #f0f0f0;
-    color: #8a8a8a;        
-    border-color:#c7c7c7;
+    color: #8a8a8a;
+    border-color: #c7c7c7;
     cursor: not-allowed;
 }
 
@@ -193,52 +194,52 @@ section button:hover {
 }
 
 .tooltip {
-  position: relative;
-  display: inline-block;
-  cursor: pointer;
-  background-color: #007bff;
-  color: white;
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  text-align: center;
-  font-weight: bold;
-  font-size: 14px;
-  line-height: 20px;
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    background-color: #007bff;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 14px;
+    line-height: 20px;
 }
 
 .tooltip .tooltiptext {
-  visibility: hidden;
-  width: 210px;
-  background-color: #333;
-  color: #fff;
-  text-align: left;
-  border-radius: 6px;
-  padding: 8px;
-  position: absolute;
-  z-index: 1;
-  bottom: 125%;
-  left: 50%;
-  margin-left: -90px;
-  opacity: 0;
-  transition: opacity 0.3s;
-  font-size: 13px;
+    visibility: hidden;
+    width: 210px;
+    background-color: #333;
+    color: #fff;
+    text-align: left;
+    border-radius: 6px;
+    padding: 8px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -90px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-size: 13px;
 }
 
 .tooltip .tooltiptext::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 43%;
-  margin-left: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: #333 transparent transparent transparent;
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 43%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #333 transparent transparent transparent;
 }
 
 .tooltip:hover .tooltiptext {
-  visibility: visible;
-  opacity: 1;
+    visibility: visible;
+    opacity: 1;
 }
 
 #lista-questoes {
@@ -248,16 +249,71 @@ section button:hover {
     margin-top: 1rem;
 }
 
-#lista-questoes > div {
+#lista-questoes>div {
     background-color: #f2f7ff;
     border: 1.5px solid var(--secondary);
     border-radius: 0.6rem;
     padding: 1rem;
     transition: 0.25s ease;
 }
-#lista-questoes > div:hover {
+
+#lista-questoes>div:hover {
     box-shadow: 0 4px 8px rgba(38, 132, 255, 0.1);
 }
+
+/* Lista geral */
+#lista-arquivos {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+/* Cada item */
+#lista-arquivos li {
+    background: #f8f9fb;
+    border: 1px solid #e3e6ea;
+    border-radius: 10px;
+    padding: 0.65rem 1rem;
+    font-size: 0.95rem;
+    color: #333;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    transition: all 0.2s ease;
+}
+
+/* Efeito hover */
+#lista-arquivos li:hover {
+    background: #f0f3f7;
+    transform: translateY(-1px);
+}
+
+/* Ícone de arquivo (antes do nome) */
+#lista-arquivos li::before {
+    content: "📎";
+    margin-right: 0.6rem;
+}
+
+/* Caso você tenha botão de remover */
+#lista-arquivos .btn-remover {
+    background: transparent;
+    border: none;
+    color: #e74c3c;
+    font-size: 0.85rem;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+#lista-arquivos .btn-remover:hover {
+    text-decoration: underline;
+}
+
 
 textarea {
     resize: none;
@@ -270,21 +326,48 @@ textarea {
     box-shadow: 0 0 0 3px rgba(255, 86, 48, 0.2);
 }
 
-.confirmacao {
-    background-color: #f8fbff;
-    border-left: 5px solid var(--primary);
-    padding: 1rem 1.25rem;
-    border-radius: 0.5rem;
-    line-height: 1.5;
+#confirmacao {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1.5rem 2rem;
+    max-width: 500px;
+    animation: fadeIn 0.3s ease;
 }
-.confirmacao p {
-    margin: 0.3rem 0;
+
+#confirmacao h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #333;
+    font-weight: normal;
+}
+
+#confirmacao p {
+    margin: 0;
+    font-size: 0.95rem;
+}
+
+#confirmacao span {
+    color: #333;
+    font-weight: 600;
+}
+
+#confirmacao p+p {
+    border-top: 1px solid #eee;
+    padding-top: 0.5rem;
 }
 
 /* ===== Animações ===== */
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* ===== Responsividade ===== */

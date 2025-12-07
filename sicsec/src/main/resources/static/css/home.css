@@ -296,11 +296,23 @@ main>section.ativo {
     font-weight: bold;
 }
 
+.table-wrapper {
+    overflow-y: scroll;
+    max-height: 21vh;
+}
+
 .turmas-vinculadas table,
 .minhas-atividades table {
     width: 100%;
     border-collapse: collapse;
     font-size: 0.9rem;
+}
+
+.turmas-vinculadas thead,
+.minhas-atividades thead {
+    position: sticky;
+    top: 0;
+    z-index: 2;
 }
 
 .turmas-vinculadas th,
@@ -354,7 +366,7 @@ main>section.ativo {
     position: relative;
     font-size: 0.9rem;
     padding: 1.5rem;
-    min-height: 8rem;
+    min-height: 5rem;
 }
 
 .titulo-noticia {
@@ -1309,7 +1321,6 @@ td {
 
 .noticias {
     width: 100%;
-    padding: 2rem;
 }
 
 .noticias h1 {
