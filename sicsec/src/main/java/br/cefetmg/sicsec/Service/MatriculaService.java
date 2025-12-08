@@ -57,8 +57,8 @@ public class MatriculaService {
     }
 
     public Matricula buscarPorNumero(String numeroMatricula) {
-        Long numeroMatriculaLong = Long.parseLong(numeroMatricula);
-        return matriculaRepository.findByNumeroMatricula(numeroMatriculaLong);
+        Long numerLongoMatriculaLong = Long.parseLong(numeroMatricula);
+        return matriculaRepository.findByNumeroMatricula(numerLongoMatriculaLong);
     }
 
     public void atualizar(String cpf, String nome, String email, String telefone, String numeroMatriculaAnterior, String numeroMatriculaNovo) {

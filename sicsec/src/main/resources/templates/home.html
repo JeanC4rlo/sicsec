@@ -1,64 +1,87 @@
 <!DOCTYPE html>
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
-
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link th:href="@{/css/base.css}" rel="stylesheet" />
-    <link th:href="@{/css/home.css}" rel="stylesheet">
     
+    <link th:href="@{/css/home.css}" rel="stylesheet" />
+    <link th:href="@{/css/base.css}" rel="stylesheet" />
+    <link th:href="@{/css/biblioteca.css}" rel="stylesheet" />
+    <link th:href="@{/css/homeAluno/turmas.css}" rel="stylesheet" />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Red+Hat+Display:ital,wght@0,300..900;1,300..900&display=swap"
-        rel="stylesheet" />
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Red+Hat+Display:ital,wght@0,300..900;1,300..900&display=swap"
+      rel="stylesheet"
+    />
+
+    <script th:src="@{/js/home/sections/homepage.js}"></script>
+    <script th:src="@{/js/home/sections/loginBiblioteca.js}"></script>
+    <script th:src="@{/js/home/sections/tabelaAcervo.js}"></script>
+    <script th:src="@{/js/home/sections/bibliotecaSections.js}"></script>
+    <script th:src="@{/js/home/sections/tabelaDinamica.js}"></script>
+    <script th:src="@{/js/home/sections/turmas/turmasVinculadas.js}"></script>
+    <script th:src="@{/js/home/sections/turmas/initTurmasAluno.js}"></script>
+    <script th:src="@{/js/home/sections/turmas/turmaSections.js}"></script>
+    <script th:src="@{/js/home/sections/bolsas.js}"></script>
+    <script th:src="@{/js/home/sections/bolsasSections.js}"></script>
+    <script th:src="@{/js/home/home.js}"></script>
+
     <title>SICSEC</title>
+  </head>
 
-    <script defer th:src="@{/js/home/adicionar-secoes.js}"></script>
-    <script defer th:src="@{/js/home/selecionar-perfil.js}"></script>
-    <script defer th:src="@{/js/home/GerenciadorTabs.js}"></script>
-</head>
-
-<body>
+  <body>
     <header>
-        <div class="logos">
-            <img th:src="@{/images/cefet.png}" alt="Logo CEFET" id="logo-cefet">
-            <h1>SICSEC</h1>
-        </div>
-        <div class="dropdown-perfil" th:if="${perfis != null and !perfis.isEmpty()}">
-            <form th:action="@{/login/select}" method="post" id="perfil-form">
-
-                <select id="perfil-select" name="idUsuario">
-                    <option disabled selected>Escolha um perfil</option>
-                    <option th:each="perfil : ${perfis}" th:value="${perfil.usuario.id}"
-                        th:text="${perfil.usuario.matricula.numeroMatricula + ' [' + perfil.usuario.cargo + '] (' + (perfil.logado ? 'Logado' : 'Não logado') + ')'}"
-                        th:selected="${perfilSelecionado != null ? perfilSelecionado.usuario.id == perfil.usuario.id : perfil.logado}">
-                    </option>
-                </select>
-
-                <div th:if="${perfilSelecionado != null and !perfilSelecionado.getLogado()}">
-                    <label>Perfil não logado! Insira a senha:
-                        <input type="password" name="senha" required />
-                    </label>
-                    <button type="submit">Trocar</button>
-                </div>
-            </form>
-        </div>
-        <nav th:if="${secoes != null and !secoes.isEmpty() and perfilSelecionado.logado}">
-            <button th:each="secao : ${secoes}" 
-                    class="secao-botao" 
-                    th:classappend="${secao.isDefault} ? 'ativo' : ''"
-                    th:data-id="${secao.secao}"
-                    th:data-default="${secao.isDefault}">
-                <img th:src="@{${secao.icone}}" alt="" />
-                <span th:text="${secao.texto}"></span>
-            </button>
-        </nav>
-
-        <a th:href="@{/logout}" class="sair">Sair</a>
+      <div class="logos">
+        <img th:src="@{/images/cefet.png}" alt="" id="logo-cefet" />
+        <h1>SICSEC</h1>
+      </div>
+      <nav>
+        <button data-section="homepage">
+          <img th:src="@{/images/home/homepage.svg}" alt="" />
+          Página Inicial
+        </button>
+        <button id="botaoAcessoBoletim" data-section="boletim">
+          <img th:src="@{/images/home/boletim.svg}" alt="" />
+          Boletim
+        </button>
+        <button data-section="biblioteca">
+          <img th:src="@{/images/home/biblioteca.svg}" alt="" />
+          Biblioteca
+        </button>
+        <button data-section="turmas">
+          <img th:src="@{/images/home/turmas.svg}" alt="" />
+          Turmas
+        </button>
+        <button data-section="bolsas">
+          <img th:src="@{/images/home/bolsas.svg}" alt="" />
+          Bolsas
+        </button>
+      </nav>
+      <a th:href="@{/}" class="sair">Sair</a>
     </header>
-    <div id="content">
+
+    <main>
+      <section id="homepage">
         <div class="wrapper"></div>
-    </div>
-</body>
+      </section>
+
+      <section id="turmas">
+        <div class="wrapper"></div>
+      </section>
+
+      <section id="boletim">
+        <div class="wrapper"></div>
+      </section>
+
+      <section id="biblioteca">
+        <div class="wrapper"></div>
+      </section>
+
+      <section id="bolsas">
+        <div class="wrapper"></div>
+      </section>
+    </main>
+  </body>
 </html>

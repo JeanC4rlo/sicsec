@@ -2,7 +2,7 @@ package br.cefetmg.sicsec.Controller;
 
 import java.io.IOException;
 import java.util.List;
-
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
 import br.cefetmg.sicsec.Model.Atividade;
 import br.cefetmg.sicsec.Repository.AtividadeRepository;
 import br.cefetmg.sicsec.Service.ArquivoService;
@@ -37,9 +36,6 @@ public class AtividadeController {
     @Autowired
     private ValidarArquivosService validarArquivosService;
 
-    @Autowired
-    private GlobalExceptionHandler globalExceptionHandler;
-
     @PostMapping("/salvar")
     public ResponseEntity<?> salvarAtividade(
             @RequestPart("atividade") Atividade atividade,
@@ -48,8 +44,12 @@ public class AtividadeController {
         try {
             Atividade nova = validarArquivosService.validarListaArquivos(atividade, arquivos);
             return ResponseEntity.status(HttpStatus.CREATED).body(nova);
+
         } catch (IOException e) {
-            return globalExceptionHandler.handleGeneric(e);
+            Map<String, String> erro = Map.of(
+                    "mensagem", "Erro ao processar arquivos",
+                    "detalhes", e.getMessage());
+            return ResponseEntity.badRequest().body(erro);
         }
     }
 
@@ -66,15 +66,11 @@ public class AtividadeController {
     }
 
     @GetMapping("/download/{nomeArquivo}")
-    public ResponseEntity<?> downloadArquivo(@PathVariable String nomeArquivo) throws IOException {
-        try {
-            Resource resource = arquivoService.carregarArquivo(nomeArquivo);
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
-                    .body(resource);
-        } catch (IOException e) {
-            return globalExceptionHandler.handleGeneric(e);
-        }
+    public ResponseEntity<Resource> downloadArquivo(@PathVariable String nomeArquivo) throws IOException {
+        Resource resource = arquivoService.carregarArquivo(nomeArquivo);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+                .body(resource);
     }
 
     @GetMapping("/atividades")

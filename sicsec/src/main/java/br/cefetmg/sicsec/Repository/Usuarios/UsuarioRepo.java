@@ -5,6 +5,7 @@
 package br.cefetmg.sicsec.Repository.Usuarios;
 
 import br.cefetmg.sicsec.Model.Usuario.Usuario;
+import br.cefetmg.sicsec.Model.Usuario.Aluno.Aluno;
 import br.cefetmg.sicsec.Model.Util.Enum.Cargo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 import java.util.List;
 
+
 /**
  *
  * @author davig
@@ -21,29 +23,22 @@ import java.util.List;
 
 @Repository
 public interface UsuarioRepo extends JpaRepository<Usuario, Long> {
-    // Busca usuários por tipo de matrícula (ESTUDANTE, PROFESSOR, ADMIN)
+    //Busca usuários por tipo de matrícula (ESTUDANTE, PROFESSOR, ADMIN)
     List<Usuario> findByCargo(Cargo cargo);
 
-    // Busca usuários pela matrícula
+    //Busca usuários pela matrícula
     Optional<Usuario> findByMatricula_NumeroMatricula(Long matricula);
 
-    // Busca usuários pelo CPF
+    //Busca usuários pelo CPF
     @Query("""
             SELECT u
             FROM Usuario u
             JOIN u.matricula m
             WHERE m.cpf.cpf = :cpf
             """)
-    List<Usuario> findByCpf(@Param("cpf") Long cpf);
-
-    // Busca usuários pelo nome contendo algo (LIKE %nome%)
+    Usuario findByCpf(@Param("cpf") Long cpf);
+    
+    //Busca usuários pelo nome contendo algo (LIKE %nome%)
     List<Usuario> findByMatricula_NomeContaining(String nome);
 
-    Optional<Usuario> findById(Long id);
-
-    @Query("SELECT u FROM Usuario u WHERE " +
-            "LOWER(u.matricula.nome) LIKE LOWER(CONCAT('%', :q, '%')) OR " +
-            "STR(u.matricula.cpf.cpf) LIKE CONCAT('%', :q, '%') OR " +
-            "STR(u.matricula.numeroMatricula) LIKE CONCAT('%', :q, '%')")
-    List<Usuario> findByNomeMatriculaCpf(@Param("q") String q);
 }

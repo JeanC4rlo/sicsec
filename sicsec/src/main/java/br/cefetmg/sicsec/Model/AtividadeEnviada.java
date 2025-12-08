@@ -1,6 +1,6 @@
 package br.cefetmg.sicsec.Model;
 
-//import br.cefetmg.sicsec.Model.Usuario.Aluno.Aluno;
+import br.cefetmg.sicsec.Model.Usuario.Aluno.Aluno;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -10,7 +10,7 @@ import jakarta.persistence.ManyToOne;
 import java.time.LocalDateTime;
 
 @Entity
-public class AtividadeEnviada {
+public abstract class AtividadeEnviada {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -19,15 +19,13 @@ public class AtividadeEnviada {
     @JoinColumn(name = "atividade_id", nullable = false)
     private Atividade atividade;
 
-    /*@ManyToOne
+    @ManyToOne
     @JoinColumn(name = "aluno_id", nullable = false)
-    private Aluno aluno;*/
+    private Aluno aluno;
 
     private Double nota;
+
     private LocalDateTime horarioEnvio;
-    private String resposta;
-    private String nomeArquivoEnviado;
-    private Integer numTentativa;
 
     public Long getId() {
         return id;
@@ -45,13 +43,13 @@ public class AtividadeEnviada {
         this.atividade = atividade;
     }
 
-    /*public Aluno getAluno() {
+    public Aluno getAluno() {
         return aluno;
     }
 
     public void setAluno(Aluno aluno) {
         this.aluno = aluno;
-    }*/
+    }
 
     public Double getNota() {
         return nota;
@@ -67,29 +65,5 @@ public class AtividadeEnviada {
 
     public void setHorarioEnvio(LocalDateTime horarioEnvio) {
         this.horarioEnvio = horarioEnvio;
-    }
-
-    public String getResposta() {
-        return resposta;
-    }
-
-    public void setResposta(String resposta) {
-        this.resposta = resposta;
-    }
-
-    public String getNomeArquivoEnviado() {
-        return nomeArquivoEnviado;
-    }
-
-    public void setNomeArquivoEnviado(String nomeArquivoEnviado) {
-        this.nomeArquivoEnviado = nomeArquivoEnviado;
-    }
-
-    public Integer getNumTentativa() {
-        return numTentativa;
-    }
-
-    public void setNumTentativa(Integer numTentativa) {
-        this.numTentativa = numTentativa;
     }
 }
