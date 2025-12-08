@@ -16,12 +16,12 @@ import jakarta.persistence.Transient;
 public class CPF {
     
     @Column(name = "cpf")
-    private long cpf;
+    private Long cpf;
     
     @Transient
     private String cpfFormatado;
     
-    public long getCpf() {
+    public Long getCpf() {
         return cpf;
     }
 

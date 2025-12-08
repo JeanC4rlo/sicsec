@@ -28,5 +28,4 @@ public interface MatriculaRepo extends JpaRepository<Matricula, Long> {
     boolean existsByNumeroMatricula(Long numeroMatricula);
 
     Matricula findByNumeroMatricula(Long numeroMatricula);
-    
 }
