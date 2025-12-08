@@ -43,7 +43,7 @@ html {
     background-color: #f9f9f9;
 }
 
-#turmas .wrapper section {
+.turmas .wrapper section {
     max-height: 100vh;
     overflow-y: auto;
 }

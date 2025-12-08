@@ -17,12 +17,14 @@ import br.cefetmg.sicsec.Model.Curso.Disciplina;
 import br.cefetmg.sicsec.Model.Curso.Turma.Turma;
 import br.cefetmg.sicsec.Model.Usuario.Aluno.Aluno;
 import br.cefetmg.sicsec.Model.Usuario.Professor.Professor;
+import br.cefetmg.sicsec.Model.Util.Enum.Cargo;
 import br.cefetmg.sicsec.Model.Usuario.Usuario;
 import br.cefetmg.sicsec.Repository.AulaRepo;
 import br.cefetmg.sicsec.Repository.CursoRepo;
 import br.cefetmg.sicsec.Repository.DisciplinaRepo;
 import br.cefetmg.sicsec.Repository.TurmaRepo;
 import br.cefetmg.sicsec.Repository.Usuarios.UsuarioRepo;
+import br.cefetmg.sicsec.dto.Perfil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
@@ -326,9 +328,11 @@ public class TurmaService {
 
     public List<Turma> listarTurmasDeAluno(HttpSession session) {
         
-        Usuario usuario = (Usuario) session.getAttribute("usuario");
+        Perfil perfil = (Perfil) session.getAttribute("perfilSelecionado");
+        Usuario usuario = perfil.getUsuario();
         
-        if (usuario == null || !(usuario instanceof Aluno)) {
+        if (usuario == null || (usuario.getCargo() != Cargo.ALUNO)) {
+            System.out.println("Acesso negado. " + usuario.toString());
             throw new IllegalStateException("Acesso negado.");
         }
         

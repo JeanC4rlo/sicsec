@@ -4,10 +4,8 @@ let localAtual;
 let horarioAtual;
 
 async function initTurmas() {
-    listaTurmas = document.querySelector("#turmas .lista-turmas");
-    materiaAtual = document.querySelector(".value.materia");
-    localAtual = document.querySelector(".value.local");
-    horarioAtual = document.querySelector(".value.horario");
+
+    listaTurmas = document.querySelector(".lista-turmas");
 
     const turmas = await fetchJSON("/api/aluno/acesso/turma/listar");
 
@@ -19,6 +17,15 @@ async function initTurmas() {
         listaTurmas.appendChild(botao);
     });
 
-    const turmaSalva = sessionStorage.getItem("turmaSelecionada");
+    selecionarTurma(turmas[0].id, listaTurmas.querySelector(".botao-turma"));
 
 }
+
+async function fetchJSON(url, options = { method: "POST" }) {
+  const res = await fetch(url, options);
+  if (!res.ok) throw new Error(`Erro HTTP ${res.status} em ${url}`);
+  return res.json();
+}
+
+initTurmas();
+initTurmasTabs();

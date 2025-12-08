@@ -18,6 +18,7 @@ import br.cefetmg.sicsec.Repository.CursoRepo;
 import br.cefetmg.sicsec.Repository.PresencaRepo;
 import br.cefetmg.sicsec.Repository.TurmaRepo;
 import br.cefetmg.sicsec.Repository.Usuarios.*;
+import br.cefetmg.sicsec.dto.Perfil;
 
 /**
  *
@@ -70,8 +71,9 @@ public class UsuarioService {
 
     public List<Presenca> getFrequenciaAluno(HttpSession session) {
 
-        Usuario usuario = (Usuario) session.getAttribute("usuario");
-        
+        Perfil perfil = (Perfil) session.getAttribute("perfilSelecionado");
+        Usuario usuario = perfil.getUsuario();
+
         if (usuario == null || !(usuario instanceof Aluno)) {
             throw new IllegalStateException("Acesso negado.");
         }

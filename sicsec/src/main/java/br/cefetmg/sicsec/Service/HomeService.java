@@ -37,10 +37,14 @@ public class HomeService {
 						false),
 				new Secao(
 						"/images/icons/turmas.svg",
-						"/html/aluno/sections/turmas.html",
+						"/html/aluno/sections/acesso-turmas.html",
 						"Turmas",
-						Arrays.asList(),
-						Arrays.asList("/js/aluno/frag/turmas.js"),
+						Arrays.asList("/css/homeAluno/turmas.css"),
+						Arrays.asList(
+							"/js/aluno/frag/turmas/turmaSections.js", 
+							"/js/aluno/frag/turmas/turmasVinculadas.js",
+							"/js/aluno/frag/turmas/initTurmasAluno.js"
+						),
 						"turmas",
 						false),
 				new Secao(

@@ -1050,15 +1050,15 @@ td {
     direction: rtl;
 }
 
-#turmas .wrapper header > * {
+#turmas-content header div {
   direction: ltr;
 }
 
-#turmas .wrapper header .lista-turmas-wrapper {
+#turmas-content header .lista-turmas-wrapper {
     height: 45%;
 }
 
-#turmas .wrapper header .acoes {
+#turmas-content header .acoes {
     height: 55%;
 }
 

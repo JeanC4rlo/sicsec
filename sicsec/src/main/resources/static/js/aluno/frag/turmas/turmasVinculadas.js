@@ -125,7 +125,7 @@ function criarCard(pessoa) {
 
 async function listarNoticias(turmaId) {
 
-    const divNoticias = document.querySelector("#turmas .noticias");
+    const divNoticias = document.querySelector("#turmas-content .noticias");
 
     const noticias = await fetchJSON("/api/aluno/acesso/turma/noticias/" + encodeURIComponent(turmaId));
 
@@ -156,7 +156,7 @@ async function listarNoticias(turmaId) {
 
 async function listarCronograma(turmaId) {
 
-    const divCronogramas = document.querySelector("#turmas .cronograma");
+    const divCronogramas = document.querySelector("#turmas-content .cronograma");
 
     const cronogramas = await fetchJSON("/api/aluno/acesso/turma/cronogramas/" + encodeURIComponent(turmaId));
 
@@ -207,12 +207,11 @@ async function listarCronograma(turmaId) {
 
 async function montarTabelaFrequencia(turmaId) {
     
-    const tabelaFrequencia = document.querySelector("#turmas .tabela-frequencia tbody");
+    const tabelaFrequencia = document.querySelector("#turmas-content .tabela-frequencia tbody");
 
     const frequencias = await fetchJSON("/api/aluno/frequencia/" + encodeURIComponent(turmaId));
     tabelaFrequencia.innerHTML = "";
     
-    console.log(frequencias);
     const frequenciaTabelada = [];
     
     frequencias.forEach(registro => {
@@ -225,8 +224,6 @@ async function montarTabelaFrequencia(turmaId) {
             if (!registro.presente) frequenciaTabelada.find(f => f.data === registro.data).faltas++;
         }
     });
-
-    console.log(frequenciaTabelada);
 
     frequenciaTabelada.forEach(registro => {
         const tr = document.createElement("tr");
@@ -255,17 +252,11 @@ async function selecionarTurma(turmaId, botao) {
     montarTabelaFrequencia(turmaId);
 
     // Adiciona classe visivel ao elemento de ações
-    const acoesElement = document.querySelector("#turmas header .acoes");
+    const acoesElement = document.querySelector("#turmas-content header .acoes");
     if (acoesElement) {
         acoesElement.classList.add("visivel");
     }
 
     openTurmasTab("principal");
 
-}
-
-async function fetchJSON(url, options = { method: "POST" }) {
-  const res = await fetch(url, options);
-  if (!res.ok) throw new Error(`Erro HTTP ${res.status} em ${url}`);
-  return res.json();
 }

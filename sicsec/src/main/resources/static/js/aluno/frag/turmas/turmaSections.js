@@ -1,5 +1,5 @@
 function highlightTurmasOption(tabId) {
-    const buttons = document.querySelectorAll("#turmas .acoes-container button");
+    const buttons = document.querySelectorAll("#turmas-content .acoes-container button");
 
     buttons.forEach(button => {
         if (button.dataset.tab === tabId)
@@ -10,10 +10,8 @@ function highlightTurmasOption(tabId) {
 }
 
 function openTurmasTab(tabId) {
-    
-    console.log("Abrindo aba:", tabId);
 
-    const sections = document.querySelectorAll("#turmas section");
+    const sections = document.querySelectorAll("#turmas-content section");
 
     sections.forEach(section => {
         if (section.classList.contains(tabId))
@@ -26,7 +24,7 @@ function openTurmasTab(tabId) {
 
 function initTurmasTabs() {
     
-    const turmasButtons = document.querySelectorAll("#turmas .acoes-container button");
+    const turmasButtons = document.querySelectorAll("#turmas-content .acoes-container button");
 
     turmasButtons.forEach(button => {
         button.addEventListener("click", e => {
@@ -34,7 +32,11 @@ function initTurmasTabs() {
             const targetTab = button.dataset.tab;
             highlightTurmasOption(targetTab);
             openTurmasTab(targetTab);
+            console.log(targetTab);
         });
     });
+
+    highlightTurmasOption("principal");
+    openTurmasTab("principal");
 
 }
