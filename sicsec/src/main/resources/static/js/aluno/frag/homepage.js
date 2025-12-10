@@ -99,8 +99,8 @@
             })
     }
 
-    function atualizarAtividades(atividade) {
-        if (calcularDistanciaData(atividade.dataEncerramento, atividade.horaEncerramento, "minutos") == 0) {
+    function atualizarAtividades(atividadeDTO) {
+        if (calcularDistanciaData(atividadeDTO.dataEncerramento, atividadeDTO.horaEncerramento, "minutos") == 0) {
             return;
         }
         const corpoTable = document.querySelector(".minhas-atividades tbody");
@@ -108,23 +108,28 @@
         const data = document.createElement("td");
         const infoAtividade = document.createElement("td");
 
-        linha.addEventListener('click', () => irParaFazerAtividades(atividade.id))
+        linha.addEventListener('click', () => irParaFazerAtividades(atividadeDTO.id))
 
         data.classList.add("data-col");
-        data.innerHTML = formatarDataEHora(atividade.dataEncerramento, atividade.horaEncerramento);
+        data.innerHTML = formatarDataEHora(atividadeDTO.dataEncerramento, atividadeDTO.horaEncerramento);
 
         const disciplina = document.createElement("span");
         disciplina.classList.add("disciplina");
         const avaliacao = document.createElement("span");
         avaliacao.classList.add("avaliacao");
+        const estado = document.createElement("span");
+        estado.classList.add("estado");
 
         disciplina.innerHTML = "DISCIPLINA";
-        avaliacao.innerHTML = `${atividade.nome}<br>${atividade.tipo}: ${atividade.valor} ponto`;
-        if (atividade.valor > 1) avaliacao.innerHTML += "s";
+
+        avaliacao.innerHTML = `${atividadeDTO.nome}<br>${atividadeDTO.tipo}: ${atividadeDTO.valor} ponto`;
+        if (atividadeDTO.valor > 1) avaliacao.innerHTML += "s";
+
+        estado.innerHTML = definirEstado(atividadeDTO);
 
         infoAtividade.append(disciplina, avaliacao);
 
-        linha.append(data, infoAtividade);
+        linha.append(data, infoAtividade, estado);
         corpoTable.append(linha);
     }
 
@@ -146,6 +151,30 @@
             })
     }
 
+    function definirEstado(atividadeDTO) {
+        let distanciaEmMinutos = calcularDistanciaData(atividadeDTO.dataEncerramento, atividadeDTO.horaEncerramento, "minutos");
+        if (distanciaEmMinutos <= 0) {
+            return "fechada";
+        }
+        let numTentativas;
+        fetch(`/atividade/${atividadeDTO.id}/num-tentativas`)
+            .then(resp => {
+                if (!resp.ok) throw new Error("Erro ao carregar o número de tentativas");
+                return resp.json();
+            })
+            .then(dado => {
+                numTentativas = dado;
+            })
+        if (numTentativas > 0)
+            return "Concluída";
+        else {
+            if (distanciaEmMinutos > 60 * 24)
+                return "Aberta";
+            else
+                return "Aberta (quase fechando!)";
+        }
+    }
+
     function initHomepage() {
         const prevBtn = document.getElementById('prevNoticia');
         const nextBtn = document.getElementById('nextNoticia');
@@ -165,5 +194,5 @@
         iniciarSlideshow();
         carregarAtividades();
     }
-   initHomepage();
+    initHomepage();
 })();
