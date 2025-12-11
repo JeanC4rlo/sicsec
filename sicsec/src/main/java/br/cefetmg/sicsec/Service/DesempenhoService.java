@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 import br.cefetmg.sicsec.Model.Desempenho;
 import br.cefetmg.sicsec.Model.Resposta;
-import br.cefetmg.sicsec.Model.Usuario.Usuario;
+import br.cefetmg.sicsec.Model.Usuario.Aluno.Aluno;
 import br.cefetmg.sicsec.Repository.AtividadeRepository;
 import br.cefetmg.sicsec.Repository.DesempenhoRepository;
 import br.cefetmg.sicsec.Repository.TentativaRepository;
@@ -28,8 +28,13 @@ public class DesempenhoService {
     @Autowired
     AlunoRepo alunoRepository;
 
-    public double getNota(Long tentativaId) {
+    public Double getNotaTentativa(Long tentativaId) {
         Desempenho desempenho = desempenhoRepository.findByTentativaId(tentativaId);
+        return desempenho.getNota();
+    }
+
+    public Double getMaiorNotaAtividade(Long atividadeId, Long alunoId) {
+        Desempenho desempenho = desempenhoRepository.findTopByAtividadeIdAndAlunoIdOrderByNotaDesc(atividadeId, alunoId);
         return desempenho.getNota();
     }
 
@@ -54,15 +59,15 @@ public class DesempenhoService {
                 .toList();
     }
 
-    public Desempenho salvarDesempenho(Resposta resposta, Usuario aluno) {
+    public Desempenho salvarDesempenho(Resposta resposta, Aluno aluno) {
         return desempenhoRepository.save(popularDesempenho(resposta, aluno));
     }
 
-    public Desempenho salvarDesempenho(Resposta resposta, double nota, Usuario aluno) {
+    public Desempenho salvarDesempenho(Resposta resposta, Double nota, Aluno aluno) {
         return desempenhoRepository.save(popularDesempenho(resposta, nota, aluno));
     }
 
-    private Desempenho popularDesempenho(Resposta resposta, Usuario aluno) {
+    private Desempenho popularDesempenho(Resposta resposta, Aluno aluno) {
         Desempenho desempenho = new Desempenho();
 
         desempenho.setAluno(aluno);
@@ -74,7 +79,7 @@ public class DesempenhoService {
         return desempenho;
     }
 
-    private Desempenho popularDesempenho(Resposta resposta, double nota, Usuario aluno) {
+    private Desempenho popularDesempenho(Resposta resposta, Double nota, Aluno aluno) {
         Desempenho desempenho = popularDesempenho(resposta, aluno);
         desempenho.setCorrigido(true);
         desempenho.setNota(nota);

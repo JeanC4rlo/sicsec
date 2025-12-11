@@ -32,7 +32,7 @@ public class TentativaController {
 
     @GetMapping("/atividade/{atividadeId}/num-tentativas")
     public ResponseEntity<Integer> getNumTentativasAtividade(@PathVariable Long atividadeId) {
-        int tentativas = tentativaService.getNumTentativasAtividade(atividadeId);
+        int tentativas = tentativaService.getNumTentativasFeitas(atividadeId);
         return ResponseEntity.ok(tentativas);
     }
 

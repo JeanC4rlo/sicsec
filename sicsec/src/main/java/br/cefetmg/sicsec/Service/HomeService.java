@@ -28,6 +28,14 @@ public class HomeService {
 						"homepage",
 						true),
 				new Secao(
+						"/images/icons/check.svg",
+						"/html/aluno/sections/atividades.html",
+						"Atividades",
+						Arrays.asList(),
+						Arrays.asList("/js/aluno/frag/atividades.js"),
+						"atividades",
+						false),
+				new Secao(
 						"/images/icons/boletim.svg",
 						"/html/aluno/sections/boletim.html",
 						"Boletim",

@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import br.cefetmg.sicsec.Model.Atividade;
 import br.cefetmg.sicsec.Service.AtividadeService;
+import br.cefetmg.sicsec.dto.AtividadeDTO;
 import br.cefetmg.sicsec.dto.HomeAtividadesDTO;
 import jakarta.servlet.http.HttpSession;
 
@@ -43,6 +44,12 @@ public class AtividadeController {
     @GetMapping("/home-atividades")
     public ResponseEntity<List<HomeAtividadesDTO>> ListarHomeAtividades() {
         List<HomeAtividadesDTO> listaAtividadesDTO = atividadeService.ListarAtividadesHomeAtividadeDTO();
+        return ResponseEntity.ok(listaAtividadesDTO);
+    }
+
+    @GetMapping("/atividades-dto")
+    public ResponseEntity<List<AtividadeDTO>> ListarAtividadesDTO(HttpSession session) {
+        List<AtividadeDTO> listaAtividadesDTO = atividadeService.ListarAtividadesDTO(session);
         return ResponseEntity.ok(listaAtividadesDTO);
     }
 

@@ -1,50 +1,4 @@
 (function () {
-    const noticias = [
-        { detalhe: '15/10/2025 - PORTUGUÊS', texto: 'Livro Memórias Póstumas de Brás Cubas' },
-        { detalhe: '16/10/2025 - BIOLOGIA', texto: 'Aula no auditório 202 P19' },
-        { detalhe: '17/10/2025 - QUÍMICA', texto: 'Apresentação de Trabalhos' }
-    ];
-
-    let indiceAtual = 0;
-    let intervaloSlideshow;
-    const tempoIntervalo = 5000;
-
-    function atualizarNoticia(indice) {
-        const noticia = noticias[indice];
-        document.getElementById('detalheNoticia').textContent = noticia.detalhe;
-        document.getElementById('textoNoticia').textContent = noticia.texto;
-    }
-
-    function pararSlideshow() {
-        clearInterval(intervaloSlideshow);
-        const pararBtn = document.getElementById('btnParar');
-        pararBtn.textContent = 'INICIAR';
-        pararBtn.classList.add('ativo');
-    }
-
-    function avancarIndiceAutomatico() {
-        indiceAtual = (indiceAtual + 1) % noticias.length;
-        atualizarNoticia(indiceAtual);
-    }
-
-    function iniciarSlideshow() {
-        pararSlideshow();
-        intervaloSlideshow = setInterval(avancarIndiceAutomatico, tempoIntervalo);
-        const pararBtn = document.getElementById('btnParar');
-        pararBtn.textContent = 'PARAR';
-        pararBtn.classList.remove('ativo');
-    }
-
-    function navegarManual(direcao) {
-        pararSlideshow();
-        indiceAtual += direcao;
-
-        if (indiceAtual >= noticias.length) indiceAtual = 0;
-        else if (indiceAtual < 0) indiceAtual = noticias.length - 1;
-
-        atualizarNoticia(indiceAtual);
-    }
-
     function calcularDistanciaData(data, hora = "00:00", tipo = "dias") {
         let denominador = 1;
         switch (tipo) {
@@ -113,22 +67,28 @@
         }
     }
 
-    async function atualizarAtividades(atividadeDTO) {
+    function criarDOMElement(tipo, classe = null, id = null) {
+        const el = document.createElement(tipo);
+        if(classe) el.classList.add(classe)
+        if(id) el.id = id;
+        return el;
+    }
+
+    async function atualizarTabelaAtividades(atividadeDTO) {
         if (calcularDistanciaData(atividadeDTO.dataEncerramento, atividadeDTO.horaEncerramento, "minutos") == 0) {
             return;
         }
 
-        const corpoTable = document.querySelector(".minhas-atividades tbody");
-        const linha = document.createElement("tr");
-
-        const data = document.createElement("td");
-        data.classList.add("data-col");
-
-        const infoAtividade = document.createElement("td");
-        infoAtividade.classList.add("info-atividade");
-
-        const estado = document.createElement("td");
-        estado.classList.add("estado");
+        const corpoTable = document.querySelector("#tabela-atividades tbody");
+        const linha = criarDOMElement("tr");
+        const data = criarDOMElement("td", "data-col");
+        const infoAtividade = criarDOMElement("td", "info-atividade");
+        const disciplina = criarDOMElement("td", "disciplina");
+        const professor = criarDOMElement("td", "professor");
+        const tentativasRestantes = criarDOMElement("td", "tentativasRestantes");
+        const valor = criarDOMElement("td", "valor");
+        const nota = criarDOMElement("td", "nota");
+        const estado = criarDOMElement("td", "estado");
 
         linha.addEventListener('click', () => irParaFazerAtividades(atividadeDTO.id));
 
@@ -137,54 +97,51 @@
             atividadeDTO.horaEncerramento
         );
 
-        const disciplina = document.createElement("span");
-        disciplina.classList.add("disciplina");
+        const nomeAtividade = criarDOMElement("span", "nome-atividade");
+        const tipo = criarDOMElement("span", "tipo");
+        nomeAtividade.innerHTML = atividadeDTO.nome;
+        tipo.innerHTML = atividadeDTO.tipo;
+        infoAtividade.append(nomeAtividade, tipo);
+
         disciplina.innerHTML = "DISCIPLINA";
 
-        const avaliacao = document.createElement("span");
-        avaliacao.classList.add("avaliacao");
-        avaliacao.innerHTML = `${atividadeDTO.nome}<br>${atividadeDTO.tipo}: ${atividadeDTO.valor} ponto`;
-        if (atividadeDTO.valor > 1) avaliacao.innerHTML += "s";
+        professor.innerHTML = atividadeDTO.nomeProfessor;
+
+        tentativasRestantes.innerHTML = atividadeDTO.numTentativasRestantes;
+
+        valor.innerHTML = atividadeDTO.valor;
+
+        nota.innerHTML = atividadeDTO.nota;
 
         const imgEstado = await definirEstado(atividadeDTO);
         imgEstado.classList.add("img-estado");
         estado.append(imgEstado);
 
-
-        infoAtividade.append(disciplina, avaliacao);
-        linha.append(data, infoAtividade, estado);
+        linha.append(data, infoAtividade, disciplina, professor, tentativasRestantes, valor, nota, estado);
         corpoTable.append(linha);
     }
 
     function carregarAtividades() {
-        fetch("/api/atividade/home-atividades")
+        fetch("/api/atividade/atividades-dto")
             .then(response => {
                 if (!response.ok) throw new Error("Falha ao carregar as atividades");
                 return response.json();
             })
             .then(async dados => {
-                const msg = document.getElementById("msg-sem-atividade-homepage");
+                console.log(dados)
+                const msg = document.getElementById("msg-sem-atividade");
                 msg.classList.toggle("inativo", dados.length > 0);
 
                 for (const atividadeDTO of dados) {
-                    await atualizarAtividades(atividadeDTO);
+                    await atualizarTabelaAtividades(atividadeDTO);
                 }
             })
             .catch(err => console.log("Erro:", err));
     }
 
-    function initHomepage() {
-        document.getElementById('prevNoticia').addEventListener('click', () => navegarManual(-1));
-        document.getElementById('nextNoticia').addEventListener('click', () => navegarManual(1));
-        document.getElementById('btnParar').addEventListener('click', () => {
-            const btn = document.getElementById('btnParar');
-            btn.textContent === 'PARAR' ? pararSlideshow() : iniciarSlideshow();
-        });
-
-        atualizarNoticia(indiceAtual);
-        iniciarSlideshow();
+    function initAtivdades() {
         carregarAtividades();
     }
 
-    initHomepage();
+    initAtivdades();
 })();

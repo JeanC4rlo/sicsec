@@ -39,9 +39,15 @@ public class DesempenhoController {
         return ResponseEntity.ok(respostaService.getDesempenhoDTO(desempenhoId));
     }
 
+    @GetMapping("atividade/{atividadeId}/aluno/{alunoId}/nota")
+    public ResponseEntity<Double> getMaiorNotaAtividade(@PathVariable Long atividadeId, @PathVariable Long alunoId) {
+        Double nota = desempenhoService.getMaiorNotaAtividade(atividadeId, alunoId);
+        return ResponseEntity.ok(nota);
+    }
+
     @GetMapping("/tentativa/{tentativaId}/nota")
-    public ResponseEntity<Double> getNota(@PathVariable Long tentativaId) {
-        double nota = desempenhoService.getNota(tentativaId);
+    public ResponseEntity<Double> getNotaTentativa(@PathVariable Long tentativaId) {
+        Double nota = desempenhoService.getNotaTentativa(tentativaId);
         return ResponseEntity.ok(nota);
     }
     

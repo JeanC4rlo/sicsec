@@ -9,9 +9,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import br.cefetmg.sicsec.Model.Atividade;
 import br.cefetmg.sicsec.Model.Usuario.Usuario;
+import br.cefetmg.sicsec.Model.Usuario.Aluno.Aluno;
 import br.cefetmg.sicsec.Model.Usuario.Professor.Professor;
 import br.cefetmg.sicsec.Repository.AtividadeRepository;
+import br.cefetmg.sicsec.Repository.Usuarios.AlunoRepo;
 import br.cefetmg.sicsec.Repository.Usuarios.ProfessorRepo;
+import br.cefetmg.sicsec.dto.AtividadeDTO;
 import br.cefetmg.sicsec.dto.HomeAtividadesDTO;
 import br.cefetmg.sicsec.dto.Perfil;
 import jakarta.servlet.http.HttpSession;
@@ -19,13 +22,22 @@ import jakarta.servlet.http.HttpSession;
 @Service
 public class AtividadeService {
     @Autowired
-    AtividadeRepository atividadeRepository;
+    private AtividadeRepository atividadeRepository;
 
     @Autowired
     private ArquivoService arquivoService;
 
     @Autowired
+    private TentativaService tentativaService;
+
+    @Autowired
+    private DesempenhoService desempenhoService;
+
+    @Autowired
     private ProfessorRepo professorRepository;
+
+    @Autowired
+    private AlunoRepo alunoRepository;
 
     public Atividade getAtividade(Long atividadeId) {
         return atividadeRepository.findById(atividadeId).get();
@@ -52,6 +64,29 @@ public class AtividadeService {
         return atividadeRepository.findAll().stream()
                 .map(a -> new HomeAtividadesDTO(a.getId(), a.getNome(), a.getTipo(), a.getValor(),
                         a.getDataEncerramento(), a.getHoraEncerramento()))
+                .toList();
+    }
+
+    public List<AtividadeDTO> ListarAtividadesDTO(HttpSession session) {
+        Usuario usuario = ((Perfil) session.getAttribute("perfilSelecionado")).getUsuario();
+        Aluno aluno = alunoRepository.findById(usuario.getMatricula().getId()).get();
+        return atividadeRepository.findAll().stream()
+                .map(a -> {
+                    String nomeProfessor = a.getProfessor().getMatricula().getNome();
+                    int numTentativasRestantes = a.getTentativas() - tentativaService.getNumTentativasFeitas(a.getId());
+                    Double nota = desempenhoService.getMaiorNotaAtividade(a.getId(), aluno.getId());
+                    return new AtividadeDTO(
+                            a.getId(),
+                            a.getNome(),
+                            a.getTipo(),
+                            a.getValor(),
+                            nota,
+                            a.getDataEncerramento(),
+                            a.getHoraEncerramento(),
+                            null,
+                            nomeProfessor,
+                            numTentativasRestantes);
+                })
                 .toList();
     }
 }

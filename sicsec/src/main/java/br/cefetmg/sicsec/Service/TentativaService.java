@@ -43,7 +43,7 @@ public class TentativaService {
         return tentativaRepository.save(tentativa);
     }
 
-    public int getNumTentativasAtividade(Long atividadeId) {
+    public int getNumTentativasFeitas(Long atividadeId) {
         return tentativaRepository.countByAtividade_IdAndAbertaFalse(atividadeId);
     }
 

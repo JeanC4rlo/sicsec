@@ -6,4 +6,6 @@ import br.cefetmg.sicsec.Model.Desempenho;
 
 public interface DesempenhoRepository extends JpaRepository<Desempenho, Long> {
     Desempenho findByTentativaId(Long tentativaId);
+
+    Desempenho findTopByAtividadeIdAndAlunoIdOrderByNotaDesc(Long atividadeId, Long alunoId);
 }
