@@ -1,23 +1,58 @@
-/*
-
-td {
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
-    cursor: pointer;
-    text-align: center;
-    width: 50vw;
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    border-radius: 0.5rem;
+    table-layout: fixed;
 }
 
-thead {
-    color: white;
+table caption {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--primary);
+    padding: 1rem;
+    text-align: left;
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 3;
+}
+
+table thead {
     background-color: var(--primary);
-    border-radius: 5px 5px 0 0;
-}*/
+    color: white;
+}
+
+table th, 
+table td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+table th {
+    font-weight: bold;
+}
 
 .tabela-container {
-    margin: 2vh 5vw 0 5vw;
+    max-height: 60vh;
+    overflow-y: auto;
+    border-radius: 0.5rem;
 }
 
-#tabela-desempenhos {
-    max-height: 50vh;
+table caption {
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 10;
+    height: 3.5rem;
+}
+
+table thead th {
+    position: sticky;
+    top: 3.5rem;
+    background: var(--primary);
+    color: white;
+    z-index: 9;
 }
