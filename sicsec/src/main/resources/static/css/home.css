@@ -57,7 +57,7 @@ body>header {
     gap: 1rem;
 }
 
-#perfil-form > div {
+#perfil-form>div {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -224,7 +224,7 @@ main>section.ativo {
     width: 100%;
 }
 
-.secao-conteudo > * {
+.secao-conteudo>* {
     min-width: 0;
     max-height: 100vh;
     overflow-x: auto;
@@ -298,6 +298,10 @@ main>section.ativo {
 
 .table-wrapper {
     overflow-y: scroll;
+    max-height: 100vh;
+}
+
+.table-wrapper.reduzida{
     max-height: 21vh;
 }
 
@@ -349,16 +353,23 @@ main>section.ativo {
     display: block;
 }
 
-.minhas-atividades .disciplina {
+.minhas-atividades .disciplina,
+.nome-atividade {
     font-weight: bold;
     margin-bottom: 0.25rem;
     color: #333;
 }
 
 .minhas-atividades .avaliacao,
-.minhas-atividades .questionario {
+.minhas-atividades .questionario,
+.tipo {
     font-size: 0.85rem;
     color: #666;
+}
+
+.atividade-fechada {
+    font-style: italic;
+    background-color: #d8d2d2;
 }
 
 /* --- Seção Notícias --- */
@@ -528,7 +539,7 @@ main>section.ativo {
 
 /* Hover effects para tabelas */
 .turmas-vinculadas tr:hover,
-.minhas-atividades tr:hover {
+.minhas-atividades tr:hover:not(.atividade-fechada) {
     background-color: #f8f9fa;
     cursor: pointer;
 }

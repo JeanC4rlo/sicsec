@@ -9,12 +9,13 @@
     }
 
     function formatarDataEHora(data, hora) {
-        let distanciaEmDias = calcularDistanciaData(data);
+        let distanciaEmMinutos = calcularDistanciaData(data, hora, "minutos");
         let d = data.split("-");
         let mensagem = `${d[2]}/${d[1]}/${d[0]} ${hora}<br>`;
-        mensagem += distanciaEmDias > 1
-            ? `(${distanciaEmDias} dias)`
-            : "hoje";
+        if (distanciaEmMinutos < 0) return mensagem + "Fechada";
+        mensagem += distanciaEmMinutos > 60 * 24
+            ? `(${calcularDistanciaData(data)} dias)`
+            : "(Hoje)";
         return mensagem;
     }
 
@@ -69,13 +70,13 @@
 
     function criarDOMElement(tipo, classe = null, id = null) {
         const el = document.createElement(tipo);
-        if(classe) el.classList.add(classe)
-        if(id) el.id = id;
+        if (classe) el.classList.add(classe)
+        if (id) el.id = id;
         return el;
     }
 
     async function atualizarTabelaAtividades(atividadeDTO) {
-        if (calcularDistanciaData(atividadeDTO.dataEncerramento, atividadeDTO.horaEncerramento, "minutos") == 0) {
+        if (calcularDistanciaData(atividadeDTO.dataEncerramento) <= -3) {
             return;
         }
 
@@ -90,7 +91,11 @@
         const nota = criarDOMElement("td", "nota");
         const estado = criarDOMElement("td", "estado");
 
-        linha.addEventListener('click', () => irParaFazerAtividades(atividadeDTO.id));
+        if (calcularDistanciaData(atividadeDTO.dataEncerramento, atividadeDTO.horaEncerramento, "minutos") > 0) {
+            linha.addEventListener('click', () => irParaFazerAtividades(atividadeDTO.id));
+        }
+        else
+            linha.classList.add("atividade-fechada");
 
         data.innerHTML = formatarDataEHora(
             atividadeDTO.dataEncerramento,
@@ -111,7 +116,15 @@
 
         valor.innerHTML = atividadeDTO.valor;
 
-        nota.innerHTML = atividadeDTO.nota;
+        if (atividadeDTO.nota != null)
+            nota.innerHTML = atividadeDTO.nota;
+        else {
+            if (atividadeDTO.numTentativasRestantes == 0 && atividadeDTO.tipo != "Questionário")
+                nota.innerHTML = "Sua resposta está sendo avaliada";
+            else {
+                nota.innerHTML = "Você ainda não fez a atividade";
+            }
+        }
 
         const imgEstado = await definirEstado(atividadeDTO);
         imgEstado.classList.add("img-estado");

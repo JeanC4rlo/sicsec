@@ -55,12 +55,13 @@
     }
 
     function formatarDataEHora(data, hora) {
-        let distanciaEmDias = calcularDistanciaData(data);
+        let distanciaEmMinutos = calcularDistanciaData(data, hora, "minutos");
         let d = data.split("-");
         let mensagem = `${d[2]}/${d[1]}/${d[0]} ${hora}<br>`;
-        mensagem += distanciaEmDias > 1
-            ? `(${distanciaEmDias} dias)`
-            : "hoje";
+        if (distanciaEmMinutos < 0) return mensagem + "Fechada";
+        mensagem += distanciaEmMinutos > 60 * 24
+            ? `(${calcularDistanciaData(data)} dias)`
+            : "(Hoje)";
         return mensagem;
     }
 
@@ -114,7 +115,7 @@
     }
 
     async function atualizarAtividades(atividadeDTO) {
-        if (calcularDistanciaData(atividadeDTO.dataEncerramento, atividadeDTO.horaEncerramento, "minutos") == 0) {
+        if (calcularDistanciaData(atividadeDTO.dataEncerramento) <= -3) {
             return;
         }
 
@@ -130,7 +131,11 @@
         const estado = document.createElement("td");
         estado.classList.add("estado");
 
-        linha.addEventListener('click', () => irParaFazerAtividades(atividadeDTO.id));
+        if (calcularDistanciaData(atividadeDTO.dataEncerramento, atividadeDTO.horaEncerramento, "minutos") > 0) {
+            linha.addEventListener('click', () => irParaFazerAtividades(atividadeDTO.id));
+        }
+        else
+            linha.classList.add("atividade-fechada");
 
         data.innerHTML = formatarDataEHora(
             atividadeDTO.dataEncerramento,

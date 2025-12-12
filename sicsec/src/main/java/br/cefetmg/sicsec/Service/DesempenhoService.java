@@ -34,8 +34,11 @@ public class DesempenhoService {
     }
 
     public Double getMaiorNotaAtividade(Long atividadeId, Long alunoId) {
+        Double nota = null;
         Desempenho desempenho = desempenhoRepository.findTopByAtividadeIdAndAlunoIdOrderByNotaDesc(atividadeId, alunoId);
-        return desempenho.getNota();
+        if(desempenho != null)
+            nota = desempenho.getNota();
+        return nota;
     }
 
     public Desempenho getDesempenho(Long desempenhoId) {

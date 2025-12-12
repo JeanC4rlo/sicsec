@@ -1,6 +1,9 @@
 package br.cefetmg.sicsec.Service;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,16 +64,35 @@ public class AtividadeService {
     }
 
     public List<HomeAtividadesDTO> ListarAtividadesHomeAtividadeDTO() {
+        LocalDate hoje = LocalDate.now();
+
         return atividadeRepository.findAll().stream()
-                .map(a -> new HomeAtividadesDTO(a.getId(), a.getNome(), a.getTipo(), a.getValor(),
-                        a.getDataEncerramento(), a.getHoraEncerramento()))
+                .filter(a -> {
+                    LocalDate dataEncerramento = LocalDate.parse(a.getDataEncerramento());
+                    long diasRestantes = ChronoUnit.DAYS.between(hoje, dataEncerramento);
+                    return diasRestantes > -3;
+                })
+                .map(a -> new HomeAtividadesDTO(
+                        a.getId(),
+                        a.getNome(),
+                        a.getTipo(),
+                        a.getValor(),
+                        a.getDataEncerramento(),
+                        a.getHoraEncerramento()))
                 .toList();
     }
 
     public List<AtividadeDTO> ListarAtividadesDTO(HttpSession session) {
+        LocalDate hoje = LocalDate.now();
         Usuario usuario = ((Perfil) session.getAttribute("perfilSelecionado")).getUsuario();
         Aluno aluno = alunoRepository.findById(usuario.getMatricula().getId()).get();
+
         return atividadeRepository.findAll().stream()
+                .filter(a -> {
+                    LocalDate dataEncerramento = LocalDate.parse(a.getDataEncerramento());
+                    long diasRestantes = ChronoUnit.DAYS.between(hoje, dataEncerramento);
+                    return diasRestantes > -3;
+                })
                 .map(a -> {
                     String nomeProfessor = a.getProfessor().getMatricula().getNome();
                     int numTentativasRestantes = a.getTentativas() - tentativaService.getNumTentativasFeitas(a.getId());
