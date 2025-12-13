@@ -296,6 +296,13 @@ main>section.ativo {
     font-weight: bold;
 }
 
+#atividades-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+
 .table-wrapper {
     overflow-y: scroll;
     max-height: 100vh;
@@ -370,6 +377,14 @@ main>section.ativo {
 .atividade-fechada {
     font-style: italic;
     background-color: #d8d2d2;
+}
+
+#barra-de-pesquisa-atividades {
+    width: 50vw;
+}
+
+.section-atividades.minhas-atividades {
+    margin: 2vw;
 }
 
 /* --- Seção Notícias --- */

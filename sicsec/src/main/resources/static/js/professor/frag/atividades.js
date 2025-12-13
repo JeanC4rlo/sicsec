@@ -4,14 +4,6 @@ function initSectionAtividadesProfessor () {
     let tabelaAtividades;
     let corpoTable;
 
-    const input = (placeholder, type = "text", name = "") => {
-        const el = document.createElement("input");
-        el.type = type;
-        el.placeholder = placeholder;
-        if (name) el.name = name;
-        return el;
-    };
-
     function formatarDataEHora(data) {
         let distanciaEmDias = Math.round((new Date(data).getTime() - new Date().getTime()) / (1000 * 3600 * 24));
         data = data.split("-");

@@ -1,12 +1,13 @@
 function initSectionTurmas() {
     let tabelaDesempenhos;
-    const estruturaTabela = `
+    const tabelaSemDados = `
     <table id="tabela-desempenhos">
         <caption>Desempenho da turma</caption>
         <thead>
             <tr>
-                <th>Nome</th>
+                <th>Aluno</th>
                 <th>Atividade</th>
+                <th>Nº Tentativa</th>
                 <th>Tipo</th>
                 <th>Nota</th>
             </tr>
@@ -24,9 +25,13 @@ function initSectionTurmas() {
         try {
             const resp = await fetch("/api/desempenho/desempenhos");
             if (!resp.ok) throw new Error("Erro ao carregar as respostas");
-
+            tabelaDesempenhos.innerHTML = tabelaSemDados;
             const desempenhos = await resp.json();
-            tabelaDesempenhos.innerHTML = estruturaTabela;
+            desempenhos.sort((a, b) => {
+                if (a.nomeAtividade.localeCompare(b.nomeAtividade) == 0)
+                    return a.nomeAluno.localeCompare(b.nomeAluno);
+                return a.nomeAtividade.localeCompare(b.nomeAtividade);
+            })
             desempenhos.forEach(desempenho => preencherTabela(desempenho));
 
         } catch (erro) {
@@ -38,16 +43,18 @@ function initSectionTurmas() {
         const linha = document.createElement("tr");
         const nome = document.createElement("td");
         const atividade = document.createElement("td");
+        const numTentativa = document.createElement("td");
         const tipo = document.createElement("td");
         const nota = document.createElement("td");
 
         nome.textContent = desempenho.nomeAluno;
         atividade.textContent = desempenho.nomeAtividade;
+        numTentativa.textContent = desempenho.numTentativa;
         tipo.textContent = desempenho.tipoAtividade;
         if (desempenho.notaAluno != null) nota.textContent = desempenho.notaAluno + "/" + desempenho.valorAtividade
         else nota.append(botaoAvaliar(desempenho));
 
-        linha.append(nome, atividade, tipo, nota);
+        linha.append(nome, atividade, numTentativa, tipo, nota);
         tabelaDesempenhos.append(linha);
     }
 

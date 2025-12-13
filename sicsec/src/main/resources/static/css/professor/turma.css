@@ -35,10 +35,18 @@ table th {
     font-weight: bold;
 }
 
+.secao-conteudo {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+
 .tabela-container {
     max-height: 60vh;
     overflow-y: auto;
     border-radius: 0.5rem;
+    width: 70vw;
 }
 
 table caption {

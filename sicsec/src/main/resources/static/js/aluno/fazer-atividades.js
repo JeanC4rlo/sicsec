@@ -451,7 +451,7 @@ function carregarTelaRedacao() {
 
 async function carregarTelaEnvioArquivo() {
     await contarTentativas();
-    if (state.numTentativasFeitas > state.atividade.tentativas) {
+    if (state.numTentativasFeitas >= state.atividade.tentativas) {
         telaAtividadeJaFeita();
         return;
     }

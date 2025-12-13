@@ -134,6 +134,33 @@
         corpoTable.append(linha);
     }
 
+    function normalizar(texto) {
+        return texto
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "");
+    }
+
+    function pesquisarPorAtividade() {
+        const barraDePesquisa = document.getElementById("barra-de-pesquisa-atividades");
+        const tabela = document.getElementById("tabela-atividades");
+
+        barraDePesquisa.addEventListener("input", () => {
+
+            const texto = normalizar(barraDePesquisa.value);
+            const linhas = tabela.querySelectorAll("tbody tr");
+
+            linhas.forEach(linha => {
+                const celulaNome = linha.querySelector(".nome-atividade");
+                if (!celulaNome) return;
+
+                const nomeAtvd = normalizar(celulaNome.textContent);
+
+                linha.style.display = nomeAtvd.includes(texto) ? '' : 'none';
+            });
+        });
+    }
+
     function carregarAtividades() {
         fetch("/api/atividade/atividades-dto")
             .then(response => {
@@ -141,10 +168,13 @@
                 return response.json();
             })
             .then(async dados => {
-                console.log(dados)
                 const msg = document.getElementById("msg-sem-atividade");
                 msg.classList.toggle("inativo", dados.length > 0);
-
+                dados.sort((a, b) => {
+                    if(calcularDistanciaData(a.dataEncerramento) <= 0) return 1;
+                    if(calcularDistanciaData(b.dataEncerramento) <= 0) return -1;
+                    return calcularDistanciaData(a.dataEncerramento) - calcularDistanciaData(b.dataEncerramento);
+                });
                 for (const atividadeDTO of dados) {
                     await atualizarTabelaAtividades(atividadeDTO);
                 }
@@ -153,6 +183,7 @@
     }
 
     function initAtivdades() {
+        pesquisarPorAtividade();
         carregarAtividades();
     }
 

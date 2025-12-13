@@ -170,7 +170,11 @@
             .then(async dados => {
                 const msg = document.getElementById("msg-sem-atividade-homepage");
                 msg.classList.toggle("inativo", dados.length > 0);
-
+                dados.sort((a, b) => {
+                    if (calcularDistanciaData(a.dataEncerramento) <= 0) return 1;
+                    if (calcularDistanciaData(b.dataEncerramento) <= 0) return -1;
+                    return calcularDistanciaData(a.dataEncerramento) - calcularDistanciaData(b.dataEncerramento);
+                });
                 for (const atividadeDTO of dados) {
                     await atualizarAtividades(atividadeDTO);
                 }
