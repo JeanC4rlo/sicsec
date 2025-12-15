@@ -257,6 +257,6 @@ async function selecionarTurma(turmaId, botao) {
         acoesElement.classList.add("visivel");
     }
 
-    openTurmasTab("principal");
+    switchTurmasTab("principal");
 
 }

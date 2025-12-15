@@ -111,8 +111,10 @@ public class HomeService {
 						"/images/icons/turmas.svg",
 						"/html/admin/sections/turmas.html",
 						"Gestão de turmas",
-						Arrays.asList("/css/admin/turmas.css"),
-						Arrays.asList("/js/admin/frag/initTurmas.js"),
+						Arrays.asList("https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css",
+											"/css/admin/turmas.css"),
+						Arrays.asList("https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js",
+											"/js/admin/frag/turmas.js"),
 						"turmas",
 						false),
 				new Secao(

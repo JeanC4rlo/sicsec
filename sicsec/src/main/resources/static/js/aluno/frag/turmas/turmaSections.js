@@ -22,6 +22,11 @@ function openTurmasTab(tabId) {
 
 }
 
+function switchTurmasTab(targetTab) {
+    highlightTurmasOption(targetTab);
+    openTurmasTab(targetTab);
+}
+
 function initTurmasTabs() {
     
     const turmasButtons = document.querySelectorAll("#turmas-content .acoes-container button");
@@ -30,13 +35,10 @@ function initTurmasTabs() {
         button.addEventListener("click", e => {
             e.preventDefault();
             const targetTab = button.dataset.tab;
-            highlightTurmasOption(targetTab);
-            openTurmasTab(targetTab);
-            console.log(targetTab);
+            switchTurmasTab(targetTab);
         });
     });
 
-    highlightTurmasOption("principal");
-    openTurmasTab("principal");
+    switchTurmasTab("principal");
 
 }
