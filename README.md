@@ -142,7 +142,7 @@ O produto SICSEC 1.0 visa integrar os sistemas acadêmico (SIGAA), bibliotecári
 | **CSU10** | Gestão de bolsas             | REQ37, REQ38, REQ39, REQ40, REQ41, REQ42                                   | RN27, RN28, RN29, RN30, RN37, RN38 |
 | **CSU11** | Gestão de documentos         | REQ43, REQ44, REQ45, REQ46, REQ47                                          | RN04, RN31, RN32, RN33, RN34, RN35, RN36, RN38, RN39 |
 | **CSU12** | Acessar boletim              | REQ18                                                                      | RN14, RN38       |
-| **CSU13** | Fazer atividades             | REQ17, REQ18                                                               | RN12, RN13, RN38 |
+| **CSU13** | Acesso às atividades e a seu estado            | REQ17, REQ18                                                               | RN12, RN13, RN38 |
 | **CSU14** | Acessar turmas e material associado | REQ10, REQ14, REQ18                                                 | RN02, RN03, RN08, RN36, RN38 |
 | **CSU15** | Acessar e usar a biblioteca  | REQ26, REQ29, REQ30, REQ31, REQ33, REQ34, REQ35                            | RN20, RN23, RN24, RN38, RN40 |
 
@@ -177,15 +177,40 @@ O resultado ficou da seguinte forma:
 | **CSU17** | Gestão de cronogramas                      | REQ52, REQ53, REQ54, REQ55                                                         | RN20, RN23, RN24, RN38, RN40 |
 | **CSU18** | Atribuição de notas                        | REQ26, REQ29, REQ30, REQ31, REQ32, REQ33, REQ34, REQ35, REQ36                      | RN14, RN20, RN23, RN24, RN38, RN40 |
 
+### 16/12/25
+
+No dia 16/12/25, foi modificado o CSU13, pois ele englobava necessidas que já haviam sido supridas em um CSU anterior (CSU06). Então, para ele foi destinado uma função crucial que ainda não havia sido posta ao sistema: uma tela exclusiva para o acesso de atividades e uma sistema de estado para as atividades.
+
+O resultado ficou da seguinte forma:
+
+## Casos de Uso
+
+| Id        | Nome                                       | Requisitos                                                                         | Regra de Negócio |
+|-----------|--------------------------------------------|------------------------------------------------------------------------------------|------------------|
+| **CSU01** | Login e cadastro Auxiliar                  | REQ01, REQ02, REQ05, REQ09, REQ13, REQ17, REQ21, REQ25, REQ29, REQ33, REQ37, REQ43 | RN01, RN37      |
+| **CSU02** | Gestão de matrícula                        | REQ01, REQ02, REQ03, REQ04                                                         | RN05, RN37       |                                                                     |              |
+| **CSU03** | Gestão disciplinas                         | REQ05, REQ06, REQ07, REQ08                                                         | RN02, RN06, RN09, RN37, RN38, RN39 |
+| **CSU04** | Gestão de turma e subturma                 | REQ09, REQ10, REQ11, REQ12                                                         | RN02, RN03, RN07, RN09, RN36, RN37, RN39 |
+| **CSU05** | Gestão de material didático                | REQ13, REQ14, REQ15, REQ16                                                         | RN10, RN11, RN36, RN37 |
+| **CSU06** | Gestão de avaliações                       | REQ17, REQ18, REQ19, REQ20                                                         | RN12, RN14, RN15, RN36, RN37, RN39 |
+| **CSU07** | Gestão de lista de chamada                 | REQ21, REQ22, REQ23, REQ24                                                         | RN16, RN17, RN18, RN19, RN37, RN39 |
+| **CSU08** | Gestão de livros                           | REQ25, REQ26, REQ27, REQ28                                                         | RN21, RN37, RN39 |
+| **CSU09** | Gestão de emprestimos e reservas de livros | REQ29, REQ30, REQ31, REQ32, REQ33, REQ34, REQ35, REQ36                             | RN22, RN23, RN25, RN26, RN36, RN37, RN39 |
+| **CSU10** | Gestão de bolsas                           | REQ37, REQ38, REQ39, REQ40, REQ41, REQ42                                           | RN27, RN28, RN29, RN30, RN37, RN38 |
+| **CSU11** | Gestão de documentos                       | REQ43, REQ44, REQ45, REQ46, REQ47                                                  | RN04, RN31, RN32, RN33, RN34, RN35, RN36, RN38, RN39 |
+| **CSU12** | Acessar boletim                            | REQ18                                                                              | RN14, RN38       |
+| **CSU13** | Fazer atividades/questionários             | REQ17, REQ18                                                                       | RN12, RN13, RN38 |
+| **CSU14** | Acessar turmas e material associado        | REQ10, REQ14, REQ18                                                                | RN02, RN03, RN08, RN36, RN38 |
+| **CSU15** | Acessar e usar a biblioteca                | REQ26, REQ29, REQ30, REQ31, REQ32, REQ33, REQ34, REQ35, REQ36                      | RN20, RN23, RN24, RN38, RN40 |
+| **CSU16** | Gestão de notícias                         | REQ48, REQ49, REQ50, REQ51                                                         | RN20, RN23, RN24, RN38, RN40 |
+| **CSU17** | Gestão de cronogramas                      | REQ52, REQ53, REQ54, REQ55                                                         | RN20, RN23, RN24, RN38, RN40 |
+| **CSU18** | Atribuição de notas                        | REQ26, REQ29, REQ30, REQ31, REQ32, REQ33, REQ34, REQ35, REQ36                      | RN14, RN20, RN23, RN24, RN38, RN40 |
+
 ## Planejamento
 
 | **Sprint**   | **Duração** | **CSUs (Casos de Uso)**                                                                                                                                                                                                                                                                         | **Desenvolvedores Responsáveis**                                                                                                                                                                                                      |
 | ------------ | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Sprint 1** | 3 semanas   | CSU01 – Login e Cadastro Auxiliar<br>CSU02 – Gestão de Matrícula<br>CSU04 – Gerenciar turmas/subturmas <br>CSU06 – Gestão de Atividades<br>CSU07 – Gerenciar listas de presença                                                                                                                                                       | **César:** CSU06<br>**Davi:** CSU04<br>**Jean:** CSU02<br>**Luiza:** CSU01<br>**Wesley:** CSU07              |
 | **Sprint 2** | 2 semanas   | CSU03 – Gestão de Disciplinas<br>CSU05 – Gerenciar Material Didático<br>CSU10 – Gestão de Bolsas<br>CSU11 – Gestão de Documentos<br>CSU13 – Fazer atividades e questionários<br>CSU17 – Gestão de Cronogramas                                                                                                                   | **César:** CSU13<br>**Davi:** CSU05 e CSU17<br>**Jean:** CSU11<br>**Luiza:** CSU03<br>**Wesley:** CSU10          |
-<<<<<<< HEAD
-| **Sprint 3** | 2 semanas   | CSU08 – Gestão de Livros<br>CSU09 – Gestão de Empréstimos e Reservas de Livros<br>CSU12 – Acessar Boletim<br>CSU14 – Acessar Turmas e Materiais Associados<br>CSU15 – Acessar e Usar a Biblioteca<br>CSU16 – Gestão de Notícias<br>CSU18 – Atribuição de Notas | **César:** CSU 12<br>**Davi:** CSU14<br>**Jean:** CSU 08 e CSU15<br>**Luiza:** CSU09<br>**Wesley:** CSU16 |
-=======
 | **Sprint 3** | 2 semanas   | CSU08 – Gestão de Livros<br>CSU09 – Gestão de Empréstimos e Reservas de Livros<br>CSU12 – Acessar Boletim<br>CSU14 – Acessar Turmas e Materiais Associados<br>CSU15 – Acessar e Usar a Biblioteca<br>CSU16 – Gestão de Notícias<br>CSU18 – Atribuição de Notas | **César:** CSU12 e CSU18<br>**Davi:** CSU14<br>**Jean:** CSU08 e CSU15<br>**Luiza:** CSU09<br>**Wesley:** CSU16 |
->>>>>>> 3327154c888b1ce4ac8388a6832543a086b7b74d
 
