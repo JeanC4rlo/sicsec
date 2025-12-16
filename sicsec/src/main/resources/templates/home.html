@@ -31,7 +31,7 @@
                 <select id="perfil-select" name="idUsuario">
                     <option disabled selected>Escolha um perfil</option>
                     <option th:each="perfil : ${perfis}" th:value="${perfil.usuario.id}"
-                        th:text="${perfil.usuario.matricula.numeroMatricula + ' [' + perfil.usuario.cargo + '] (' + (perfil.logado ? 'Logado' : 'Não logado') + ')'}"
+                        th:text="${(perfil.usuario.matricula.numeroMatricula != null ? perfil.usuario.matricula.numeroMatricula : '&lt;vazio&gt;') + ' [' + perfil.usuario.cargo + '] (' + (perfil.logado ? 'Logado' : 'Não logado') + ')'}"
                         th:selected="${perfilSelecionado != null ? perfilSelecionado.usuario.id == perfil.usuario.id : perfil.logado}">
                     </option>
                 </select>
