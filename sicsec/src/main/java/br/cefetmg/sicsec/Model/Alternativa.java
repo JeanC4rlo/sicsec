@@ -13,8 +13,6 @@ public class Alternativa {
 
     private String texto;
 
-    private Boolean correta;
-
     public Long getId() {
         return id;
     }
@@ -29,13 +27,5 @@ public class Alternativa {
 
     public void setTexto(String texto) {
         this.texto = texto;
-    }
-
-    public Boolean getCorreta() {
-        return correta;
-    }
-
-    public void setCorreta(Boolean correta) {
-        this.correta = correta;
     }
 }

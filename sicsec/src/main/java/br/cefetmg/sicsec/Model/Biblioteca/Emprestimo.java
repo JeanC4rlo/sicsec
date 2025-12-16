@@ -32,12 +32,10 @@ public class Emprestimo {
     @Enumerated(EnumType.STRING)
     private Reserva reserva;
     
-    @JsonManagedReference
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_usuario", nullable = false)
     private Usuario mortuario; //Quem fez o emprestimo
 
-    @JsonManagedReference
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_livro", nullable = false)
     private Livro livro;

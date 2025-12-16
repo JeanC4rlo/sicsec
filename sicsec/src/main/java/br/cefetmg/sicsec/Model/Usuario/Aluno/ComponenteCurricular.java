@@ -21,7 +21,6 @@ class ComponenteCurricular {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "boletim_id", nullable = false)
     private Boletim boletim;
@@ -31,7 +30,6 @@ class ComponenteCurricular {
     @JoinColumn(name = "disciplina_id", nullable = false)
     private Disciplina disciplina;
     
-    @JsonManagedReference
     @OneToMany(mappedBy = "componente", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Nota> notas;
     

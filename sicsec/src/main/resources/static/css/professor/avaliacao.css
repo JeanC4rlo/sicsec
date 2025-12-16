@@ -1,0 +1,239 @@
+@import url("/css/base.css");
+
+:root {
+    --accent: #36b37e;
+    --danger: #ff2a00;
+    --caution: #ff5630;
+    --bg: #f4f6fa;
+    --text: #222;
+    --card-bg: #fff;
+    --shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+/* ===== Reset e comportamento geral ===== */
+
+body {
+    background: linear-gradient(180deg, #f6f9ff 0%, #eef3ff 100%);
+    margin: 0;
+    padding: 2rem;
+    font-family: "Inter", system-ui, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+}
+
+h1 {
+    color: var(--secondary);
+}
+
+#conteudo {
+    background-color: var(--card-bg);
+    width: 100%;
+    max-width: 900px;
+    padding: 2rem 2.5rem;
+    border-radius: 1rem;
+    box-shadow: var(--shadow);
+    animation: fadeIn 0.35s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+button {
+    background-color: var(--primary);
+    font-weight: 600;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.6rem 1.2rem;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    color: white;
+}
+
+button:hover {
+    transform: translateY(-2px);
+}
+
+#btn-sair {
+    align-self: flex-end;
+}
+
+#btn-sair:hover {
+    background-color: #ff2a00;
+}
+
+#btn-enviar {
+    align-self: center;
+    width: 20vw;
+}
+
+#btn-enviar:hover {
+    background-color: var(--accent);
+}
+
+#btn-baixar {
+    align-self: left;
+    background-color: var(--accent);
+    width: 10vw;
+}
+
+span {
+    font-weight: normal;
+}
+
+.titulo-avaliacao {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.conteudo-aluno {
+    background: #f7faff;
+    border: 1.5px solid var(--secondary);
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 3px 8px rgba(0, 43, 99, 0.08);
+}
+
+.conteudo-aluno h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.texto-redacao {
+    background: white;
+    border: 1px solid #d0d7e2;
+    padding: 1.25rem;
+    border-radius: 0.5rem;
+    line-height: 1.55;
+    white-space: pre-wrap;
+    max-height: 400px;
+    overflow-y: auto;
+    font-size: 1rem;
+}
+
+.arquivo-link {
+    display: inline-block;
+    padding: 0.6rem 1rem;
+    background-color: var(--primary);
+    color: white;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: 0.25s ease;
+    margin-top: 0.5rem;
+}
+
+.arquivo-link:hover {
+    background-color: var(--secondary);
+    transform: translateY(-2px);
+}
+
+.avaliacao-box {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.avaliacao-box label {
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.input-nota {
+    width: 100%;
+    max-width: 120px;
+    padding: 0.6rem;
+    border: 2px solid #d0d7e2;
+    border-radius: 0.5rem;
+    font-size: 1.1rem;
+    text-align: center;
+    transition: border-color 0.2s ease;
+}
+
+.input-nota:focus {
+    outline: none;
+    border-color: var(--secondary);
+    background-color: #f0f6ff;
+    box-shadow: 0 0 0 3px rgba(38, 132, 255, 0.15);
+}
+
+.btn-enviar-nota {
+    width: fit-content;
+    background-color: var(--accent);
+    color: white;
+    font-weight: 600;
+    border: none;
+    border-radius: 0.6rem;
+    padding: 0.7rem 1.6rem;
+    cursor: pointer;
+    transition: 0.25s ease;
+    box-shadow: var(--shadow);
+    margin-top: 0.5rem;
+}
+
+.btn-enviar-nota:hover {
+    background-color: #2ca96d;
+    transform: translateY(-2px);
+}
+
+.btn-enviar-nota.inativo {
+    background-color: #c9c9c9;
+    color: #666 !important;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none;
+}
+
+.feedback-sucesso {
+    background-color: #f2fff8;
+    border-left: 6px solid var(--accent);
+    padding: 1rem 1.25rem;
+    border-radius: 0.5rem;
+    color: #0a4d2b;
+}
+
+.feedback-erro {
+    background-color: #fff5f5;
+    border-left: 6px solid var(--danger);
+    padding: 1rem 1.25rem;
+    border-radius: 0.5rem;
+    color: #781b1b;
+}
+
+.campo-obrigatorio:focus {
+    border-color: var(--danger);
+    box-shadow: 0 0 0 3px rgba(255, 86, 48, 0.2);
+}
+
+/* ===== Animação ===== */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===== Responsividade ===== */
+
+@media (max-width: 700px) {
+    #conteudo {
+        padding: 1.5rem;
+    }
+
+    .titulo-avaliacao {
+        font-size: 1.5rem;
+    }
+
+    .conteudo-aluno {
+        padding: 1rem;
+    }
+}

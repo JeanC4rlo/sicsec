@@ -20,12 +20,10 @@ public class Boletim {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "aluno_id", nullable = false)
     private Aluno aluno;
 
-    @JsonManagedReference
     @OneToMany(mappedBy = "boletim", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ComponenteCurricular> componentes;
 

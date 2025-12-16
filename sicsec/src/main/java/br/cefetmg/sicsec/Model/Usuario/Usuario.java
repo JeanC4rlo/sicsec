@@ -19,31 +19,27 @@ import jakarta.persistence.*;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Usuario {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     @Enumerated(EnumType.STRING)
     private Cargo cargo;
-    
+
     private String senha;
-    
-    @JsonManagedReference
+
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_matricula", nullable = false)
     private Matricula matricula;
-    
-    @JsonManagedReference
+
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_dados", nullable = false)
     private DadosBancarios dadosBancarios;
-    
-    @JsonBackReference
+
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "mortuario")
     private List<Emprestimo> emprestimos;
-    
-    @JsonIgnore
+
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "usuario")
     private List<Assinatura> documentosAssinados;
 

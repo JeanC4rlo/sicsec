@@ -28,6 +28,14 @@ public class HomeService {
 						"homepage",
 						true),
 				new Secao(
+						"/images/icons/check.svg",
+						"/html/aluno/sections/atividades.html",
+						"Atividades",
+						Arrays.asList(),
+						Arrays.asList("/js/aluno/frag/atividades.js"),
+						"atividades",
+						false),
+				new Secao(
 						"/images/icons/boletim.svg",
 						"/html/aluno/sections/boletim.html",
 						"Boletim",
@@ -58,7 +66,7 @@ public class HomeService {
 						Arrays.asList("/css/aluno/assinaturas.css"),
 						Arrays.asList("/js/aluno/frag/assinaturas.js"),
 						"assinaturas",
-						true),
+						false),
 				new Secao(
 						"/images/icons/bolsas.svg",
 						"/html/aluno/sections/bolsas.html",
@@ -70,6 +78,14 @@ public class HomeService {
 
 		ROLE_SECTIONS.put(Cargo.PROFESSOR, Arrays.asList(
 				new Secao(
+						"/images/icons/homepage.svg",
+						"/html/aluno/sections/homepage.html",
+						"Página inicial",
+						Arrays.asList(),
+						Arrays.asList("/js/aluno/frag/homepage.js"),
+						"homepage",
+						true),
+				new Secao(
 						"/images/icons/materia.svg",
 						"/html/professor/sections/atividades.html",
 						"Atividades",
@@ -78,13 +94,13 @@ public class HomeService {
 						"atividades",
 						false),
 				new Secao(
-						"/images/icons/homepage.svg",
-						"/html/aluno/sections/homepage.html",
-						"Página inicial",
-						Arrays.asList(),
-						Arrays.asList("/js/aluno/frag/homepage.js"),
-						"homepage",
-						true),
+						"/images/icons/materia.svg",
+						"/html/professor/sections/turmas.html",
+						"Turmas",
+						Arrays.asList("/css/professor/turma.css"),
+						Arrays.asList("/js/professor/frag/turmas.js"),
+						"turmas",
+						false),
 				new Secao(
 						"/images/icons/assinaturas.svg",
 						"/html/professor/sections/assinaturas.html",

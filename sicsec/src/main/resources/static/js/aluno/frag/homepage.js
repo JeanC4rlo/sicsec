@@ -1,163 +1,199 @@
-const noticias = [
-    {
-        detalhe: '15/10/2025 - PORTUGUÊS',
-        texto: 'Livro Memórias Póstumas de Brás Cubas'
-    },
-    {
-        detalhe: '16/10/2025 - BIOLOGIA',
-        texto: 'Aula no auditório 202 P19'
-    },
-    {
-        detalhe: '17/10/2025 - QUÍMICA',
-        texto: 'Apresentação de Trabalhos'
-    }
-];
+(function () {
+    const noticias = [
+        { detalhe: '15/10/2025 - PORTUGUÊS', texto: 'Livro Memórias Póstumas de Brás Cubas' },
+        { detalhe: '16/10/2025 - BIOLOGIA', texto: 'Aula no auditório 202 P19' },
+        { detalhe: '17/10/2025 - QUÍMICA', texto: 'Apresentação de Trabalhos' }
+    ];
 
-let indiceAtual = 0;
-let intervaloSlideshow;
-const tempoIntervalo = 5000;
+    let indiceAtual = 0;
+    let intervaloSlideshow;
+    const tempoIntervalo = 5000;
 
-function atualizarNoticia(indice) {
-    const noticia = noticias[indice];
-
-    const detalheEl = document.getElementById('detalheNoticia');
-    const textoEl = document.getElementById('textoNoticia');
-
-    detalheEl.textContent = noticia.detalhe;
-    textoEl.textContent = noticia.texto;
-}
-
-function pararSlideshow() {
-    clearInterval(intervaloSlideshow);
-    const pararBtn = document.getElementById('btnParar');
-    pararBtn.textContent = 'INICIAR';
-    pararBtn.classList.add('ativo');
-}
-
-function avancarIndiceAutomatico() {
-    indiceAtual++;
-    if (indiceAtual >= noticias.length) {
-        indiceAtual = 0;
-    }
-    atualizarNoticia(indiceAtual);
-}
-
-function iniciarSlideshow() {
-    pararSlideshow();
-
-    intervaloSlideshow = setInterval(avancarIndiceAutomatico, tempoIntervalo);
-
-    const pararBtn = document.getElementById('btnParar');
-    pararBtn.textContent = 'PARAR';
-    pararBtn.classList.remove('ativo');
-}
-
-function navegarManual(direcao) {
-    pararSlideshow();
-
-    indiceAtual += direcao;
-
-    if (indiceAtual >= noticias.length) {
-        indiceAtual = 0;
-    } else if (indiceAtual < 0) {
-        indiceAtual = noticias.length - 1;
+    function atualizarNoticia(indice) {
+        const noticia = noticias[indice];
+        document.getElementById('detalheNoticia').textContent = noticia.detalhe;
+        document.getElementById('textoNoticia').textContent = noticia.texto;
     }
 
-    atualizarNoticia(indiceAtual);
-}
-
-function calcularDistanciaDias(data) {
-    return Math.round((new Date(data).getTime() - new Date().getTime()) / (1000 * 3600 * 24));
-}
-
-function formatarDataEHora(data, hora) {
-    let distanciaEmDias = calcularDistanciaDias(data);
-    data = data.split("-");
-    let mensagem = `${data[2]}/${data[1]}/${data[0]} ${hora}<br>`;
-    if (distanciaEmDias > 1)
-        mensagem += `(${distanciaEmDias} dia${(distanciaEmDias > 1) ? 's)' : ')'}`
-    else
-        mensagem += "hoje";
-    return mensagem
-}
-
-function irParaFazerAtividades(id) {
-    fetch(`/api/atividade/${id}`)
-        .then(response => response.json())
-        .then(atividade => {
-            localStorage.setItem("atividade", JSON.stringify(atividade));
-            window.location.href = "/html/aluno/fazer-atividades.html";
-        })
-}
-
-function atualizarAtividades(atividade) {
-    if (calcularDistanciaDias(atividade.dataEncerramento) < 0) {
-        return;
+    function pararSlideshow() {
+        clearInterval(intervaloSlideshow);
+        const pararBtn = document.getElementById('btnParar');
+        pararBtn.textContent = 'INICIAR';
+        pararBtn.classList.add('ativo');
     }
-    const corpoTable = document.querySelector(".minhas-atividades tbody");
-    const linha = document.createElement("tr");
-    const data = document.createElement("td");
-    const infoAtividade = document.createElement("td");
 
-    linha.addEventListener('click', () => irParaFazerAtividades(atividade.id))
+    function avancarIndiceAutomatico() {
+        indiceAtual = (indiceAtual + 1) % noticias.length;
+        atualizarNoticia(indiceAtual);
+    }
 
-    data.classList.add("data-col");
-    data.innerHTML = formatarDataEHora(atividade.dataEncerramento, atividade.horaEncerramento);
+    function iniciarSlideshow() {
+        pararSlideshow();
+        intervaloSlideshow = setInterval(avancarIndiceAutomatico, tempoIntervalo);
+        const pararBtn = document.getElementById('btnParar');
+        pararBtn.textContent = 'PARAR';
+        pararBtn.classList.remove('ativo');
+    }
 
-    const disciplina = document.createElement("span");
-    disciplina.classList.add("disciplina");
-    const avaliacao = document.createElement("span");
-    avaliacao.classList.add("avaliacao");
+    function navegarManual(direcao) {
+        pararSlideshow();
+        indiceAtual += direcao;
 
-    disciplina.innerHTML = "DISCIPLINA";
-    avaliacao.innerHTML = `${atividade.nome}<br>${atividade.tipo}: ${atividade.valor} ponto`;
-    if (atividade.valor > 1) avaliacao.innerHTML += "s";
+        if (indiceAtual >= noticias.length) indiceAtual = 0;
+        else if (indiceAtual < 0) indiceAtual = noticias.length - 1;
 
-    infoAtividade.append(disciplina, avaliacao);
+        atualizarNoticia(indiceAtual);
+    }
 
-    linha.append(data, infoAtividade);
-    corpoTable.append(linha);
-}
-
-function carregarAtividades() {
-    fetch("/api/atividade/home-atividades")
-        .then(response => {
-            if (!response.ok) throw new Error("Falha ao carregar as atividades");
-            return response.json();
-        })
-        .then(dados => {
-            if (dados.length > 0) document.getElementById("msg-sem-atividade").classList.add("inativo");
-            else document.getElementById("msg-sem-atividade").classList.remove("inativo");
-            dados.forEach(atividade => {
-                atualizarAtividades(atividade);
-            });
-        })
-        .catch(err => {
-            console.log("Erro:", err);
-        })
-}
-
-function initHomepage() {
-    const prevBtn = document.getElementById('prevNoticia');
-    const nextBtn = document.getElementById('nextNoticia');
-    const pararBtn = document.getElementById('btnParar');
-
-    prevBtn.addEventListener('click', () => navegarManual(-1));
-    nextBtn.addEventListener('click', () => navegarManual(1));
-    pararBtn.addEventListener('click', () => {
-        if (pararBtn.textContent === 'PARAR') {
-            pararSlideshow();
-        } else {
-            iniciarSlideshow();
+    function calcularDistanciaData(data, hora = "00:00", tipo = "dias") {
+        let denominador = 1;
+        switch (tipo) {
+            case "dias": denominador = 1000 * 3600 * 24; break;
+            case "minutos": denominador = 1000 * 60;
         }
-    });
+        return Math.round((new Date(`${data}T${hora}-03:00`).getTime() - Date.now()) / denominador);
+    }
 
-    atualizarNoticia(indiceAtual);
-    iniciarSlideshow();
-    carregarAtividades();
-}
+    function formatarDataEHora(data, hora) {
+        let distanciaEmMinutos = calcularDistanciaData(data, hora, "minutos");
+        let d = data.split("-");
+        let mensagem = `${d[2]}/${d[1]}/${d[0]} ${hora}<br>`;
+        if (distanciaEmMinutos < 0) return mensagem + "Fechada";
+        mensagem += distanciaEmMinutos > 60 * 24
+            ? `(${calcularDistanciaData(data)} dias)`
+            : "(Hoje)";
+        return mensagem;
+    }
 
-document.addEventListener("load", () => {
+    function irParaFazerAtividades(id) {
+        fetch(`/api/atividade/${id}`)
+            .then(r => r.json())
+            .then(atividade => {
+                localStorage.setItem("atividade", JSON.stringify(atividade));
+                window.location.href = "/html/aluno/fazer-atividades.html";
+            });
+    }
+
+    async function definirEstado(atividadeDTO) {
+        const img = document.createElement("img");
+        let caminho = "/images/icons/";
+        let distanciaEmMinutos = calcularDistanciaData(
+            atividadeDTO.dataEncerramento,
+            atividadeDTO.horaEncerramento,
+            "minutos"
+        );
+
+        if (distanciaEmMinutos <= 0) {
+            img.src = caminho + "encerrado.svg";
+            img.title = "Atividade fechada";
+            return img;
+        }
+
+        try {
+            const resp = await fetch(`/api/tentativa/atividade/${atividadeDTO.id}/num-tentativas`);
+            if (!resp.ok) throw new Error("Erro ao carregar o número de tentativas");
+
+            const numTentativasFeitas = await resp.json();
+
+            if (numTentativasFeitas > 0) {
+                img.src = caminho + "concluido.svg";
+                img.title = "Você já fez essa atividade";
+            }
+            else if (distanciaEmMinutos > 60 * 24) {
+                img.src = caminho + "atencao.svg";
+                img.title = "Você ainda não fez essa atividade";
+            }
+            else {
+                img.src = caminho + "alerta.svg";
+                img.title = "Atividade ainda não feita e será fechada hoje";
+            }
+            return img;
+
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    async function atualizarAtividades(atividadeDTO) {
+        if (calcularDistanciaData(atividadeDTO.dataEncerramento) <= -3) {
+            return;
+        }
+
+        const corpoTable = document.querySelector(".minhas-atividades tbody");
+        const linha = document.createElement("tr");
+
+        const data = document.createElement("td");
+        data.classList.add("data-col");
+
+        const infoAtividade = document.createElement("td");
+        infoAtividade.classList.add("info-atividade");
+
+        const estado = document.createElement("td");
+        estado.classList.add("estado");
+
+        if (calcularDistanciaData(atividadeDTO.dataEncerramento, atividadeDTO.horaEncerramento, "minutos") > 0) {
+            linha.addEventListener('click', () => irParaFazerAtividades(atividadeDTO.id));
+        }
+        else
+            linha.classList.add("atividade-fechada");
+
+        data.innerHTML = formatarDataEHora(
+            atividadeDTO.dataEncerramento,
+            atividadeDTO.horaEncerramento
+        );
+
+        const disciplina = document.createElement("span");
+        disciplina.classList.add("disciplina");
+        disciplina.innerHTML = "DISCIPLINA";
+
+        const avaliacao = document.createElement("span");
+        avaliacao.classList.add("avaliacao");
+        avaliacao.innerHTML = `${atividadeDTO.nome}<br>${atividadeDTO.tipo}: ${atividadeDTO.valor} ponto`;
+        if (atividadeDTO.valor > 1) avaliacao.innerHTML += "s";
+
+        const imgEstado = await definirEstado(atividadeDTO);
+        imgEstado.classList.add("img-estado");
+        estado.append(imgEstado);
+
+
+        infoAtividade.append(disciplina, avaliacao);
+        linha.append(data, infoAtividade, estado);
+        corpoTable.append(linha);
+    }
+
+    function carregarAtividades() {
+        fetch("/api/atividade/home-atividades")
+            .then(response => {
+                if (!response.ok) throw new Error("Falha ao carregar as atividades");
+                return response.json();
+            })
+            .then(async dados => {
+                const msg = document.getElementById("msg-sem-atividade-homepage");
+                msg.classList.toggle("inativo", dados.length > 0);
+                dados.sort((a, b) => {
+                    if (calcularDistanciaData(a.dataEncerramento) <= 0) return 1;
+                    if (calcularDistanciaData(b.dataEncerramento) <= 0) return -1;
+                    return calcularDistanciaData(a.dataEncerramento) - calcularDistanciaData(b.dataEncerramento);
+                });
+                for (const atividadeDTO of dados) {
+                    await atualizarAtividades(atividadeDTO);
+                }
+            })
+            .catch(err => console.log("Erro:", err));
+    }
+
+    function initHomepage() {
+        document.getElementById('prevNoticia').addEventListener('click', () => navegarManual(-1));
+        document.getElementById('nextNoticia').addEventListener('click', () => navegarManual(1));
+        document.getElementById('btnParar').addEventListener('click', () => {
+            const btn = document.getElementById('btnParar');
+            btn.textContent === 'PARAR' ? pararSlideshow() : iniciarSlideshow();
+        });
+
+        atualizarNoticia(indiceAtual);
+        iniciarSlideshow();
+        carregarAtividades();
+    }
+
     initHomepage();
-    document.querySelector("button[data-id='homepage']").addEventListener("click", initSectionHomepage);
-})
+})();

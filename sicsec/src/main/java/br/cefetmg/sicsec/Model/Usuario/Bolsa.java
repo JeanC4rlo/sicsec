@@ -30,7 +30,6 @@ public class Bolsa {
     @Temporal(TemporalType.DATE)
     private Date fim;
     
-    @JsonBackReference
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "bolsista",

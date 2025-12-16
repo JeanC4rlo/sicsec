@@ -13,5 +13,5 @@ public interface TentativaRepository extends JpaRepository<Tentativa, Long> {
 
     Optional<Tentativa> findTopByAtividade_IdOrderByNumTentativaDesc(Long atividadeId);
 
-    Optional<Tentativa> findByAtividadeIdAndAbertaTrue(Long atividadeId);
+    Optional<Tentativa> findByAtividade_IdAndAbertaTrue(Long atividadeId);
 }

@@ -97,5 +97,4 @@ public class HomeController {
     public String producaoAtividadesView() {
         return "redirect:/html/professor/producao-atividades.html";
     }
-
 }

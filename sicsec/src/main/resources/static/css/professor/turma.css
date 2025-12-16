@@ -1,0 +1,66 @@
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    border-radius: 0.5rem;
+    table-layout: fixed;
+}
+
+table caption {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--primary);
+    padding: 1rem;
+    text-align: left;
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 3;
+}
+
+table thead {
+    background-color: var(--primary);
+    color: white;
+}
+
+table th, 
+table td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+table th {
+    font-weight: bold;
+}
+
+.secao-conteudo {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.tabela-container {
+    max-height: 60vh;
+    overflow-y: auto;
+    border-radius: 0.5rem;
+    width: 70vw;
+}
+
+table caption {
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 10;
+    height: 3.5rem;
+}
+
+table thead th {
+    position: sticky;
+    top: 3.5rem;
+    background: var(--primary);
+    color: white;
+    z-index: 9;
+}

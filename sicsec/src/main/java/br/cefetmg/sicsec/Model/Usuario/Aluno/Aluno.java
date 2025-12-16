@@ -6,7 +6,6 @@ package br.cefetmg.sicsec.Model.Usuario.Aluno;
 
 import br.cefetmg.sicsec.Model.Curso.Turma.Turma;
 import br.cefetmg.sicsec.Model.Usuario.*;
-import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import java.util.List;
 
@@ -17,15 +16,12 @@ import java.util.List;
 @Entity
 public class Aluno extends Usuario {
     
-    @JsonManagedReference
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "discentes")
     private List<Turma> turmas;
     
-    @JsonManagedReference
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "bolsistas")
     private List<Bolsa> bolsas;
     
-    @JsonManagedReference
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "aluno")
     private List<Boletim> anosEscolares;
     
@@ -35,7 +31,6 @@ public class Aluno extends Usuario {
     private List<Matricula> historicoMatricula;
     */
 
-    @JsonManagedReference
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "aluno")
     private List<NescessidadeEspecial> nescessidadesEspeciais;
 

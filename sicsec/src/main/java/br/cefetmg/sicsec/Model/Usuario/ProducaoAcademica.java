@@ -27,7 +27,6 @@ public class ProducaoAcademica {
     @Temporal(TemporalType.DATE)
     private Date publicacao;
     
-    @JsonBackReference
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_autor", nullable = false)
     private Usuario autor;
