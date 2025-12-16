@@ -104,25 +104,13 @@ table thead th {
     z-index: 9;
 }
 
-table tbody tr:nth-child(even):not(.encerrada) {
+table tbody tr:nth-child(even):not(.atividade-fechada) {
     background-color: var(--bg-secondary);
 }
 
-table tbody tr:hover:not(.encerrada) {
+table tbody tr:hover:not(.atividade-fechada) {
     background-color: var(--secondary);
     color: white;
-    cursor: pointer;
-}
-
-.encerrada {
-    background-color: #6a6a6a;
-    color: #e0e0e0;
-    opacity: 0.7;
-    font-style: italic;
-}
-
-.encerrada:hover {
-    background-color: var(--primary);
     cursor: pointer;
 }
 

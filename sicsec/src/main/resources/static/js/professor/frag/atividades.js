@@ -1,20 +1,33 @@
-function initSectionAtividadesProfessor () {
+function initSectionAtividadesProfessor() {
     let barraDePesquisa;
     let btnAddAtividade;
     let tabelaAtividades;
     let corpoTable;
 
+    function formatarData(data) {
+        data = data.split("-");
+        return `${data[2]}/${data[1]}/${data[0]}`;
+    }
+
     function formatarDataEHora(data) {
         let distanciaEmDias = Math.round((new Date(data).getTime() - new Date().getTime()) / (1000 * 3600 * 24));
-        data = data.split("-");
-        let mensagem = `${data[2]}/${data[1]}/${data[0]}<br>(${distanciaEmDias} dia`;
+        let mensagem = formatarData(data) + `<br>(${distanciaEmDias} dia`;
         mensagem += (distanciaEmDias > 1) ? "s)" : ")";
         return mensagem
     }
 
+    function calcularDistanciaData(data, hora = "00:00", tipo = "dias") {
+        let denominador = 1;
+        switch (tipo) {
+            case "dias": denominador = 1000 * 3600 * 24; break;
+            case "minutos": denominador = 1000 * 60;
+        }
+        return Math.round((new Date(`${data}T${hora}-03:00`).getTime() - Date.now()) / denominador);
+    }
+
     function atividadeAindaDisponivel(data, linha) {
         if ((new Date(data).getTime() - new Date().getTime()) / (1000 * 3600 * 24) <= 0) {
-            linha.classList.add("encerrada");
+            linha.classList.add("atividade-fechada");
             return false;
         }
         return true;
@@ -39,17 +52,13 @@ function initSectionAtividadesProfessor () {
 
         linha.classList.add("atividade");
 
-        codigo.innerHTML = atividade.id;
-        nome.innerHTML = atividade.nome;
-        tipo.innerHTML = atividade.tipo;
-        valor.innerHTML = atividade.valor;
         if (atividadeAindaDisponivel(atividade.dataEncerramento, linha)) {
             dataEnc.innerHTML = formatarDataEHora(atividade.dataEncerramento);
         }
         else {
             dataEnc.innerHTML = "Atividade encerrada";
         }
-        dataCri.innerHTML = "DATACRI";
+        atividade.dataCriacao? dataCri.innerHTML = formatarData(atividade.dataCriacao) : dataCri.innerHTML = "Data desconhecida";
 
         linha.append(codigo, nome, tipo, valor, dataEnc, dataCri);
         corpoTable.append(linha);
@@ -63,6 +72,11 @@ function initSectionAtividadesProfessor () {
             })
             .then(dados => {
                 corpoTable.innerHTML = "";
+                dados.sort((a, b) => {
+                    if (calcularDistanciaData(a.dataEncerramento) <= 0) return 1;
+                    if (calcularDistanciaData(b.dataEncerramento) <= 0) return -1;
+                    return a.id - b.id;
+                });
                 dados.forEach(atividade => {
                     preencherTabelaAtividades(atividade);
                     pesquisarPorAtividade();

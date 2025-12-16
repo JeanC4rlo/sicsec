@@ -1,19 +1,9 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package br.cefetmg.sicsec.Model.Usuario.Professor;
 
 import br.cefetmg.sicsec.Model.Curso.Turma.*;
 import br.cefetmg.sicsec.Model.Usuario.*;
-import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import java.util.List;
-
-/**
- *
- * @author davig
- */
 
 @Entity
 public class Professor extends Usuario {

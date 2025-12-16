@@ -27,6 +27,7 @@ public class Atividade implements FileOwner {
     private Double valor;
     private String dataEncerramento;
     private String horaEncerramento;
+    private String dataCriacao;
     @Lob
     private String enunciado;
     @Lob
@@ -90,6 +91,14 @@ public class Atividade implements FileOwner {
 
     public void setHoraEncerramento(String horaEncerramento) {
         this.horaEncerramento = horaEncerramento;
+    }
+
+    public String getDataCriacao() {
+        return dataCriacao;
+    }
+
+    public void setDataCriacao(String dataCriacao) {
+        this.dataCriacao = dataCriacao;
     }
 
     public String getEnunciado() {
