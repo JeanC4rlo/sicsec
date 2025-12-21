@@ -8,13 +8,7 @@ import br.cefetmg.sicsec.Model.Biblioteca.Emprestimo;
 import br.cefetmg.sicsec.Model.Util.Enum.Cargo;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
-
-/**
- *
- * @author davig
- */
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)

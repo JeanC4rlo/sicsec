@@ -297,7 +297,6 @@ class GerenciadorEdicaoDocumentos {
                 }
             }
 
-            console.log('Arquivado:', dados.arquivado);
             formData.append('arquivado', dados.arquivado);
 
             const response = await fetch(`/api/documentos/${documentoId}`, {

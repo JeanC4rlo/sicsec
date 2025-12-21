@@ -135,6 +135,16 @@ public class HomeService {
 						Arrays.asList("/js/admin/frag/usuarios.js", "/js/admin/frag/documentos.js"),
 						"documentos",
 						false)));
+
+			ROLE_SECTIONS.put(Cargo.BIBLIOTECARIO, Arrays.asList(
+				new Secao(
+						"/images/icons/livros.svg",
+						"/html/bibliotecario/sections/livros.html",
+						"Gestão de livros",
+						Arrays.asList("/css/bibliotecario/livros.css"),
+						Arrays.asList("/js/bibliotecario/frag/livros.js"),
+						"livros",
+						false)));
 	}
 
 	public List<Secao> getSecoesPorCargo(Usuario usuario) {

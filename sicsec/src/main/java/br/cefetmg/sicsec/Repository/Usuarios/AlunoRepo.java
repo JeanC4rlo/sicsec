@@ -4,7 +4,6 @@
  */
 package br.cefetmg.sicsec.Repository.Usuarios;
 
-import br.cefetmg.sicsec.Model.Usuario.Usuario;
 import br.cefetmg.sicsec.Model.Usuario.Aluno.Aluno;
 import br.cefetmg.sicsec.Model.Util.Enum.Cargo;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,12 +13,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 import java.util.List;
-
-
-/**
- *
- * @author davig
- */
 
 @Repository
 public interface AlunoRepo extends JpaRepository<Aluno, Long> {

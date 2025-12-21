@@ -3,26 +3,17 @@ package br.cefetmg.sicsec.Service;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.cefetmg.sicsec.Model.Usuario.Usuario;
 import br.cefetmg.sicsec.Model.Usuario.Administrador.Administrador;
 import br.cefetmg.sicsec.Model.Usuario.Administrador.ChefeDepartamento;
 import br.cefetmg.sicsec.Model.Usuario.Administrador.Coordenador;
-import br.cefetmg.sicsec.Model.Util.Enum.CargoAdministrador;
 import br.cefetmg.sicsec.Model.Util.Enum.Cargo;
-import br.cefetmg.sicsec.Repository.Usuarios.*;
 
 @Service
 public class AdministradorService {
     
-    @Autowired
-    private UsuarioRepo usuarioRepo;
-
-    @Autowired
-    private AdministradorRepo adminRepo;
-
     public Object GetAdministrador(Usuario usuario) {
 
         if (usuario == null || usuario.getCargo() != Cargo.ADMINISTRADOR) {
