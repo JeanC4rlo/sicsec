@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.RestController;
 import br.cefetmg.sicsec.Model.Desempenho;
 import br.cefetmg.sicsec.Service.DesempenhoService;
 import br.cefetmg.sicsec.Service.RespostaService;
+import br.cefetmg.sicsec.dto.DesempenhoComDadosAlunoDTO;
 import br.cefetmg.sicsec.dto.DesempenhoDTO;
 import br.cefetmg.sicsec.dto.NotaDTO;
+import jakarta.servlet.http.HttpSession;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -30,8 +32,8 @@ public class DesempenhoController {
     private RespostaService respostaService;
 
     @GetMapping("/desempenhos")
-    public ResponseEntity<List<DesempenhoDTO>> getDesempenhos() {
-        return ResponseEntity.ok(desempenhoService.getListaDesempenhos());
+    public ResponseEntity<List<DesempenhoComDadosAlunoDTO>> getDesempenhos(HttpSession session) {
+        return ResponseEntity.ok(desempenhoService.getListaDesempenhos(session));
     }
 
     @GetMapping("/{desempenhoId}")

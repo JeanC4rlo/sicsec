@@ -14,10 +14,13 @@ import br.cefetmg.sicsec.Model.Usuario.Aluno.Aluno;
 import br.cefetmg.sicsec.Repository.AtividadeRepository;
 import br.cefetmg.sicsec.Repository.TentativaRepository;
 import br.cefetmg.sicsec.Repository.Usuarios.AlunoRepo;
-import br.cefetmg.sicsec.dto.Perfil;
-import jakarta.servlet.http.HttpSession;
+import br.cefetmg.sicsec.dto.tentativa.TentativaCreateDTO;
+import br.cefetmg.sicsec.dto.tentativa.TentativaRequestDTO;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 
 @Service
+@Transactional
 public class TentativaService {
     @Autowired
     TentativaRepository tentativaRepository;
@@ -29,79 +32,105 @@ public class TentativaService {
     AlunoRepo alunoRepository;
 
     public Tentativa getTentativa(Long tentativaId) {
-        return tentativaRepository.findById(tentativaId).get();
+        return tentativaRepository.findById(tentativaId)
+                .orElseThrow(() -> new EntityNotFoundException("Tentativa não encontrada"));
     }
 
-    public Tentativa salvarTentativa(Tentativa tentativa, HttpSession session) {
-        Atividade atividade = atividadeRepository.findById(tentativa.getAtividade().getId()).orElseThrow();
-        tentativa.setAtividade(atividade);
+    public TentativaRequestDTO salvarTentativa(TentativaCreateDTO dto, Usuario usuario) {
+        Aluno aluno = alunoRepository.findById(usuario.getMatricula().getId())
+                .orElseThrow(() -> new EntityNotFoundException("Aluno não encontrado"));
+        Atividade atividade = atividadeRepository.findById(dto.atividadeId())
+                .orElseThrow(() -> new EntityNotFoundException("Atividade não encontrada"));
 
-        Usuario usuario = ((Perfil) session.getAttribute("perfilSelecionado")).getUsuario();
-        Aluno aluno = alunoRepository.findById(usuario.getMatricula().getId()).get();
-        tentativa.setAluno(aluno);
-
-        return tentativaRepository.save(tentativa);
+        Tentativa tentativa = toEntity(dto, aluno, atividade);
+        return toDTO(tentativaRepository.save(tentativa));
     }
 
     public int getNumTentativasFeitas(Long atividadeId) {
         return tentativaRepository.countByAtividade_IdAndAbertaFalse(atividadeId);
     }
 
-    public Tentativa getTentativaAberta(Long atividadeId) {
-        Tentativa tentativa = tentativaRepository.findByAtividade_IdAndAbertaTrue(atividadeId).orElse(null);
-        return tentativa;
+    public TentativaRequestDTO getTentativaAberta(Long atividadeId) {
+        return tentativaRepository.findByAtividade_IdAndAbertaTrue(atividadeId)
+                .map(this::toDTO)
+                .orElse(null);
     }
 
-    public Tentativa getUltimaTentativa(Long atividadeId) {
-        return tentativaRepository.findTopByAtividade_IdOrderByNumTentativaDesc(atividadeId).get();
+    public TentativaRequestDTO getUltimaTentativa(Long atividadeId) {
+        Tentativa tentativa = tentativaRepository.findTopByAtividade_IdOrderByNumTentativaDesc(atividadeId)
+                .orElseThrow(() -> new EntityNotFoundException("Tentativa não encontrada"));
+        return toDTO(tentativa);
     }
 
-    public Tentativa atualizarTimer(Long tentativaId, Map<String, Object> dados) {
+    public void atualizarTimer(Long tentativaId, Map<String, Object> dados) {
         Tentativa tentativa = tentativaRepository.findById(tentativaId).orElseThrow();
         if (dados.containsKey("tempoRestante")) {
             tentativa.setTempoRestante((Integer) dados.get("tempoRestante"));
         }
-        return tentativaRepository.save(tentativa);
     }
 
-    public Tentativa salvarTimerInterrompivel(Long atividadeId) {
+    public void salvarTimerInterrompivel(Long atividadeId) {
         Tentativa tentativa = new Tentativa();
-        tentativa.setAtividade(atividadeRepository.findById(atividadeId).orElseThrow());
+        Atividade atividade = atividadeRepository.findById(atividadeId)
+                .orElseThrow(() -> new EntityNotFoundException("Atividade não encontrada"));
+        tentativa.setAtividade(atividade);
         tentativa.setAberta(true);
         tentativa.setHorarioInicio(LocalDateTime.now());
         tentativaRepository.save(tentativa);
-        return tentativa;
     }
 
-    public Tentativa salvarTimerContinuo(Long id) {
+    public void salvarTimerContinuo(Long atividadeId) {
         Tentativa tentativa = new Tentativa();
-        tentativa.setAtividade(atividadeRepository.findById(id).orElseThrow());
+        Atividade atividade = atividadeRepository.findById(atividadeId)
+                .orElseThrow(() -> new EntityNotFoundException("Atividade não encontrada"));
+        tentativa.setAtividade(atividade);
         tentativa.setAberta(true);
         tentativa.setHorarioInicio(LocalDateTime.now());
         tentativa.setTempoRestante(0);
         tentativaRepository.save(tentativa);
-        return tentativa;
     }
 
-    public Tentativa fecharTentativa(Long id) {
-        Tentativa tentativa = tentativaRepository.findById(id).orElseThrow();
+    public void fecharTentativa(Long id) {
+        Tentativa tentativa = tentativaRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Tentativa não encontrada"));
         tentativa.setTempoRestante(0);
         tentativa.setAberta(false);
-        return tentativaRepository.save(tentativa);
     }
 
     public Long getTempoRestante(Long tentativaId) {
-        Tentativa tentativa = tentativaRepository.findById(tentativaId).orElseThrow();
+        Tentativa tentativa = tentativaRepository.findById(tentativaId)
+                .orElseThrow(() -> new EntityNotFoundException("Tentativa não encontrada"));
         LocalDateTime agora = LocalDateTime.now();
         Duration decorrido = Duration.between(tentativa.getHorarioInicio(), agora);
         long restante = tentativa.getTempoRestante() - decorrido.getSeconds();
 
         if (restante <= 0) {
             tentativa.setAberta(false);
-            tentativaRepository.save(tentativa);
             restante = 0;
         }
 
         return restante;
+    }
+
+    private Tentativa toEntity(TentativaCreateDTO dto, Aluno aluno, Atividade atividade) {
+        Tentativa tentativa = new Tentativa();
+        tentativa.setAberta(dto.aberta());
+        tentativa.setAluno(aluno);
+        tentativa.setAtividade(atividade);
+        tentativa.setHorarioInicio(LocalDateTime.parse(dto.horarioInicio()));
+        tentativa.setNumTentativa(dto.numTentativa());
+        tentativa.setTempoRestante(dto.tempoRestante());
+        return tentativa;
+    }
+
+    private TentativaRequestDTO toDTO(Tentativa tentativa) {
+        return new TentativaRequestDTO(
+                tentativa.getId(),
+                tentativa.getAtividade().getId(),
+                tentativa.getAluno().getId(),
+                tentativa.getHorarioInicio().toLocalDate().toString(),
+                tentativa.getTempoRestante(),
+                tentativa.getNumTentativa(),
+                tentativa.getAberta());
     }
 }

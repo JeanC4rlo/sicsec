@@ -10,24 +10,33 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import br.cefetmg.sicsec.Model.Atividade;
+import br.cefetmg.sicsec.Model.TempoDuracao;
 import br.cefetmg.sicsec.Model.Usuario.Usuario;
 import br.cefetmg.sicsec.Model.Usuario.Aluno.Aluno;
 import br.cefetmg.sicsec.Model.Usuario.Professor.Professor;
 import br.cefetmg.sicsec.Repository.AtividadeRepository;
 import br.cefetmg.sicsec.Repository.Usuarios.AlunoRepo;
 import br.cefetmg.sicsec.Repository.Usuarios.ProfessorRepo;
-import br.cefetmg.sicsec.dto.AtividadeDTO;
 import br.cefetmg.sicsec.dto.HomeAtividadesDTO;
-import br.cefetmg.sicsec.dto.Perfil;
-import jakarta.servlet.http.HttpSession;
+import br.cefetmg.sicsec.dto.TempoDuracaoDTO;
+import br.cefetmg.sicsec.dto.atividade.AtividadeAlunoDTO;
+import br.cefetmg.sicsec.dto.atividade.AtividadeCreateDTO;
+import br.cefetmg.sicsec.dto.atividade.AtividadeHomeDTO;
+import br.cefetmg.sicsec.dto.atividade.AtividadeResumoDTO;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 
 @Service
 public class AtividadeService {
+
     @Autowired
     private AtividadeRepository atividadeRepository;
 
     @Autowired
     private ArquivoService arquivoService;
+
+    @Autowired
+    private TurmaService turmaService;
 
     @Autowired
     private TentativaService tentativaService;
@@ -42,24 +51,44 @@ public class AtividadeService {
     private AlunoRepo alunoRepository;
 
     public Atividade getAtividade(Long atividadeId) {
-        return atividadeRepository.findById(atividadeId).get();
+        return atividadeRepository.findById(atividadeId)
+                .orElseThrow(() -> new EntityNotFoundException("Atividade não encontrada"));
     }
 
-    public Atividade salvarAtividade(Atividade atividade, MultipartFile[] arquivos, HttpSession session)
+    public AtividadeAlunoDTO getAtividadeDTO(Long atividadeId) {
+        return toDTO(atividadeRepository.findById(atividadeId)
+                .orElseThrow(() -> new EntityNotFoundException("Atividade não encontrada")));
+    }
+
+    @Transactional
+    public void salvarAtividade(AtividadeCreateDTO dto, MultipartFile[] arquivos,
+            Usuario usuario)
             throws IOException {
-        Usuario usuario = ((Perfil) session.getAttribute("perfilSelecionado")).getUsuario();
-        Professor professor = professorRepository.findById(usuario.getMatricula().getId()).get();
+        Atividade atividade = toEntity(dto);
+
+        Professor professor = professorRepository.findById(usuario.getMatricula().getId())
+                .orElseThrow(() -> new EntityNotFoundException("Professor não encontrado"));
+        ;
+
         atividade.setProfessor(professor);
+
         Atividade nova = atividadeRepository.save(atividade);
         if (arquivos != null && arquivos.length > 0 && !arquivos[0].isEmpty()) {
             arquivoService.salvarListaArquivos(nova, arquivos);
             nova = atividadeRepository.save(nova);
         }
-        return nova;
     }
 
-    public List<Atividade> ListarAtividades() {
-        return atividadeRepository.findAll();
+    public List<AtividadeResumoDTO> ListarAtividades() {
+        return atividadeRepository.findAll().stream()
+                .map(a -> new AtividadeResumoDTO(
+                        a.getId(),
+                        a.getNome(),
+                        a.getTipo(),
+                        a.getValor(),
+                        a.getDataEncerramento(),
+                        a.getDataCriacao()))
+                .toList();
     }
 
     public List<HomeAtividadesDTO> ListarAtividadesHomeAtividadeDTO() {
@@ -81,22 +110,21 @@ public class AtividadeService {
                 .toList();
     }
 
-    public List<AtividadeDTO> ListarAtividadesDTO(HttpSession session) {
-        LocalDate hoje = LocalDate.now();
-        Usuario usuario = ((Perfil) session.getAttribute("perfilSelecionado")).getUsuario();
-        Aluno aluno = alunoRepository.findById(usuario.getMatricula().getId()).get();
+    public List<AtividadeHomeDTO> ListarAtividadesDTO(Usuario usuario) {
+        Aluno aluno = alunoRepository.findById(usuario.getMatricula().getId())
+                .orElseThrow(() -> new EntityNotFoundException("Aluno não encontrado"));
 
-        return atividadeRepository.findAll().stream()
-                .filter(a -> {
-                    LocalDate dataEncerramento = LocalDate.parse(a.getDataEncerramento());
-                    long diasRestantes = ChronoUnit.DAYS.between(hoje, dataEncerramento);
-                    return diasRestantes > -3;
-                })
+        String dataLimite = LocalDate.now().minusDays(2).toString();
+
+        return atividadeRepository
+                .findAtividadesVisiveisAluno(dataLimite, aluno.getTurmas())
+                .stream()
                 .map(a -> {
                     String nomeProfessor = a.getProfessor().getMatricula().getNome();
-                    int numTentativasRestantes = a.getTentativas() - tentativaService.getNumTentativasFeitas(a.getId());
+                    int tentativasRestantes = a.getTentativas() - tentativaService.getNumTentativasFeitas(a.getId());
                     Double nota = desempenhoService.getMaiorNotaAtividade(a.getId(), aluno.getId());
-                    return new AtividadeDTO(
+
+                    return new AtividadeHomeDTO(
                             a.getId(),
                             a.getNome(),
                             a.getTipo(),
@@ -106,8 +134,52 @@ public class AtividadeService {
                             a.getHoraEncerramento(),
                             null,
                             nomeProfessor,
-                            numTentativasRestantes);
+                            tentativasRestantes);
                 })
                 .toList();
+
+    }
+
+    private Atividade toEntity(AtividadeCreateDTO dto) {
+        Atividade atividade = new Atividade();
+        atividade.setNome(dto.nome());
+        atividade.setTipo(dto.tipo());
+        atividade.setValor(dto.valor());
+        atividade.setDataEncerramento(dto.dataEncerramento());
+        atividade.setHoraEncerramento(dto.horaEncerramento());
+        atividade.setDataCriacao(dto.dataCriacao());
+        atividade.setEnunciado(dto.enunciado());
+        atividade.setQuestoes(dto.questoes());
+        atividade.setTentativas(dto.tentativas());
+        if (dto.tempoDuracao() != null)
+            atividade.setTempoDuracao(
+                    new TempoDuracao(dto.tempoDuracao().getHoras(), dto.tempoDuracao().getMinutos()));
+        else
+            atividade.setTempoDuracao(null);
+        atividade.setTipoTimer(dto.tipoTimer());
+        atividade.setTurmas(turmaService.listarTurmasPorId(dto.turmas()));
+        return atividade;
+    }
+
+    private AtividadeAlunoDTO toDTO(Atividade atividade) {
+        TempoDuracaoDTO tempoDuracaoDTO;
+        if (atividade.getTempoDuracao() != null)
+            tempoDuracaoDTO = new TempoDuracaoDTO(atividade.getTempoDuracao().getHoras(),
+                    atividade.getTempoDuracao().getMinutos());
+        else
+            tempoDuracaoDTO = null;
+        return new AtividadeAlunoDTO(
+                atividade.getId(),
+                atividade.getNome(),
+                atividade.getTipo(),
+                atividade.getValor(),
+                atividade.getDataEncerramento(),
+                atividade.getHoraEncerramento(),
+                atividade.getDataCriacao(),
+                atividade.getEnunciado(),
+                atividade.getQuestoes(),
+                atividade.getTentativas(),
+                tempoDuracaoDTO,
+                atividade.getTipoTimer());
     }
 }

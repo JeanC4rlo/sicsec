@@ -1,9 +1,10 @@
-package br.cefetmg.sicsec.dto;
+package br.cefetmg.sicsec.dto.atividade;
 
-public record HomeAtividadesDTO(
+public record AtividadeResumoDTO(
         Long id,
         String nome,
         String tipo,
         Double valor,
         String dataEncerramento,
-        String horaEncerramento) {}
+        String dataCriacao) {
+}
