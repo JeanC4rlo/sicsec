@@ -93,6 +93,7 @@
 .form-group textarea:focus,
 .form-group select:focus {
     outline: none;
+    background-color: var(--primary);
     border-color: var(--secondary);
 }
 
