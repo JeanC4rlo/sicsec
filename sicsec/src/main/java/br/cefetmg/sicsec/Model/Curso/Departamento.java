@@ -27,9 +27,11 @@ public class Departamento {
     @JoinColumn(name = "coordenador_id")
     private ChefeDepartamento chefe;
     
+    @JsonManagedReference
     @OneToMany(fetch = FetchType.LAZY, mappedBy="departamento")
     private List<Curso> cursos;
     
+    @JsonManagedReference(value = "disciplinaDepartamento")
     @OneToMany(fetch = FetchType.LAZY, mappedBy="departamento")
     private List<Disciplina> disciplinas;
 

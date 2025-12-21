@@ -5,6 +5,7 @@
 package br.cefetmg.sicsec.Model.Curso;
 
 import br.cefetmg.sicsec.Model.Curso.Turma.Turma;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 /**
  *
@@ -20,6 +21,7 @@ public class MaterialDidatico {
     private String nome;
     private String url;
     
+    @JsonBackReference
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "turma_id", nullable = false)
     private Turma turma;

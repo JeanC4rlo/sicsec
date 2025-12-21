@@ -4,7 +4,7 @@ const state = {
     numQuestoes: 0,
     tempoTotal: 0,
     numTentativasFeitas: 0,
-    tentativa: null,
+    objTentativa: null,
     temporizador: null,
     LIMITE_CARACTERES: 2000,
     containerPrinci: null,
@@ -27,26 +27,11 @@ function formatarData(data) {
     return `${data[2]}/${data[1]}/${data[0]}`;
 }
 
-async function carregarAtividade() {
-    try {
-        const id = localStorage.getItem("atividadeId");
-        if (!id) throw new Error("ID da atividade não encontrado");
-
-        const response = await fetch(`/api/atividade/completa/${id}`);
-
-        if (!response.ok) {
-            const err = await response.json()
-            alert(err.erro);
-            throw err;
-        }
-
-        state.atividade = await response.json();
-        state.atividade.questoes = JSON.parse(state.atividade.questoes);
-    } catch (err) {
-        console.error("Falha ao carregar atividade:", err);
-    }
+function carregarAtividade() {
+    state.atividade = JSON.parse(localStorage.getItem("atividade"));
+    state.atividade.questoes = JSON.parse(state.atividade.questoes);
+    state.atividade.tempoDeDuracao = JSON.parse(state.atividade.tempoDeDuracao);
 }
-
 
 function checkQuestaoMarcada() {
     const selecionado = state.questoes[state.numQuestoes].querySelector(`input[name="alternativa_questao_${state.numQuestoes + 1}"]:checked`);
@@ -81,19 +66,18 @@ async function carregarOuCriarTentativa() {
 
         if (_tentativa) {
             if (state.atividade.tipoTimer == "none" || (state.atividade.tipoTimer != "none" && _tentativa.tempoRestante > 0)) {
-                state.tentativa = _tentativa;
-                console.log("Tentativa aberta encontrada:", state.tentativa);
+                state.objTentativa = _tentativa;
+                console.log("Tentativa aberta encontrada:", state.objTentativa);
             }
         } else {
             const dados = {
-                atividadeId: state.atividade.id,
+                atividade: { id: state.atividade.id },
                 horarioInicio: new Date().toLocaleString("sv-SE",
                     { timeZone: "America/Sao_Paulo" }).replace(" ", "T") + ".000000",
                 tempoRestante: converterTempoDaAtividade(),
                 numTentativa: state.numTentativasFeitas + 1,
                 aberta: true
             }
-            console.log(dados);
             response = await fetch("/api/tentativa/salvar", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -101,10 +85,11 @@ async function carregarOuCriarTentativa() {
             });
 
             if (!response.ok) throw new Error("Erro ao criar nova tentativa");
-            state.tentativa = await response.json();
-            console.log(state.tentativa);
+
+            state.objTentativa = await response.json();
+            console.log("Nova tentativa criada:", state.objTentativa);
         }
-        state.tempoTotal = state.tentativa.tempoRestante ?? converterTempoDaAtividade();
+        state.tempoTotal = state.objTentativa.tempoRestante || converterTempoDaAtividade();
     } catch (err) {
         console.error(err);
         alert("Não foi possível carregar a tentativa");
@@ -148,7 +133,7 @@ function criarTimerInterrompivel(timer) {
 }
 
 async function criarTimerContinuo(timer) {
-    const resposta = await fetch(`/api/tentativa/tempo-restante/${state.tentativa.id}`);
+    const resposta = await fetch(`/api/tentativa/tempo-restante/${state.objTentativa.id}`);
     let tempoRestante = await resposta.json();
 
     state.temporizador = setInterval(() => {
@@ -230,8 +215,8 @@ function converterTempoParaSegundos(horas = 0, minutos = 0, segundos = 0) {
 }
 
 function converterTempoDaAtividade() {
-    if (!state.atividade.tempoDuracao) return null;
-    return converterTempoParaSegundos(Number(state.atividade.tempoDuracao.horas), Number(state.atividade.tempoDuracao.minutos));
+    if (!state.atividade.tempoDeDuracao) return null;
+    return converterTempoParaSegundos(Number(state.atividade.tempoDeDuracao.numHoras), Number(state.atividade.tempoDeDuracao.numMinutos));
 }
 
 function montarListaAlternativasMarcadas(alternativas) {
@@ -259,13 +244,12 @@ async function enviarQuestionario() {
     const alternativasMarcadas = document.querySelectorAll("input:checked");
 
     const respostaAluno = {
-        atividadeId: state.atividade.id,
-        tentativaId: state.tentativa.id,
+        atividade: { id: state.atividade.id },
+        tentativa: { id: state.objTentativa.id },
         alternativasMarcadas: montarListaAlternativasMarcadas(alternativasMarcadas),
-        textoRedacao: null
+        textoRedacao: null,
+        arquivoId: null
     };
-
-    console.log(respostaAluno)
 
     const resposta = await fetch("/api/resposta/enviar", {
         method: "POST",
@@ -299,11 +283,12 @@ async function enviarRedacao() {
     console.log(document.getElementById("textarea-redacao").value);
 
     const respostaAluno = {
-        atividadeId: state.atividade.id,
-        tentativaId: state.tentativa.id,
+        atividade: { id: state.atividade.id },
+        tentativa: { id: state.objTentativa.id },
         alternativasMarcadas: null,
-        textoRedacao: document.getElementById("textarea-redacao").value
-    }
+        textoRedacao: document.getElementById("textarea-redacao").value,
+        arquivoId: null
+    };
 
     const resposta = await fetch("/api/resposta/enviar", {
         method: "POST",
@@ -329,10 +314,11 @@ async function enviarArquivo() {
 
 
     const respostaAluno = {
-        atividadeId: state.atividade.id,
-        tentativaId: state.tentativa.id,
+        atividade: { id: state.atividade.id },
+        tentativa: { id: state.objTentativa.id },
         alternativasMarcadas: null,
-        textoRedacao: null
+        textoRedacao: null,
+        arquivoId: null
     };
 
     const formData = new FormData();
@@ -372,7 +358,7 @@ async function enviarArquivo() {
 }
 
 async function resgatarNota() {
-    const resposta = await fetch(`/api/desempenho/tentativa/${state.tentativa.id}/nota`);
+    const resposta = await fetch(`/api/desempenho/tentativa/${state.objTentativa.id}/nota`);
     const valor = await resposta.json();
     return Number(valor);
 }
@@ -389,7 +375,7 @@ function montarPaginaResultado(nota) {
 async function timeOut() {
     clearInterval(state.temporizador);
 
-    if (state.tentativa && state.tentativa.id) {
+    if (state.objTentativa && state.objTentativa.id) {
         await fecharTentativa();
     }
     alert("O tempo desta tentativa acabou. Reinicie a página para começar uma nova");
@@ -533,7 +519,7 @@ async function contarTentativas() {
 
 async function fecharTentativa() {
     try {
-        const response = await fetch(`/api/tentativa/fechar/${state.tentativa.id}`, {
+        const response = await fetch(`/api/tentativa/fechar/${state.objTentativa.id}`, {
             method: "PATCH"
         });
         if (!response.ok) throw new Error("Erro ao fechar a tentativa");
@@ -544,7 +530,7 @@ async function fecharTentativa() {
 
 async function atualizarTempo() {
     try {
-        const response = await fetch(`/api/tentativa/atualizar-timer/${state.tentativa.id}`, {
+        const response = await fetch(`/api/tentativa/atualizar-timer/${state.objTentativa.id}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ tempoRestante: state.tempoTotal })
@@ -671,9 +657,9 @@ async function carregarArquivos() {
     htmlDOM.containerPrincipal.append(lista);
 }
 
-async function initFazerAtividades() {
+function initFazerAtividades() {
     htmlDOM.containerPrincipal = document.getElementById("main-container");
-    await carregarAtividade();
+    carregarAtividade();
     primeiraTela();
 
     const btnSair = document.getElementById("btn-sair");

@@ -4,10 +4,17 @@ function initSectionAtividadesProfessor() {
     let tabelaAtividades;
     let corpoTable;
 
-    /*function formatarData(data) {
+    function formatarData(data) {
         data = data.split("-");
         return `${data[2]}/${data[1]}/${data[0]}`;
-    }*/
+    }
+
+    function formatarDataEHora(data) {
+        let distanciaEmDias = Math.round((new Date(data).getTime() - new Date().getTime()) / (1000 * 3600 * 24));
+        let mensagem = formatarData(data) + `<br>(${distanciaEmDias} dia`;
+        mensagem += (distanciaEmDias > 1) ? "s)" : ")";
+        return mensagem
+    }
 
     function calcularDistanciaData(data, hora = "00:00", tipo = "dias") {
         let denominador = 1;
@@ -17,31 +24,6 @@ function initSectionAtividadesProfessor() {
         }
         return Math.round((new Date(`${data}T${hora}-03:00`).getTime() - Date.now()) / denominador);
     }
-
-    function formatarData(data, incluirDistancia = false) {
-        let distanciaEmDias = calcularDistanciaData(data);
-        let d = data.split("-");
-        let mensagem = `${d[2]}/${d[1]}/${d[0]}`;
-        if (incluirDistancia) {
-            mensagem += "<br>";
-            if (distanciaEmDias < 0) return mensagem + "Fechada";
-            mensagem += distanciaEmDias > 0
-                ? `(${calcularDistanciaData(data)} dias)`
-                : "(Hoje)";
-        }
-        return mensagem;
-    }
-
-    function calcularDistanciaData(data) {
-        const alvo = new Date(`${data}T00:00:00`);
-        const hoje = new Date();
-        hoje.setHours(0, 0, 0, 0);
-
-        const diffDias = (alvo - hoje) / (1000 * 60 * 60 * 24);
-
-        return Math.round(diffDias);
-    }
-
 
     function atividadeAindaDisponivel(data, linha) {
         if ((new Date(data).getTime() - new Date().getTime()) / (1000 * 3600 * 24) <= 0) {
@@ -71,12 +53,12 @@ function initSectionAtividadesProfessor() {
         linha.classList.add("atividade");
 
         if (atividadeAindaDisponivel(atividade.dataEncerramento, linha)) {
-            dataEnc.innerHTML = formatarData(atividade.dataEncerramento, true);
+            dataEnc.innerHTML = formatarDataEHora(atividade.dataEncerramento);
         }
         else {
             dataEnc.innerHTML = "Atividade encerrada";
         }
-        atividade.dataCriacao ? dataCri.innerHTML = formatarData(atividade.dataCriacao) : dataCri.innerHTML = "Data desconhecida";
+        atividade.dataCriacao? dataCri.innerHTML = formatarData(atividade.dataCriacao) : dataCri.innerHTML = "Data desconhecida";
 
         linha.append(codigo, nome, tipo, valor, dataEnc, dataCri);
         corpoTable.append(linha);
@@ -89,15 +71,7 @@ function initSectionAtividadesProfessor() {
                 return response.json();
             })
             .then(dados => {
-                if (dados.length == 0) {
-                    corpoTable.innerHTML = `
-                        <tr id="msg-sem-atividade">
-                            <td colspan="6"><p><i>Nenhuma atividade criada</i></p></td>
-                        </tr>
-                `;
-                }
-                else
-                    corpoTable.innerHTML = "";
+                corpoTable.innerHTML = "";
                 dados.sort((a, b) => {
                     if (calcularDistanciaData(a.dataEncerramento) <= 0) return 1;
                     if (calcularDistanciaData(b.dataEncerramento) <= 0) return -1;

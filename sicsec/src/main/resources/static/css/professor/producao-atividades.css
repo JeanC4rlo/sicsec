@@ -74,25 +74,15 @@ input:disabled {
     cursor: not-allowed;
 }
 
-input:not([type="checkbox"]):not([type="radio"]),
+input,
 select,
-textarea,
-#div-turmas {
+textarea {
     width: 100%;
     padding: 0.6rem 0.8rem;
     border: 2px solid #d0d7e2;
     border-radius: 0.5rem;
     font-size: 1rem;
     transition: border-color 0.2s ease, background-color 0.2s ease;
-}
-
-input[type="checkbox"] {
-    width: auto;
-    margin: 0;
-}
-
-#div-turmas {
-    padding: 2vh;
 }
 
 input:focus,
@@ -333,11 +323,6 @@ section button:hover {
     flex-direction: column;
 }
 
-.checkbox-item {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
 
 textarea {
     resize: none;

@@ -2,22 +2,17 @@ package br.cefetmg.sicsec.Controller;
 
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.cefetmg.sicsec.Model.Usuario.Usuario;
+import br.cefetmg.sicsec.Model.Tentativa;
 import br.cefetmg.sicsec.Service.TentativaService;
-import br.cefetmg.sicsec.dto.Perfil;
-import br.cefetmg.sicsec.dto.tentativa.TentativaCreateDTO;
-import br.cefetmg.sicsec.dto.tentativa.TentativaRequestDTO;
 import jakarta.servlet.http.HttpSession;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,55 +25,58 @@ public class TentativaController {
     TentativaService tentativaService;
 
     @PostMapping("/salvar")
-    public ResponseEntity<TentativaRequestDTO> salvarTentativa(@RequestBody TentativaCreateDTO dto,
-            HttpSession session) {
-        Usuario usuario = ((Perfil) session.getAttribute("perfilSelecionado")).getUsuario();
-        return ResponseEntity.ok(tentativaService.salvarTentativa(dto, usuario));
+    public ResponseEntity<Tentativa> salvarTentativa(@RequestBody Tentativa tentativa, HttpSession session) {
+        Tentativa salva = tentativaService.salvarTentativa(tentativa, session);
+        return ResponseEntity.ok(salva);
     }
 
     @GetMapping("/atividade/{atividadeId}/num-tentativas")
-    public Integer getNumTentativasAtividade(@PathVariable Long atividadeId) {
-        return tentativaService.getNumTentativasFeitas(atividadeId);
+    public ResponseEntity<Integer> getNumTentativasAtividade(@PathVariable Long atividadeId) {
+        int tentativas = tentativaService.getNumTentativasFeitas(atividadeId);
+        return ResponseEntity.ok(tentativas);
     }
 
     @GetMapping("/atividade/{atividadeId}/tentativa-aberta")
-    public ResponseEntity<TentativaRequestDTO> getTentativaAberta(@PathVariable Long atividadeId) {
-        return ResponseEntity.ok(tentativaService.getTentativaAberta(atividadeId));
+    public ResponseEntity<Tentativa> getTentativaAberta(@PathVariable Long atividadeId) {
+        Tentativa aberta = tentativaService.getTentativaAberta(atividadeId);
+        return ResponseEntity.ok().body(aberta);
     }
 
     @GetMapping("/atividade/{atividadeId}/ultima-tentativa")
-    public TentativaRequestDTO getUltimaTentativa(@PathVariable Long atividadeId) {
-        return tentativaService.getUltimaTentativa(atividadeId);
+    public ResponseEntity<Tentativa> getUltimaTentativa(@PathVariable Long atividadeId) {
+        Tentativa ultima = tentativaService.getUltimaTentativa(atividadeId);
+        return ResponseEntity.ok(ultima);
     }
 
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     @PatchMapping("/atualizar-timer/{tentativaId}")
-    public void atualizarTimer(
+    public ResponseEntity<Tentativa> atualizarTimer(
             @PathVariable Long tentativaId,
             @RequestBody Map<String, Object> dados) {
-        tentativaService.atualizarTimer(tentativaId, dados);
+        Tentativa nova = tentativaService.atualizarTimer(tentativaId, dados);
+        return ResponseEntity.ok(nova);
     }
 
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     @PatchMapping("/fechar/{tentativaId}")
-    public void fecharTentativa(@PathVariable Long tentativaId) {
-        tentativaService.fecharTentativa(tentativaId);
+    public ResponseEntity<Tentativa> fecharTentativa(@PathVariable Long tentativaId) {
+        Tentativa nova = tentativaService.fecharTentativa(tentativaId);
+        return ResponseEntity.ok(nova);
     }
 
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping("/iniciar/atividade/{atividadeId}/timer-interrompivel")
-    public void iniciarTentativaInterrompivel(@PathVariable Long atividadeId) {
-        tentativaService.salvarTimerInterrompivel(atividadeId);
+    public ResponseEntity<Tentativa> iniciarTentativaInterrompivel(@PathVariable Long atividadeId) {
+        Tentativa tentativa = tentativaService.salvarTimerInterrompivel(atividadeId);
+        return ResponseEntity.ok(tentativa);
     }
 
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping("/iniciar/atividade/{atividadeId}/timer-continuo")
-    public void iniciarTentativaContinua(@PathVariable Long atividadeId) {
-        tentativaService.salvarTimerContinuo(atividadeId);
+    public ResponseEntity<Tentativa> iniciarTentativaContinua(@PathVariable Long atividadeId) {
+        Tentativa tentativa = tentativaService.salvarTimerContinuo(atividadeId);
+        return ResponseEntity.ok(tentativa);
     }
 
     @GetMapping("/tempo-restante/{tentativaId}")
-    public Long tempoRestante(@PathVariable Long tentativaId) {
-        return tentativaService.getTempoRestante(tentativaId);
+    public ResponseEntity<Long> tempoRestante(@PathVariable Long tentativaId) {
+        long restante = tentativaService.getTempoRestante(tentativaId);
+        return ResponseEntity.ok(restante);
     }
 }

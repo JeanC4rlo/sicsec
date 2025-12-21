@@ -1,88 +1,41 @@
 package br.cefetmg.sicsec.Controller;
 
 import java.io.IOException;
+import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import br.cefetmg.sicsec.Exceptions.CorrecaoException;
-import br.cefetmg.sicsec.dto.ApiErrorDTO;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.servlet.http.HttpServletRequest;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-        private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<?> handleNotFound(EntityNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Map.of("erro", e.getMessage()));
+    }
 
-        @ExceptionHandler(EntityNotFoundException.class)
-        public ResponseEntity<ApiErrorDTO> handleNotFound(
-                        EntityNotFoundException ex,
-                        HttpServletRequest request) {
+    @ExceptionHandler(CorrecaoException.class)
+    public ResponseEntity<?> handleCorrecao(CorrecaoException e) {
+        return ResponseEntity.badRequest()
+                .body(Map.of("erro", e.getMessage()));
+    }
 
-                log.warn("[NOT_FOUND] {}", ex.getMessage());
+    @ExceptionHandler(IOException.class)
+    public ResponseEntity<?> handleIOException(IOException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body("Erro ao processar arquivos: " + ex.getMessage());
+    }
 
-                ApiErrorDTO error = new ApiErrorDTO(
-                                HttpStatus.NOT_FOUND.value(),
-                                HttpStatus.NOT_FOUND.name(),
-                                ex.getMessage(),
-                                request.getRequestURI());
-
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
-        }
-
-        @ExceptionHandler(CorrecaoException.class)
-        public ResponseEntity<ApiErrorDTO> handleCorrecao(
-                        CorrecaoException ex,
-                        HttpServletRequest request) {
-
-                log.warn("[CORRECAO] {}", ex.getMessage());
-
-                ApiErrorDTO error = new ApiErrorDTO(
-                                HttpStatus.BAD_REQUEST.value(),
-                                HttpStatus.BAD_REQUEST.name(),
-                                ex.getMessage(),
-                                request.getRequestURI());
-
-                return ResponseEntity.badRequest().body(error);
-        }
-
-        @ExceptionHandler(IOException.class)
-        public ResponseEntity<ApiErrorDTO> handleIOException(
-                        IOException ex,
-                        HttpServletRequest request) {
-
-                log.error("[IO_ERROR] {}", ex.getMessage());
-
-                ApiErrorDTO error = new ApiErrorDTO(
-                                HttpStatus.BAD_REQUEST.value(),
-                                HttpStatus.BAD_REQUEST.name(),
-                                "Erro ao processar arquivos",
-                                request.getRequestURI());
-
-                return ResponseEntity.badRequest().body(error);
-        }
-
-        @ExceptionHandler(Exception.class)
-        public ResponseEntity<ApiErrorDTO> handleGeneric(
-                        Exception ex,
-                        HttpServletRequest request) {
-
-                log.error("[INTERNAL_ERROR] {}", ex.getMessage());
-                log.debug("Stacktrace:", ex);
-
-                ApiErrorDTO error = new ApiErrorDTO(
-                                HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                                HttpStatus.INTERNAL_SERVER_ERROR.name(),
-                                "Erro interno inesperado",
-                                request.getRequestURI());
-
-                return ResponseEntity
-                                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                                .body(error);
-        }
+    /*@ExceptionHandler(Exception.class)
+    public ResponseEntity<?> handleGeneric(Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("erro", "Erro inesperado", "detalhes", e.getMessage()));
+    }*/
 }

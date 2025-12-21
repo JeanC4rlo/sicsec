@@ -1,19 +1,14 @@
 package br.cefetmg.sicsec.Model;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import br.cefetmg.sicsec.Model.Curso.Turma.Turma;
 import br.cefetmg.sicsec.Model.Usuario.Professor.Professor;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
 import jakarta.persistence.Lob;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 
 @Entity
@@ -38,12 +33,8 @@ public class Atividade implements FileOwner {
     @Lob
     private String questoes;
     private Integer tentativas;
-    private TempoDuracao tempoDuracao;
+    private String tempoDeDuracao;
     private String tipoTimer;
-
-    @ManyToMany
-    @JoinTable(name = "atividade_turma", joinColumns = @JoinColumn(name = "atividade_id"), inverseJoinColumns = @JoinColumn(name = "turma_id"))
-    private List<Turma> turmas;
 
     @Override
     public Long getId() {
@@ -134,12 +125,12 @@ public class Atividade implements FileOwner {
         this.tentativas = tentativas;
     }
 
-    public TempoDuracao getTempoDuracao() {
-        return tempoDuracao;
+    public String getTempoDeDuracao() {
+        return tempoDeDuracao;
     }
 
-    public void setTempoDuracao(TempoDuracao tempoDuracao) {
-        this.tempoDuracao = tempoDuracao;
+    public void setTempoDeDuracao(String tempoDeDuracao) {
+        this.tempoDeDuracao = tempoDeDuracao;
     }
 
     public String getTipoTimer() {
@@ -152,13 +143,5 @@ public class Atividade implements FileOwner {
 
     public FileOwnerTypes getTipoDonoArquivo() {
         return FileOwnerTypes.ATIVIDADE;
-    }
-
-    public List<Turma> getTurmas() {
-        return turmas;
-    }
-
-    public void setTurmas(List<Turma> turmas) {
-        this.turmas = turmas;
     }
 }

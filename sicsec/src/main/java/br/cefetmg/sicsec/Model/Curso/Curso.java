@@ -6,7 +6,9 @@ package br.cefetmg.sicsec.Model.Curso;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import br.cefetmg.sicsec.Model.Curso.Turma.Turma;
 import br.cefetmg.sicsec.Model.Usuario.Matricula;
@@ -39,16 +41,20 @@ public class Curso {
     @JoinColumn(name = "coordenador_id")
     private Coordenador coordenador;
     
+    @JsonManagedReference
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "curso")
     private List<Disciplina> matrizCurricular;
     
+    @JsonManagedReference
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "curso")
     private List<Turma> turmas;
     
+    @JsonBackReference
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "departamento_id")
     private Departamento departamento;
 
+    @JsonManagedReference
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "curso")
     private List<Matricula> matriculasVinculadas;
 

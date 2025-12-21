@@ -5,6 +5,7 @@
 package br.cefetmg.sicsec.Model.Curso.Turma;
 
 import br.cefetmg.sicsec.Model.Usuario.Usuario;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import java.util.Date;
 
@@ -24,6 +25,7 @@ public class Noticia {
     @JoinColumn(name = "autor_id", nullable = false)
     private Usuario autor;
     
+    @JsonBackReference
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "turma_id", nullable = false)
     private Turma turma;

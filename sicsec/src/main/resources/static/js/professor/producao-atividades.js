@@ -11,8 +11,7 @@ function initSectionProducaoAtividades() {
             tipoTimer: "none",
             numHoras: null,
             numMinutos: null,
-            enunciado: "",
-            turmas: []
+            enunciado: ""
         }
     }
 
@@ -123,13 +122,15 @@ function initSectionProducaoAtividades() {
         return dataObj.getTime() > Date.now();
     }
 
-    function validarCheckbox() {
-        const existeMarcado = document.querySelector(
-            'input[type="checkbox"]:checked'
-        ) !== null;
-
-        return existeMarcado;
-
+    function validarTempo() {
+        const listaInputs = document.querySelectorAll("#duracao-e-tentativas > input");
+        for (let input of listaInputs) {
+            if (!input.value.trim()) {
+                validarCampo(input);
+                return false;
+            }
+        }
+        return true;
     }
 
     function avancar() {
@@ -284,25 +285,23 @@ function initSectionProducaoAtividades() {
         const dados = {
             nome: state.dadosForm.get("nome"),
             tipo: tipos[state.dadosForm.get("tipo")],
-            valor: Number(state.dadosForm.get("valor")),
+            valor: state.dadosForm.get("valor"),
             dataEncerramento: state.dadosForm.get("dataEncerramento"),
             horaEncerramento: state.dadosForm.get("horaEncerramento"),
             dataCriacao: new Date().toLocaleDateString("sv-SE"),
             enunciado: null,
             questoes: null,
-            tentativas: 1,
-            tempoDuracao: null,
-            tipoTimer: "none",
-            turmas: state.dadosAtividade.turmas
+            tentativas: "1",
+            tempoDeDuracao: null,
+            tipoTimer: "none"
         };
 
         if (state.dadosForm.get("tipo") !== "envioArquivo") {
             dados.tipoTimer = state.dadosAtividade.tipoTimer;
             if (dados.tipoTimer !== "none") {
-                dados.tempoDuracao = {
-                    horas: state.dadosAtividade.numHoras,
-                    minutos: state.dadosAtividade.numMinutos
-                };
+                const numHoras = state.dadosAtividade.numHoras;
+                const numMinutos = state.dadosAtividade.numMinutos;
+                dados.tempoDeDuracao = JSON.stringify({ numHoras, numMinutos });
             }
         }
 
@@ -324,10 +323,11 @@ function initSectionProducaoAtividades() {
 
             dados.questoes = JSON.stringify(questoesCorrigidas);
 
-            dados.tentativas = Number(state.dadosAtividade.numTentativas);
+            dados.tentativas = state.dadosAtividade.numTentativas;
         } else {
             dados.enunciado = state.dadosAtividade.enunciado;
         }
+
 
         const formData = new FormData();
         formData.append("atividade", new Blob([JSON.stringify(dados)], { type: "application/json" }));
@@ -350,18 +350,15 @@ function initSectionProducaoAtividades() {
             }
         }
 
-        console.log(dados);
-
         fetch("/api/atividade/salvar", {
             method: "POST",
             body: formData
         })
-            .then(async response => {
-                if (!response.ok) {
-                    const err = await response.json();
-                    alert(err.message);
-                    throw err;
-                }
+            .then(response => {
+                if (!response.ok) throw new Error("Erro ao enviar os dados");
+                return response.json();
+            })
+            .then(data => {
                 window.location.href = "/home";
             })
             .catch(err => console.error("Falha no envio:", err));
@@ -427,33 +424,7 @@ function initSectionProducaoAtividades() {
         return handler;
     }
 
-    async function montarDivTurmas() {
-        try {
-            const div = document.getElementById("div-turmas");
-            const resp = await fetch(`/api/turma/professor/getAll`);
-            if (!resp.ok) {
-                throw new Error("Erro ao consultar as turmas");
-            }
-            const dados = await resp.json();
-            dados.forEach(turma => {
-                const label = document.createElement("label");
-                label.classList.add("checkbox-item");
-
-                const input = document.createElement("input");
-                input.type = "checkbox";
-                input.name = "turmas";
-                input.value = turma.id;
-
-                label.append(input, document.createTextNode(" " + turma.nome));
-                div.append(label);
-            });
-
-        } catch (err) {
-            console.error("Erro:", err);
-        }
-    }
-
-    async function montarPrimeiraTela() {
+    function montarPrimeiraTela() {
         htmlDOM.section.innerHTML = `
         <form id="form-principal" action="atividades.html" method="post">
         <label>Nome da atividade:</label>
@@ -463,9 +434,6 @@ function initSectionProducaoAtividades() {
             <option value="questionario">Questionário</option>
             <option value="redacao">Redação</option>
             <option value="envioArquivo">Envio de Arquivo</option>
-        </select><br>
-        <label>Turmas:</label>
-        <div id="div-turmas"></div>
         </select><br>
         <label>Valor (pontos):</label>
         <input type="number" name="valor" min="1"><br>
@@ -478,8 +446,6 @@ function initSectionProducaoAtividades() {
 
         if (state.dadosForm != null) restaurarPrimeiraTela();
 
-        await montarDivTurmas();
-
         const validacao = () => {
             let form = document.querySelector("form");
             if (state.idxSection == -1) {
@@ -491,16 +457,8 @@ function initSectionProducaoAtividades() {
                     destacarCampo(form.dataEncerramento);
                     return false;
                 }
-                if (!validarCheckbox()) {
-                    alert("Selecione ao menos uma turma");
-                    return false;
-                }
                 state.sequence = sequenciasAcoes[form.tipo.value];
                 state.dadosForm = new FormData(form);
-                state.dadosAtividade.turmas = Array.from(
-                    document.querySelectorAll('input[name="turmas"]:checked')
-                ).map(cb => Number(cb.value))
-                console.log(state.dadosAtividade.turmas);
                 return true;
             }
         };
@@ -750,7 +708,7 @@ function initSectionProducaoAtividades() {
             enunciado.innerHTML = `Enunciado: <span>${state.dadosAtividade.enunciado}</span>`;
             divConfirmacao.append(enunciado);
 
-            if (state.arquivos.length != 0) {
+            if(state.arquivos.length != 0) {
                 const arquivos = document.createElement("p");
                 const lista = document.createElement("ul");
                 arquivos.innerHTML = "Arquivos: ";

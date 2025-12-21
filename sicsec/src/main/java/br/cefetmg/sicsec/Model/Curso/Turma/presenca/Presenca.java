@@ -5,6 +5,7 @@
 package br.cefetmg.sicsec.Model.Curso.Turma.presenca;
 
 import br.cefetmg.sicsec.Model.Usuario.Aluno.Aluno;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 /**
  *
@@ -18,6 +19,7 @@ public class Presenca {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
+    @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lista_id")
     private ListaPresenca lista;

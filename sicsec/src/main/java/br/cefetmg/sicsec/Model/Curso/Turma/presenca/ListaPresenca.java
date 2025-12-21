@@ -7,6 +7,7 @@ package br.cefetmg.sicsec.Model.Curso.Turma.presenca;
 import br.cefetmg.sicsec.Model.Curso.Turma.Turma;
 import br.cefetmg.sicsec.Model.Usuario.*;
 import br.cefetmg.sicsec.Model.Util.Horario;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import java.util.Date;
 import java.util.List;
@@ -27,10 +28,12 @@ public class ListaPresenca {
     @JoinColumn(name = "autor_id", nullable = false)
     private Usuario autor;
     
+    @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "turma_id", nullable = false)
     private Turma turma;
-
+    
+    @JsonManagedReference
     @OneToMany(mappedBy = "lista", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Presenca> presencas;
 

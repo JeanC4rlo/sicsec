@@ -5,6 +5,8 @@
 package br.cefetmg.sicsec.Model.Curso.Turma;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import br.cefetmg.sicsec.Model.Usuario.Aluno.Aluno;
 import br.cefetmg.sicsec.Model.Usuario.Professor.Professor;
 import br.cefetmg.sicsec.Model.Util.Enum.TipoTurma;
@@ -21,6 +23,7 @@ public class SubTurma extends Turma {
 
     @ManyToOne
     @JoinColumn(name = "super_turma_id", nullable = false)
+    @JsonBackReference
     private SuperTurma superTurma;
 
     
