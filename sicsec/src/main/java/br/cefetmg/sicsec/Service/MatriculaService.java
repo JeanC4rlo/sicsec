@@ -53,7 +53,7 @@ public class MatriculaService {
     private Long gerarNumeroMatricula(String nome, String cpf, String email, String telefone) {
         String ano = String.valueOf(Year.now().getValue());
 
-        int hash = Math.abs((nome + cpf + email + telefone).hashCode()) % (10 * 5);
+        int hash = Math.abs((nome + cpf + email + telefone).hashCode()) % (100_000);
 
         String matriculaBase = String.format("%s%05d", ano, hash);
 
