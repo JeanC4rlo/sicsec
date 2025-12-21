@@ -1,5 +1,6 @@
 const state = {
     atividade: null,
+    disciplinaId: null,
     questoes: [],
     numQuestoes: 0,
     tempoTotal: 0,
@@ -261,6 +262,7 @@ async function enviarQuestionario() {
     const respostaAluno = {
         atividadeId: state.atividade.id,
         tentativaId: state.tentativa.id,
+        disciplinaId: state.disciplinaId,
         alternativasMarcadas: montarListaAlternativasMarcadas(alternativasMarcadas),
         textoRedacao: null
     };
@@ -301,6 +303,7 @@ async function enviarRedacao() {
     const respostaAluno = {
         atividadeId: state.atividade.id,
         tentativaId: state.tentativa.id,
+        disciplinaId: state.disciplinaId,
         alternativasMarcadas: null,
         textoRedacao: document.getElementById("textarea-redacao").value
     }
@@ -331,6 +334,7 @@ async function enviarArquivo() {
     const respostaAluno = {
         atividadeId: state.atividade.id,
         tentativaId: state.tentativa.id,
+        disciplinaId: state.disciplinaId,
         alternativasMarcadas: null,
         textoRedacao: null
     };
@@ -673,6 +677,7 @@ async function carregarArquivos() {
 
 async function initFazerAtividades() {
     htmlDOM.containerPrincipal = document.getElementById("main-container");
+    state.disciplinaId = localStorage.getItem("disciplinaId");
     await carregarAtividade();
     primeiraTela();
 

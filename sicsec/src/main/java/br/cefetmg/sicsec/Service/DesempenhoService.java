@@ -17,11 +17,13 @@ import br.cefetmg.sicsec.Repository.TentativaRepository;
 import br.cefetmg.sicsec.Repository.Usuarios.AlunoRepo;
 import br.cefetmg.sicsec.dto.DesempenhoComDadosAlunoDTO;
 import br.cefetmg.sicsec.dto.TurmaDTO;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 
 @Service
 public class DesempenhoService {
+
     @Autowired
     DesempenhoRepository desempenhoRepository;
 
@@ -36,6 +38,9 @@ public class DesempenhoService {
 
     @Autowired
     AlunoRepo alunoRepository;
+
+    @Autowired
+    NotaService notaService;
 
     public Double getNotaTentativa(Long tentativaId) {
         Desempenho desempenho = desempenhoRepository.findByTentativaId(tentativaId);
@@ -52,7 +57,8 @@ public class DesempenhoService {
     }
 
     public Desempenho getDesempenho(Long desempenhoId) {
-        return desempenhoRepository.findById(desempenhoId).orElseThrow();
+        return desempenhoRepository.findById(desempenhoId)
+                .orElseThrow(() -> new EntityNotFoundException("Desempenho não encontrado"));
     }
 
     public List<DesempenhoComDadosAlunoDTO> getListaDesempenhos(HttpSession session) {
@@ -95,18 +101,22 @@ public class DesempenhoService {
         if (nota != null) {
             desempenho.setNota(nota);
             desempenho.setCorrigido(true);
+            notaService.salvarNota(desempenho, aluno);
         } else {
             desempenho.setNota(null);
             desempenho.setCorrigido(false);
         }
-
-        return desempenhoRepository.save(desempenho);
+        desempenho = desempenhoRepository.save(desempenho);
+        return desempenho;
     }
 
     public Desempenho atribuirNota(Long desempenhoId, Double nota) {
-        Desempenho desempenho = desempenhoRepository.findById(desempenhoId).orElseThrow();
+        Desempenho desempenho = desempenhoRepository.findById(desempenhoId)
+                .orElseThrow(() -> new EntityNotFoundException("Desempenho não encontrado"));
+        Aluno aluno = desempenho.getAluno();
         desempenho.setNota(nota);
         desempenho.setCorrigido(true);
+        notaService.salvarNota(desempenho, aluno);
         return desempenhoRepository.save(desempenho);
     }
 

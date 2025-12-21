@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import br.cefetmg.sicsec.Model.Curso.Disciplina;
 import br.cefetmg.sicsec.Model.Usuario.Aluno.Aluno;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
@@ -33,6 +34,10 @@ public class Resposta implements FileOwner {
     @JsonIgnore
     @JoinColumn(name = "aluno_id", nullable = false)
     private Aluno aluno;
+
+    @ManyToOne
+    @JoinColumn(name = "disciplina_id", nullable = false)
+    private Disciplina disciplina;
 
     @ElementCollection
     private List<AlternativaMarcada> alternativasMarcadas;
@@ -72,6 +77,14 @@ public class Resposta implements FileOwner {
 
     public void setAluno(Aluno aluno) {
         this.aluno = aluno;
+    }
+
+    public Disciplina getDisciplina() {
+        return disciplina;
+    }
+
+    public void setDisciplina(Disciplina disciplina) {
+        this.disciplina = disciplina;
     }
 
     public List<AlternativaMarcada> getAlternativasMarcadas() {

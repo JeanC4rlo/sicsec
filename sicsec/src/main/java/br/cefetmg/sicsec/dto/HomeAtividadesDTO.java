@@ -1,9 +1,0 @@
-package br.cefetmg.sicsec.dto;
-
-public record HomeAtividadesDTO(
-        Long id,
-        String nome,
-        String tipo,
-        Double valor,
-        String dataEncerramento,
-        String horaEncerramento) {}

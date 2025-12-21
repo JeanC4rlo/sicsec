@@ -52,9 +52,9 @@ public class RespostaController {
     @PostMapping("/enviar")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void salvarResposta(@RequestBody RespostaCreateDTO dto, HttpSession session)
-            throws CorrecaoException {
+            throws CorrecaoException, IOException {
         Usuario usuario = ((Perfil) session.getAttribute("perfilSelecionado")).getUsuario();
-        respostaService.salvarResposta(dto, usuario);
+        respostaService.salvarOuAtualizarResposta(dto, usuario, null);
         System.out.println("Teste 5");
     }
 
@@ -64,6 +64,6 @@ public class RespostaController {
             @RequestPart("arquivo") MultipartFile arquivo,
             HttpSession session) throws IOException {
         Usuario usuario = ((Perfil) session.getAttribute("perfilSelecionado")).getUsuario();
-        respostaService.salvarRespostaComArquivo(dto, arquivo, usuario);
+        respostaService.salvarOuAtualizarResposta(dto, usuario, arquivo);
     }
 }

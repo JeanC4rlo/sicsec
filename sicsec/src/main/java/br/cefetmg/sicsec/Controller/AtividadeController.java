@@ -19,12 +19,12 @@ import org.springframework.web.multipart.MultipartFile;
 import br.cefetmg.sicsec.Model.Atividade;
 import br.cefetmg.sicsec.Model.Usuario.Usuario;
 import br.cefetmg.sicsec.Service.AtividadeService;
-import br.cefetmg.sicsec.dto.HomeAtividadesDTO;
 import br.cefetmg.sicsec.dto.Perfil;
-import br.cefetmg.sicsec.dto.atividade.AtividadeAlunoDTO;
+import br.cefetmg.sicsec.dto.atividade.FazerAtividadeDTO;
 import br.cefetmg.sicsec.dto.atividade.AtividadeCreateDTO;
-import br.cefetmg.sicsec.dto.atividade.AtividadeHomeDTO;
+import br.cefetmg.sicsec.dto.atividade.AtividadeEmTelaAtividadesDTO;
 import br.cefetmg.sicsec.dto.atividade.AtividadeResumoDTO;
+import br.cefetmg.sicsec.dto.atividade.AtividadeEmTelaHomepageDTO;
 import jakarta.servlet.http.HttpSession;
 
 @RestController
@@ -42,8 +42,8 @@ public class AtividadeController {
     }
 
     @GetMapping("/completa/{atividadeId}")
-    public ResponseEntity<AtividadeAlunoDTO> getAtividadeCompleta(@PathVariable Long atividadeId) {
-        AtividadeAlunoDTO dto = atividadeService.getAtividadeDTO(atividadeId);
+    public ResponseEntity<FazerAtividadeDTO> getAtividadeCompleta(@PathVariable Long atividadeId) {
+        FazerAtividadeDTO dto = atividadeService.getAtividadeDTO(atividadeId);
         return ResponseEntity.ok(dto);
     }
 
@@ -54,13 +54,14 @@ public class AtividadeController {
     }
 
     @GetMapping("/home-atividades")
-    public ResponseEntity<List<HomeAtividadesDTO>> ListarHomeAtividades() {
-        List<HomeAtividadesDTO> listaAtividadesDTO = atividadeService.ListarAtividadesHomeAtividadeDTO();
+    public ResponseEntity<List<AtividadeEmTelaHomepageDTO>> ListarHomeAtividades(HttpSession session) {
+        Usuario usuario = ((Perfil) session.getAttribute("perfilSelecionado")).getUsuario();
+        List<AtividadeEmTelaHomepageDTO> listaAtividadesDTO = atividadeService.ListarAtividadesHomeAtividadeDTO(usuario);
         return ResponseEntity.ok(listaAtividadesDTO);
     }
 
     @GetMapping("/atividades-dto")
-    public ResponseEntity<List<AtividadeHomeDTO>> listarAtividadesDTO(HttpSession session) {
+    public ResponseEntity<List<AtividadeEmTelaAtividadesDTO>> listarAtividadesDTO(HttpSession session) {
         Usuario usuario = ((Perfil) session.getAttribute("perfilSelecionado")).getUsuario();
         return ResponseEntity.ok(atividadeService.ListarAtividadesDTO(usuario));
     }

@@ -2,6 +2,7 @@ package br.cefetmg.sicsec.Service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import br.cefetmg.sicsec.Repository.Usuarios.AlunoRepo;
 import br.cefetmg.sicsec.dto.AlternativaMarcadaDTO;
 import br.cefetmg.sicsec.dto.DesempenhoDTO;
 import br.cefetmg.sicsec.dto.resposta.RespostaCreateDTO;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -29,6 +31,9 @@ public class RespostaService {
 
     @Autowired
     DesempenhoService desempenhoService;
+
+    @Autowired
+    DisciplinaService disciplinaService;
 
     @Autowired
     CorrecaoService correcaoService;
@@ -54,38 +59,69 @@ public class RespostaService {
     }
 
     @Transactional
-    public void salvarResposta(RespostaCreateDTO dto, Usuario usuario) {
-        Resposta resposta = toEntity(dto);
+    public Resposta salvarOuAtualizarResposta(RespostaCreateDTO dto, Usuario usuario, MultipartFile arquivo)
+            throws IOException {
+        if (arquivo != null && !arquivoService.validarArquivo(arquivo))
+            throw new IOException();
 
-        Aluno aluno = alunoRepository.findById(usuario.getMatricula().getId()).get();
-        resposta.setAluno(aluno);
+        Aluno aluno = alunoRepository.findById(usuario.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Aluno não encontrado"));
+        Atividade atividade = atividadeService.getAtividade(dto.atividadeId());
+        Tentativa tentativa = tentativaService.getTentativa(dto.tentativaId());
+
+        Optional<Resposta> opt = respostaRepository
+                .findByAlunoIdAndAtividadeIdAndTentativaId(aluno.getId(), atividade.getId(),
+                        tentativa.getId());
+
+        Resposta resposta;
+        if (opt.isPresent()) {
+            System.out.println("achou existente");
+            resposta = opt.get();
+        } else {
+            System.out.println("Criou");
+            resposta = toEntity(dto);
+            resposta.setAluno(aluno);
+            System.out.println("DTO: " + dto.toString());
+        }
 
         Resposta nova = respostaRepository.save(resposta);
+
+        System.out.println("salvou");
+        if (arquivo != null) {
+            Arquivo arquivoEntidade = arquivoService.salvarArquivo(nova, arquivo);
+            nova.setArquivoId(arquivoEntidade.getId());
+            nova = respostaRepository.save(nova);
+        }
+        
         Double nota = null;
         if (nova.getAtividade().getTipo().equals("Questionário"))
             nota = correcaoService.corrigir(nova);
+
         desempenhoService.salvarDesempenho(nova, nota, aluno);
-        System.out.println("Teste 3");
-        System.out.println("Teste 4");
+
+        return nova;
     }
 
-    @Transactional
-    public void salvarRespostaComArquivo(RespostaCreateDTO dto, MultipartFile arquivo, Usuario usuario)
-            throws IOException {
-        if (arquivo == null || !arquivoService.validarArquivo(arquivo))
-            throw new IOException();
-        Resposta resposta = toEntity(dto);
-
-        Aluno aluno = alunoRepository.findById(usuario.getMatricula().getId()).get();
-        resposta.setAluno(aluno);
-
-        Resposta nova = respostaRepository.save(resposta);
-
-        Arquivo arquivoEntidade = arquivoService.salvarArquivo(nova, arquivo);
-        nova.setArquivoId(arquivoEntidade.getId());
-        desempenhoService.salvarDesempenho(nova, null, aluno);
-        respostaRepository.save(nova);
-    }
+    /*
+     * @Transactional
+     * public void salvarRespostaComArquivo(RespostaCreateDTO dto, MultipartFile
+     * arquivo, Usuario usuario)
+     * throws IOException {
+     * if (arquivo == null || !arquivoService.validarArquivo(arquivo))
+     * throw new IOException();
+     * Resposta resposta = toEntity(dto);
+     * 
+     * Aluno aluno = alunoRepository.findById(usuario.getMatricula().getId()).get();
+     * resposta.setAluno(aluno);
+     * 
+     * Resposta nova = respostaRepository.save(resposta);
+     * 
+     * Arquivo arquivoEntidade = arquivoService.salvarArquivo(nova, arquivo);
+     * nova.setArquivoId(arquivoEntidade.getId());
+     * desempenhoService.salvarDesempenho(nova, null, aluno);
+     * respostaRepository.save(nova);
+     * }
+     */
 
     public DesempenhoDTO getDesempenhoDTO(Long desempenhoId) {
         Desempenho desempenho = desempenhoService.getDesempenho(desempenhoId);
@@ -112,6 +148,7 @@ public class RespostaService {
         Resposta resposta = new Resposta();
         resposta.setAtividade(atividadeService.getAtividade(dto.atividadeId()));
         resposta.setTentativa(tentativaService.getTentativa(dto.tentativaId()));
+        resposta.setDisciplina(disciplinaService.getDisciplina(dto.disciplinaId()));
         resposta.setAlternativasMarcadas(toEntity(dto.alternativasMarcadas()));
         resposta.setTextoRedacao(dto.textoRedacao());
         resposta.setArquivoId(null);

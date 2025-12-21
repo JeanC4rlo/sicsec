@@ -10,14 +10,14 @@ import br.cefetmg.sicsec.Model.Atividade;
 import br.cefetmg.sicsec.Model.Curso.Turma.Turma;
 
 public interface AtividadeRepository extends JpaRepository<Atividade, Long> {
-    @Query("""
-                SELECT DISTINCT a
-                FROM Atividade a
-                JOIN a.turmas t
-                WHERE a.dataEncerramento >= :dataLimite
-                  AND t IN :turmas
-            """)
-    List<Atividade> findAtividadesVisiveisAluno(
-            @Param("dataLimite") String dataLimite,
-            @Param("turmas") List<Turma> turmas);
+        @Query("""
+                        SELECT a, t
+                        FROM Atividade a
+                        JOIN a.turmas t
+                        WHERE t IN :turmas
+                        AND a.dataEncerramento >= :dataLimite
+                        """)
+        List<Object[]> findAtividadesVisiveisAluno(
+                        @Param("dataLimite") String dataLimite,
+                        @Param("turmas") List<Turma> turmas);
 }

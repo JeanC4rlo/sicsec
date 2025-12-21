@@ -15,21 +15,24 @@ import java.util.List;
  */
 @Entity
 public class Aluno extends Usuario {
-    
+
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "discentes")
     private List<Turma> turmas;
-    
+
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "bolsistas")
     private List<Bolsa> bolsas;
-    
+
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "aluno")
+    @OrderBy("anoLetivo DESC")
     private List<Boletim> anosEscolares;
-    
+
     /*
-    @JsonIgnore
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "usuario")
-    private List<Matricula> historicoMatricula;
-    */
+     * @JsonIgnore
+     * 
+     * @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy =
+     * "usuario")
+     * private List<Matricula> historicoMatricula;
+     */
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "aluno")
     private List<NescessidadeEspecial> nescessidadesEspeciais;
@@ -65,5 +68,11 @@ public class Aluno extends Usuario {
     public void setNescessidadesEspeciais(List<NescessidadeEspecial> nescessidadesEspeciais) {
         this.nescessidadesEspeciais = nescessidadesEspeciais;
     }
-    
+
+    public Boletim getBoletimAtual() {
+        if (anosEscolares == null || anosEscolares.isEmpty()) {
+            return null;
+        }
+        return anosEscolares.get(0);
+    }
 }

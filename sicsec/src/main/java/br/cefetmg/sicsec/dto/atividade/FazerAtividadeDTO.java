@@ -2,7 +2,7 @@ package br.cefetmg.sicsec.dto.atividade;
 
 import br.cefetmg.sicsec.dto.TempoDuracaoDTO;
 
-public record AtividadeAlunoDTO(
+public record FazerAtividadeDTO(
         Long id,
         String nome,
         String tipo,

@@ -65,8 +65,9 @@
         return mensagem;
     }
 
-    function irParaFazerAtividades(id) {
-        localStorage.setItem("atividadeId", id);
+    function irParaFazerAtividades(atividadeId, disciplinaId) {
+        localStorage.setItem("atividadeId", atividadeId);
+        localStorage.setItem("disciplinaId", disciplinaId)
         window.location.href = "/html/aluno/fazer-atividades.html";
     }
 
@@ -145,7 +146,7 @@
         estado.classList.add("estado");
 
         if (calcularDistanciaData(atividadeDTO.dataEncerramento, atividadeDTO.horaEncerramento, "minutos") > 0) {
-            linha.addEventListener('click', () => irParaFazerAtividades(atividadeDTO.id));
+            linha.addEventListener('click', () => irParaFazerAtividades(atividadeDTO.id, atividadeDTO.disciplina.id));
         }
         else
             linha.classList.add("atividade-fechada");
@@ -157,7 +158,7 @@
 
         const disciplina = document.createElement("span");
         disciplina.classList.add("disciplina");
-        disciplina.innerHTML = "DISCIPLINA";
+        disciplina.innerHTML = atividadeDTO.disciplina.nome;
 
         const avaliacao = document.createElement("span");
         avaliacao.classList.add("avaliacao");

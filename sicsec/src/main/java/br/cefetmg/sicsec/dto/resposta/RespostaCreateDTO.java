@@ -7,6 +7,7 @@ import br.cefetmg.sicsec.dto.AlternativaMarcadaDTO;
 public record RespostaCreateDTO(
         Long atividadeId,
         Long tentativaId,
+        Long disciplinaId,
         List<AlternativaMarcadaDTO> alternativasMarcadas,
         String textoRedacao) {
 }

@@ -2,7 +2,6 @@ package br.cefetmg.sicsec.Service;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,18 +10,21 @@ import org.springframework.web.multipart.MultipartFile;
 
 import br.cefetmg.sicsec.Model.Atividade;
 import br.cefetmg.sicsec.Model.TempoDuracao;
+import br.cefetmg.sicsec.Model.Curso.Disciplina;
+import br.cefetmg.sicsec.Model.Curso.Turma.Turma;
 import br.cefetmg.sicsec.Model.Usuario.Usuario;
 import br.cefetmg.sicsec.Model.Usuario.Aluno.Aluno;
 import br.cefetmg.sicsec.Model.Usuario.Professor.Professor;
 import br.cefetmg.sicsec.Repository.AtividadeRepository;
 import br.cefetmg.sicsec.Repository.Usuarios.AlunoRepo;
 import br.cefetmg.sicsec.Repository.Usuarios.ProfessorRepo;
-import br.cefetmg.sicsec.dto.HomeAtividadesDTO;
+import br.cefetmg.sicsec.dto.DisciplinaDTO;
 import br.cefetmg.sicsec.dto.TempoDuracaoDTO;
-import br.cefetmg.sicsec.dto.atividade.AtividadeAlunoDTO;
+import br.cefetmg.sicsec.dto.atividade.FazerAtividadeDTO;
 import br.cefetmg.sicsec.dto.atividade.AtividadeCreateDTO;
-import br.cefetmg.sicsec.dto.atividade.AtividadeHomeDTO;
+import br.cefetmg.sicsec.dto.atividade.AtividadeEmTelaAtividadesDTO;
 import br.cefetmg.sicsec.dto.atividade.AtividadeResumoDTO;
+import br.cefetmg.sicsec.dto.atividade.AtividadeEmTelaHomepageDTO;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
@@ -55,7 +57,7 @@ public class AtividadeService {
                 .orElseThrow(() -> new EntityNotFoundException("Atividade não encontrada"));
     }
 
-    public AtividadeAlunoDTO getAtividadeDTO(Long atividadeId) {
+    public FazerAtividadeDTO getAtividadeDTO(Long atividadeId) {
         return toDTO(atividadeRepository.findById(atividadeId)
                 .orElseThrow(() -> new EntityNotFoundException("Atividade não encontrada")));
     }
@@ -91,40 +93,47 @@ public class AtividadeService {
                 .toList();
     }
 
-    public List<HomeAtividadesDTO> ListarAtividadesHomeAtividadeDTO() {
-        LocalDate hoje = LocalDate.now();
-
-        return atividadeRepository.findAll().stream()
-                .filter(a -> {
-                    LocalDate dataEncerramento = LocalDate.parse(a.getDataEncerramento());
-                    long diasRestantes = ChronoUnit.DAYS.between(hoje, dataEncerramento);
-                    return diasRestantes > -3;
-                })
-                .map(a -> new HomeAtividadesDTO(
-                        a.getId(),
-                        a.getNome(),
-                        a.getTipo(),
-                        a.getValor(),
-                        a.getDataEncerramento(),
-                        a.getHoraEncerramento()))
-                .toList();
-    }
-
-    public List<AtividadeHomeDTO> ListarAtividadesDTO(Usuario usuario) {
+    public List<AtividadeEmTelaHomepageDTO> ListarAtividadesHomeAtividadeDTO(Usuario usuario) {
         Aluno aluno = alunoRepository.findById(usuario.getMatricula().getId())
                 .orElseThrow(() -> new EntityNotFoundException("Aluno não encontrado"));
 
         String dataLimite = LocalDate.now().minusDays(2).toString();
-
         return atividadeRepository
                 .findAtividadesVisiveisAluno(dataLimite, aluno.getTurmas())
                 .stream()
-                .map(a -> {
+                .map(obj -> {
+                    Atividade a = (Atividade) obj[0];
+                    Disciplina d = ((Turma) obj[1]).getDisciplina();
+                    return new AtividadeEmTelaHomepageDTO(
+                            a.getId(),
+                            a.getNome(),
+                            a.getTipo(),
+                            new DisciplinaDTO(d.getId(), d.getNome()),
+                            a.getValor(),
+                            a.getDataEncerramento(),
+                            a.getHoraEncerramento());
+                })
+                .toList();
+    }
+
+    public List<AtividadeEmTelaAtividadesDTO> ListarAtividadesDTO(Usuario usuario) {
+        Aluno aluno = alunoRepository.findById(usuario.getMatricula().getId())
+                .orElseThrow(() -> new EntityNotFoundException("Aluno não encontrado"));
+
+        String dataLimite = LocalDate.now().minusDays(2).toString();
+        return atividadeRepository
+                .findAtividadesVisiveisAluno(dataLimite, aluno.getTurmas())
+                .stream()
+                .map(obj -> {
+                    Atividade a = (Atividade) obj[0];
+                    Turma t = (Turma) obj[1];
+                    Disciplina d = t.getDisciplina();
+
                     String nomeProfessor = a.getProfessor().getMatricula().getNome();
                     int tentativasRestantes = a.getTentativas() - tentativaService.getNumTentativasFeitas(a.getId());
                     Double nota = desempenhoService.getMaiorNotaAtividade(a.getId(), aluno.getId());
 
-                    return new AtividadeHomeDTO(
+                    return new AtividadeEmTelaAtividadesDTO(
                             a.getId(),
                             a.getNome(),
                             a.getTipo(),
@@ -132,7 +141,7 @@ public class AtividadeService {
                             nota,
                             a.getDataEncerramento(),
                             a.getHoraEncerramento(),
-                            null,
+                            new DisciplinaDTO(d.getId(), d.getNome()),
                             nomeProfessor,
                             tentativasRestantes);
                 })
@@ -157,18 +166,20 @@ public class AtividadeService {
         else
             atividade.setTempoDuracao(null);
         atividade.setTipoTimer(dto.tipoTimer());
-        atividade.setTurmas(turmaService.listarTurmasPorId(dto.turmas()));
+        List<Turma> turmas = turmaService.listarTurmasPorId(dto.turmas());
+        System.out.println("Turmas: " + turmas.size());
+        atividade.setTurmas(turmas);
         return atividade;
     }
 
-    private AtividadeAlunoDTO toDTO(Atividade atividade) {
+    private FazerAtividadeDTO toDTO(Atividade atividade) {
         TempoDuracaoDTO tempoDuracaoDTO;
         if (atividade.getTempoDuracao() != null)
             tempoDuracaoDTO = new TempoDuracaoDTO(atividade.getTempoDuracao().getHoras(),
                     atividade.getTempoDuracao().getMinutos());
         else
             tempoDuracaoDTO = null;
-        return new AtividadeAlunoDTO(
+        return new FazerAtividadeDTO(
                 atividade.getId(),
                 atividade.getNome(),
                 atividade.getTipo(),
