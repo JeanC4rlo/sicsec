@@ -1,6 +1,6 @@
-package br.cefetmg.sicsec.dto;
+package br.cefetmg.sicsec.dto.atividade;
 
-public record AtividadeDTO(
+public record AtividadeHomeDTO(
         Long id,
         String nome,
         String tipo,
