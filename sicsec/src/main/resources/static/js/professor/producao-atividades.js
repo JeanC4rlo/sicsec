@@ -288,6 +288,7 @@ function initSectionProducaoAtividades() {
             valor: state.dadosForm.get("valor"),
             dataEncerramento: state.dadosForm.get("dataEncerramento"),
             horaEncerramento: state.dadosForm.get("horaEncerramento"),
+            dataCriacao: new Date().toLocaleDateString("sv-SE"),
             enunciado: null,
             questoes: null,
             tentativas: "1",

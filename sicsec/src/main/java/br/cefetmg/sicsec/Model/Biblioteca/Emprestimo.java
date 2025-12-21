@@ -7,7 +7,6 @@ package br.cefetmg.sicsec.Model.Biblioteca;
 import br.cefetmg.sicsec.Model.Util.Enum.Reserva;
 import br.cefetmg.sicsec.Model.Usuario.Usuario;
 import java.util.Date;
-import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 
 /**

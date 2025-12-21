@@ -75,8 +75,6 @@
     }
 
     async function definirEstado(atividadeDTO) {
-        const img = document.createElement("img");
-        let caminho = "/images/icons/";
         let distanciaEmMinutos = calcularDistanciaData(
             atividadeDTO.dataEncerramento,
             atividadeDTO.horaEncerramento,
@@ -84,9 +82,7 @@
         );
 
         if (distanciaEmMinutos <= 0) {
-            img.src = caminho + "encerrado.svg";
-            img.title = "Atividade fechada";
-            return img;
+            return "fechada";
         }
 
         try {
@@ -96,22 +92,43 @@
             const numTentativasFeitas = await resp.json();
 
             if (numTentativasFeitas > 0) {
-                img.src = caminho + "concluido.svg";
-                img.title = "Você já fez essa atividade";
+                return "concluida";
             }
             else if (distanciaEmMinutos > 60 * 24) {
-                img.src = caminho + "atencao.svg";
-                img.title = "Você ainda não fez essa atividade";
+                return "aberta";
             }
             else {
-                img.src = caminho + "alerta.svg";
-                img.title = "Atividade ainda não feita e será fechada hoje";
+                return "fechando";
             }
-            return img;
 
         } catch (e) {
             console.error(e);
         }
+    }
+
+    async function getImgEstado(atividadeDTO) {
+        const estado = await definirEstado(atividadeDTO);
+        const img = document.createElement("img");
+        let caminho = "/images/icons/";
+        switch (estado) {
+            case "concluida":
+                img.src = caminho + "concluido.svg";
+                img.title = "Você já fez essa atividade";
+                break;
+            case "aberta":
+                img.src = caminho + "atencao.svg";
+                img.title = "Você ainda não fez essa atividade";
+                break;
+            case "fechando":
+                img.src = caminho + "alerta.svg";
+                img.title = "Atividade ainda não feita e será fechada hoje";
+                break;
+            default:
+                img.src = caminho + "encerrado.svg";
+                img.title = "Atividade fechada";
+                break;
+        }
+        return img;
     }
 
     async function atualizarAtividades(atividadeDTO) {
@@ -151,7 +168,7 @@
         avaliacao.innerHTML = `${atividadeDTO.nome}<br>${atividadeDTO.tipo}: ${atividadeDTO.valor} ponto`;
         if (atividadeDTO.valor > 1) avaliacao.innerHTML += "s";
 
-        const imgEstado = await definirEstado(atividadeDTO);
+        const imgEstado = await getImgEstado(atividadeDTO);
         imgEstado.classList.add("img-estado");
         estado.append(imgEstado);
 
@@ -170,10 +187,20 @@
             .then(async dados => {
                 const msg = document.getElementById("msg-sem-atividade-homepage");
                 msg.classList.toggle("inativo", dados.length > 0);
+                
+                const ORDEM_ESTADO = {
+                    fechando: 0,
+                    aberta: 1,
+                    concluida: 2,
+                    fechada: 3
+                };
+                await Promise.all(
+                    dados.map(async d => {
+                        d._estado = await definirEstado(d);
+                    })
+                );
                 dados.sort((a, b) => {
-                    if (calcularDistanciaData(a.dataEncerramento) <= 0) return 1;
-                    if (calcularDistanciaData(b.dataEncerramento) <= 0) return -1;
-                    return calcularDistanciaData(a.dataEncerramento) - calcularDistanciaData(b.dataEncerramento);
+                    return ORDEM_ESTADO[a._estado] - ORDEM_ESTADO[b._estado];
                 });
                 for (const atividadeDTO of dados) {
                     await atualizarAtividades(atividadeDTO);

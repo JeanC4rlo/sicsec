@@ -42,7 +42,7 @@ table th {
     align-items: center;
 }
 
-.tabela-container {
+.desempenhos {
     max-height: 60vh;
     overflow-y: auto;
     border-radius: 0.5rem;
