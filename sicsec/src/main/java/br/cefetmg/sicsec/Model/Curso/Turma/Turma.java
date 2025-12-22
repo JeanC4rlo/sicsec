@@ -4,6 +4,7 @@
  */
 package br.cefetmg.sicsec.Model.Curso.Turma;
 
+import br.cefetmg.sicsec.Model.Atividade;
 import br.cefetmg.sicsec.Model.Curso.*;
 import br.cefetmg.sicsec.Model.Curso.Turma.presenca.ListaPresenca;
 import br.cefetmg.sicsec.Model.Usuario.Aluno.Aluno;
@@ -34,17 +35,14 @@ public class Turma {
     private int anoLetivo;
     private boolean ativo;
     
-    @JsonManagedReference
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "disciplina_id", nullable = false)
     private Disciplina disciplina;
 
-    @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "curso_id", nullable = false)
     private Curso curso;
     
-    @JsonBackReference
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "turma_aluno",
@@ -53,7 +51,6 @@ public class Turma {
     )
     private List<Aluno> discentes;
     
-    @JsonBackReference
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "turma_professor",
@@ -62,7 +59,6 @@ public class Turma {
     )
     private List<Professor> doscentes;
     
-    @JsonManagedReference
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "turma")
     private List<Aula> aulas;
 
@@ -76,17 +72,18 @@ public class Turma {
     private List<Avaliacao> avaliacoes;
     */
 
-    @JsonManagedReference
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "turma")
     private List<MaterialDidatico> materialDidatico;
     
-    @JsonManagedReference
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "turma")
     private List<Noticia> noticias;
     
-    @JsonManagedReference
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "turma")
     private List<ListaPresenca> frequencia;
+
+    @JsonIgnore
+    @ManyToMany(mappedBy = "turmas")
+    private List<Atividade> atividades;
 
     public Turma() {
         

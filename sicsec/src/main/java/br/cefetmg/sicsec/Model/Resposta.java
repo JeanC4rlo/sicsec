@@ -1,14 +1,23 @@
 package br.cefetmg.sicsec.Model;
 
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import br.cefetmg.sicsec.Model.Curso.Disciplina;
+import br.cefetmg.sicsec.Model.Usuario.Aluno.Aluno;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 
 @Entity
-public class Resposta {
+public class Resposta implements FileOwner {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -17,14 +26,27 @@ public class Resposta {
     @JoinColumn(name = "atividade_id", nullable = false)
     private Atividade atividade;
 
+    @OneToOne
+    @JoinColumn(name = "tentativa_id", nullable = true)
+    private Tentativa tentativa;
+
     @ManyToOne
-    @JoinColumn(name = "status_id", nullable = false)
-    private Tentativa statusAtividade;
+    @JsonIgnore
+    @JoinColumn(name = "aluno_id", nullable = false)
+    private Aluno aluno;
 
-    private Integer numQuestao;
-    private Integer alternativaMarcada;
-    private Boolean correta;
+    @ManyToOne
+    @JoinColumn(name = "disciplina_id", nullable = false)
+    private Disciplina disciplina;
 
+    @ElementCollection
+    private List<AlternativaMarcada> alternativasMarcadas;
+
+    @Lob
+    private String textoRedacao;
+    private Long arquivoId;
+
+    @Override
     public Long getId() {
         return id;
     }
@@ -41,35 +63,55 @@ public class Resposta {
         this.atividade = atividade;
     }
 
-    public Tentativa getStatusAtividade() {
-        return statusAtividade;
+    public Tentativa getTentativa() {
+        return tentativa;
     }
 
-    public void setStatusAtividade(Tentativa statusAtividade) {
-        this.statusAtividade = statusAtividade;
+    public void setTentativa(Tentativa tentativa) {
+        this.tentativa = tentativa;
     }
 
-    public Integer getNumQuestao() {
-        return numQuestao;
+    public Aluno getAluno() {
+        return aluno;
     }
 
-    public void setNumQuestao(Integer numQuestao) {
-        this.numQuestao = numQuestao;
+    public void setAluno(Aluno aluno) {
+        this.aluno = aluno;
     }
 
-    public Integer getAlternativaMarcada() {
-        return alternativaMarcada;
+    public Disciplina getDisciplina() {
+        return disciplina;
     }
 
-    public void setAlternativaMarcada(Integer numAlternativa) {
-        this.alternativaMarcada = numAlternativa;
+    public void setDisciplina(Disciplina disciplina) {
+        this.disciplina = disciplina;
     }
 
-    public Boolean getCorreta() {
-        return correta;
+    public List<AlternativaMarcada> getAlternativasMarcadas() {
+        return alternativasMarcadas;
     }
 
-    public void setCorreta(Boolean correta) {
-        this.correta = correta;
+    public void setAlternativasMarcadas(List<AlternativaMarcada> alternativasMarcadas) {
+        this.alternativasMarcadas = alternativasMarcadas;
+    }
+
+    public String getTextoRedacao() {
+        return textoRedacao;
+    }
+
+    public void setTextoRedacao(String textoRedacao) {
+        this.textoRedacao = textoRedacao;
+    }
+
+    public Long getArquivoId() {
+        return arquivoId;
+    }
+
+    public void setArquivoId(Long arquivoId) {
+        this.arquivoId = arquivoId;
+    }
+
+    public FileOwnerTypes getTipoDonoArquivo() {
+        return FileOwnerTypes.RESPOSTA;
     }
 }

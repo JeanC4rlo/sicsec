@@ -33,4 +33,8 @@ build/
 .vscode/
 
 trace.db
+<<<<<<< HEAD
+uploads/
+=======
 **/uploads/
+>>>>>>> 3327154c888b1ce4ac8388a6832543a086b7b74d

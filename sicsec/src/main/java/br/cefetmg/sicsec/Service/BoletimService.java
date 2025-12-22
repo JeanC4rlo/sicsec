@@ -14,6 +14,9 @@ import br.cefetmg.sicsec.Model.Util.Enum.Cargo;
 import br.cefetmg.sicsec.Repository.BoletimRepo;
 import br.cefetmg.sicsec.dto.Perfil;
 import jakarta.servlet.http.HttpSession;
+import java.util.Optional;
+import br.cefetmg.sicsec.Model.Util.Enum.Situacao;
+import br.cefetmg.sicsec.Repository.BoletimRepository;
 
 @Service
 public class BoletimService {
@@ -41,4 +44,19 @@ public class BoletimService {
         
     }
 
+    Boletim getOuCriarBoletim(Aluno aluno, int anoAtual) {
+        Optional<Boletim> optBoletim =  bRepo.findByAluno_IdAndAnoLetivo(aluno.getId(), anoAtual);
+        Boletim boletim;
+        if(optBoletim.isEmpty()) {
+            boletim = new Boletim();
+            boletim.setAluno(aluno);
+            boletim.setAnoLetivo(anoAtual);
+            boletim.setSituacaoDoAno(Situacao.MATRICULADO);
+            boletim = bRepo.save(boletim);
+        }
+        else {
+            boletim = optBoletim.get();
+        }
+        return boletim;
+    }
 }

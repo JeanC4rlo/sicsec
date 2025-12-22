@@ -1,18 +1,9 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package br.cefetmg.sicsec.Model.Usuario;
 
 import java.util.Date;
-import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import java.util.List;
 
-/**
- *
- * @author davig
- */
 @Entity
 public class Bolsa {
     
@@ -30,7 +21,6 @@ public class Bolsa {
     @Temporal(TemporalType.DATE)
     private Date fim;
     
-    @JsonBackReference
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "bolsista",

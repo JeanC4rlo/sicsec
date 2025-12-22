@@ -45,48 +45,41 @@
     transform: scale(1.05);
 }
 
-#tabela-atividades {
+table {
     width: 100%;
     border-collapse: collapse;
     background-color: white;
     box-shadow: 0 4px 8px rgba(0,0,0,0.05);
     border-radius: 0.5rem;
-    overflow: hidden;
     table-layout: fixed;
 }
 
-#tabela-atividades caption {
+table caption {
     font-size: 1.5rem;
     font-weight: bold;
     color: var(--primary);
     padding: 1rem;
     text-align: left;
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 3;
 }
 
-#tabela-atividades thead {
+table thead {
     background-color: var(--primary);
     color: white;
 }
 
-#tabela-atividades th, 
-#tabela-atividades td {
+table th, 
+table td {
     padding: 0.75rem 1rem;
-    text-align: left;
+    text-align: center;
     border-bottom: 1px solid #ddd;
 }
 
-#tabela-atividades th {
+table th {
     font-weight: bold;
-}
-
-#tabela-atividades tbody tr:nth-child(even):not(.encerrada) {
-    background-color: var(--bg-secondary);
-}
-
-#tabela-atividades tbody tr:hover:not(.encerrada) {
-    background-color: var(--secondary);
-    color: white;
-    cursor: pointer;
 }
 
 .tabela-container {
@@ -95,21 +88,29 @@
     border-radius: 0.5rem;
 }
 
-.encerrada {
-    background-color: #6a6a6a;
-    color: #e0e0e0;
-    opacity: 0.7;
-    font-style: italic;
+table caption {
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 10;
+    height: 3.5rem;
 }
 
-.encerrada:hover {
-    background-color: var(--primary);
-    cursor: pointer;
+table thead th {
+    position: sticky;
+    top: 3.5rem;
+    background: var(--primary);
+    color: white;
+    z-index: 9;
+}
+
+table tbody tr:nth-child(even):not(.atividade-fechada) {
+    background-color: var(--bg-secondary);
 }
 
 @media (max-width: 768px) {
-    #tabela-atividades th,
-    #tabela-atividades td {
+    table th,
+    table td {
         font-size: 0.9rem;
         padding: 0.5rem;
     }

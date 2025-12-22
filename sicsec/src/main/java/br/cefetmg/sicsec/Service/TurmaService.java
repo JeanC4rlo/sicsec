@@ -4,7 +4,6 @@
  */
 package br.cefetmg.sicsec.Service;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,8 +24,10 @@ import br.cefetmg.sicsec.Repository.AulaRepo;
 import br.cefetmg.sicsec.Repository.CursoRepo;
 import br.cefetmg.sicsec.Repository.DisciplinaRepo;
 import br.cefetmg.sicsec.Repository.TurmaRepo;
+import br.cefetmg.sicsec.Repository.Usuarios.ProfessorRepo;
 import br.cefetmg.sicsec.Repository.Usuarios.UsuarioRepo;
 import br.cefetmg.sicsec.dto.Perfil;
+import br.cefetmg.sicsec.dto.TurmaDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
@@ -37,28 +38,31 @@ import jakarta.servlet.http.HttpSession;
 
 @Service
 public class TurmaService {
-    
+
     @Autowired
     private TurmaRepo turmaRepo;
-    
+
     @Autowired
     private DisciplinaRepo disciplinaRepo;
-    
+
     @Autowired
     private CursoRepo cursoRepo;
-    
+
+    @Autowired
+    private ProfessorRepo professorRepository;
+
     @Autowired
     private UsuarioRepo usuarioRepo;
-    
+
     @Autowired
     private AulaRepo aulaRepo;
     
     public Turma registrarTurma(Turma turma) {
-        
+
         turmaRepo.save(turma);
-        
+
         return turma;
-        
+
     }
     
     public SuperTurma registrarSuperTurma(SuperTurma turma) {
@@ -83,19 +87,25 @@ public class TurmaService {
         Curso curso = cursoRepo.findById(cursoId).orElseThrow(() -> new IllegalStateException("Curso Invalido"));
         List<Aluno> discentes = new ArrayList<>();
         List<Professor> doscentes = new ArrayList<>();
-        
+
         if (discentesId != null)
-            for(Long id : discentesId) {
-                Usuario u = (Usuario) usuarioRepo.findById(id).orElseThrow(() -> new IllegalStateException("Usuario Invalido"));
-                if (u instanceof Aluno a) discentes.add(a);
-                else throw new IllegalStateException("Id de Aluno Invalido");
+            for (Long id : discentesId) {
+                Usuario u = (Usuario) usuarioRepo.findById(id)
+                        .orElseThrow(() -> new IllegalStateException("Usuario Invalido"));
+                if (u instanceof Aluno a)
+                    discentes.add(a);
+                else
+                    throw new IllegalStateException("Id de Aluno Invalido");
             }
-        
+
         if (doscentesId != null)
-            for(Long id : doscentesId) {
-                Usuario u = (Usuario) usuarioRepo.findById(id).orElseThrow(() -> new IllegalStateException("Usuario Invalido"));
-                if (u instanceof Professor p) doscentes.add(p);
-                else throw new IllegalStateException("Id de Professor Invalido");
+            for (Long id : doscentesId) {
+                Usuario u = (Usuario) usuarioRepo.findById(id)
+                        .orElseThrow(() -> new IllegalStateException("Usuario Invalido"));
+                if (u instanceof Professor p)
+                    doscentes.add(p);
+                else
+                    throw new IllegalStateException("Id de Professor Invalido");
             }
         
         if (!turmaUnica) {
@@ -108,7 +118,7 @@ public class TurmaService {
 
         
         return registrarTurma(turma);
-        
+
     }
     
     public Turma registrarTurma(String nome, int anoLetivo, Long disciplinaId, Long cursoId, boolean turmaUnica) {
@@ -123,7 +133,7 @@ public class TurmaService {
         
         Turma turma = new Turma(nome, anoLetivo, true, disciplina, curso);
         return registrarTurma(turma);
-        
+
     }
 
     public Turma registrarSubturma(SuperTurma superTurma, List<Long> discentesId, List<Long> doscentesId, int t) {
@@ -162,178 +172,178 @@ public class TurmaService {
         turmaExistente.getDoscentes().clear();
 
         turmaRepo.save(turmaExistente);
-        
+
         inserirAlunos(turmaExistente, discentesId);
 
         if (doscentesId != null)
             for (Long doscenteId : doscentesId)
-            inserirProfessor(turmaExistente, doscenteId);
+                inserirProfessor(turmaExistente, doscenteId);
 
         return turmaExistente;
-        
+
     }
-    
+
     public Turma inserirAlunos(Turma turma, List<Long> discentesId) {
-        
+
         List<Aluno> discentes = turma.getDiscentes();
-        
+
         if (discentesId != null)
-            for(Long id : discentesId) {
-                Usuario u = (Usuario) usuarioRepo.findById(id).orElseThrow(() -> new IllegalStateException("Usuario Invalido"));
+            for (Long id : discentesId) {
+                Usuario u = (Usuario) usuarioRepo.findById(id)
+                        .orElseThrow(() -> new IllegalStateException("Usuario Invalido"));
                 if (u instanceof Aluno a)
                     if (!discentes.contains(a))
                         discentes.add(a);
-                else throw new IllegalStateException("Id de Aluno Invalido");
+                    else
+                        throw new IllegalStateException("Id de Aluno Invalido");
             }
-        
+
         turma.setDiscentes(discentes);
-        
+
         turmaRepo.save(turma);
-        
+
         return turma;
-        
+
     }
-    
+
     public Turma inserirAlunos(Long turmaId, List<Long> discentesId) {
-        
+
         Turma turma = turmaRepo.findById(turmaId).orElseThrow(() -> new IllegalStateException("Turma Invalida"));
-        
+
         return inserirAlunos(turma, discentesId);
-        
+
     }
-    
-    
-    
+
     public Turma inserirProfessor(Turma turma, Long doscenteId) {
-        
+
         List<Professor> doscentes = turma.getDoscentes();
-        
-        Usuario u = (Usuario) usuarioRepo.findById(doscenteId).orElseThrow(() -> new IllegalStateException("Usuario Invalido"));
+
+        Usuario u = (Usuario) usuarioRepo.findById(doscenteId)
+                .orElseThrow(() -> new IllegalStateException("Usuario Invalido"));
         if (u instanceof Professor p)
             if (!doscentes.contains(p))
                 doscentes.add(p);
-        else throw new IllegalStateException("Id de Professor Invalido");
-        
+            else
+                throw new IllegalStateException("Id de Professor Invalido");
+
         turma.setDoscentes(doscentes);
-        
+
         turmaRepo.save(turma);
-        
+
         return turma;
-        
+
     }
-    
+
     public Turma inserirProfessor(Long turmaId, Long doscenteId) {
-        
+
         Turma turma = turmaRepo.findById(turmaId).orElseThrow(() -> new IllegalStateException("Turma Invalida"));
-        
+
         return inserirProfessor(turma, doscenteId);
-        
+
     }
-    
-    
-    
+
     public Turma removerAluno(Turma turma, Long discenteId) {
-        
+
         List<Aluno> discentes = turma.getDiscentes();
-        
-        Usuario u = (Usuario) usuarioRepo.findById(discenteId).orElseThrow(() -> new IllegalStateException("Usuario Invalido"));
+
+        Usuario u = (Usuario) usuarioRepo.findById(discenteId)
+                .orElseThrow(() -> new IllegalStateException("Usuario Invalido"));
         if (u instanceof Aluno a)
             if (!discentes.contains(a))
                 discentes.remove(a);
-        else throw new IllegalStateException("Id de Aluno Invalido");
-        
+            else
+                throw new IllegalStateException("Id de Aluno Invalido");
+
         turma.setDiscentes(discentes);
-        
+
         turmaRepo.save(turma);
-        
+
         return turma;
-        
+
     }
-    
+
     public Turma removerAluno(Long turmaId, Long discenteId) {
-        
+
         Turma turma = turmaRepo.findById(turmaId).orElseThrow(() -> new IllegalStateException("Turma Invalida"));
-        
+
         return removerAluno(turma, discenteId);
-        
+
     }
-    
-    
-    
+
     public Turma removerProfessor(Turma turma, Long doscenteId) {
-        
+
         List<Professor> doscentes = turma.getDoscentes();
-        
-        Usuario u = (Usuario) usuarioRepo.findById(doscenteId).orElseThrow(() -> new IllegalStateException("Usuario Invalido"));
+
+        Usuario u = (Usuario) usuarioRepo.findById(doscenteId)
+                .orElseThrow(() -> new IllegalStateException("Usuario Invalido"));
         if (u instanceof Professor p)
             if (!doscentes.contains(p))
                 doscentes.remove(p);
-        else throw new IllegalStateException("Id de Professor Invalido");
-        
+            else
+                throw new IllegalStateException("Id de Professor Invalido");
+
         turma.setDoscentes(doscentes);
-        
+
         turmaRepo.save(turma);
-        
+
         return turma;
-        
+
     }
-    
+
     public Turma removerProfessor(Long turmaId, Long doscenteId) {
-        
+
         Turma turma = turmaRepo.findById(turmaId).orElseThrow(() -> new IllegalStateException("Turma Invalida"));
-        
+
         return removerProfessor(turma, doscenteId);
-        
+
     }
-    
-    
-    
+
     public Turma adicionarAula(Turma turma, Aula aula) {
-        
+
         List<Aula> aulas = turma.getAulas();
-        
+
         aulas.add(aula);
-        
+
         turma.setAulas(aulas);
-        
+
         turmaRepo.save(turma);
-        
+
         return turma;
-        
+
     }
-    
+
     public Turma adicionarAula(Long turmaId, Aula aula) {
-        
+
         Turma turma = turmaRepo.findById(turmaId).orElseThrow(() -> new IllegalStateException("Turma Invalida"));
-        
+
         return adicionarAula(turma, aula);
-        
+
     }
-    
+
     public Turma removerAula(Turma turma, Aula aula) {
-        
+
         List<Aula> aulas = turma.getAulas();
-        
+
         aulas.remove(aula);
-        
+
         turma.setAulas(aulas);
-        
+
         aulaRepo.delete(aula);
-        
+
         turmaRepo.save(turma);
-        
+
         return turma;
-        
+
     }
-    
+
     public Turma removerAula(Long turmaId, Long aulaId) {
-        
+
         Turma turma = turmaRepo.findById(turmaId).orElseThrow(() -> new IllegalStateException("Turma Invalida"));
-        
+
         Aula aula = aulaRepo.findById(aulaId).orElseThrow(() -> new IllegalStateException("Aula Invalida"));
-        
+
         return removerAula(turma, aula);
-        
+
     }
 
     public List<Turma> listarTurmas() {
@@ -351,12 +361,12 @@ public class TurmaService {
         return turma;
 
     }
-    
+
     public List<Turma> listarTurmasPorCurso(Long cursoId) {
 
         Curso curso = cursoRepo.findById(cursoId).orElseThrow(() -> new IllegalStateException("Curso Invalido"));
         List<Turma> turmas = turmaRepo.findByCurso(curso);
-        
+
         return turmas;
     }
 
@@ -371,12 +381,32 @@ public class TurmaService {
         return turmas;
     }
 
+    public List<TurmaDTO> listarTurmasPorProfessor(HttpSession session) {
+        Usuario usuario = ((Perfil) session.getAttribute("perfilSelecionado")).getUsuario();
+        Professor professor = professorRepository.findById(usuario.getMatricula().getId()).get();
+        List<TurmaDTO> turmas = professor.getTurmas().stream()
+                .map(t -> new TurmaDTO(t.getId(), t.getNome()))
+                .toList();
+        return turmas;
+    }
+
     public List<Turma> buscarTurmaPorNome(String nome, HttpServletRequest request) {
-        
+
         List<Turma> turmas = turmaRepo.findByNomeContainingIgnoreCase(nome);
 
         return turmas;
-        
+
+    }
+
+    public List<Turma> listarTurmasPorId(List<Long> ids) {
+        return turmaRepo.findAllById(ids);
+    }
+
+    public List<Turma> toEntity(List<TurmaDTO> listaDto) {
+        List<Long> ids = listaDto.stream()
+        .map(TurmaDTO::id)
+        .toList();
+        return listarTurmasPorId(ids);
     }
 
     public List<Turma> listarTurmasDeAluno(HttpSession session) {

@@ -1,0 +1,45 @@
+<header>
+    <h2>Gerenciar Matrículas</h2>
+    <button data-tab="criar" class="ativo">Cadastrar</button>
+    <button data-tab="editar">Editar</button>
+</header>
+
+<div class="criar tab" id="matriculaForm">
+    <form id="formMatricula" method="post">
+        <input type="text" name="cpf" placeholder="CPF" required />
+        <input type="text" name="nome" placeholder="Nome completo" required />
+        <input type="email" name="email" placeholder="Email" required />
+        <input type="text" name="telefone" placeholder="Telefone" />
+        <div class="curso-section">
+            <label>Curso:</label>
+            <select name="cursoId" required>
+                <option value="" disabled selected hidden>Selecione um curso</option>
+            </select>
+        </div>
+        <button type="submit">Cadastrar Matrícula</button>
+    </form>
+</div>
+
+<div class="editar tab" id="editarMatriculaForm">
+    <form id="buscarMatriculaForm">
+        <input type="text" id="numeroMatriculaBuscar" name="numeroMatriculaBuscar" placeholder="Número da matrícula" required />
+        <button type="submit">Buscar</button>
+    </form>
+
+    <form id="editarForm" method="post" style="display:none;margin-top: 1rem;">
+        <input type="hidden" id="matriculaId" name="id" />
+        <input type="text" name="cpf" placeholder="CPF" required />
+        <input type="text" name="nome" placeholder="Nome completo" required />
+        <input type="email" name="email" placeholder="Email" required />
+        <input type="text" name="telefone" placeholder="Telefone" />
+        <input type="text" name="numeroMatriculaAnterior" placeholder="Número da matrícula anterior" hidden />
+        <input type="text" name="numeroMatriculaNovo" placeholder="Número da matrícula" required />
+        <div class="curso-section">
+            <label>Curso:</label>
+            <select name="cursoId" required>
+                <option value="" disabled selected hidden>Selecione um curso</option>
+            </select>
+        </div>
+        <button type="submit" style="margin-top: 1rem;">Atualizar Matrícula</button>
+    </form>
+</div>

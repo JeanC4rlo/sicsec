@@ -7,7 +7,6 @@ package br.cefetmg.sicsec.Model.Curso;
 import br.cefetmg.sicsec.Model.Curso.Turma.Turma;
 import br.cefetmg.sicsec.Model.Util.Enum.DiaSemana;
 import br.cefetmg.sicsec.Model.Util.Horario;
-import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 
 /**
@@ -21,7 +20,6 @@ public class Aula {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @JsonBackReference
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "turma_id", nullable = false)
     private Turma turma;
@@ -32,7 +30,6 @@ public class Aula {
     @Embedded
     private Horario horario;
     
-    @JsonManagedReference
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "disciplina_id", nullable = false)
     private Disciplina disciplina;

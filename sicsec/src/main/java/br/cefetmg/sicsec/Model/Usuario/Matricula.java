@@ -29,7 +29,7 @@ public class Matricula {
     private String telefone;
     private Long numeroMatricula;
     
-    @JsonBackReference
+    @JsonIgnore
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "matricula")
     private Usuario usuario;
 

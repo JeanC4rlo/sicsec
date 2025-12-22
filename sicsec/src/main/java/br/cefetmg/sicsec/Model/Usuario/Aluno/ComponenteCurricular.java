@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package br.cefetmg.sicsec.Model.Usuario.Aluno;
 
 import br.cefetmg.sicsec.Model.Curso.Disciplina;
@@ -10,10 +6,6 @@ import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import java.util.List;
 
-/**
- *
- * @author davig
- */
 @Entity
 public class ComponenteCurricular {
     
@@ -21,7 +13,6 @@ public class ComponenteCurricular {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "boletim_id", nullable = false)
     private Boletim boletim;
@@ -31,7 +22,6 @@ public class ComponenteCurricular {
     @JoinColumn(name = "disciplina_id", nullable = false)
     private Disciplina disciplina;
     
-    @JsonManagedReference
     @OneToMany(mappedBy = "componente", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Nota> notas;
     
@@ -100,7 +90,4 @@ public class ComponenteCurricular {
     public void setSituacao(Aprovacao situacao) {
         this.situacao = situacao;
     }
-
-    
-    
 }

@@ -13,6 +13,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +24,7 @@ import br.cefetmg.sicsec.Model.Curso.Turma.Turma;
 import br.cefetmg.sicsec.Model.Usuario.Aluno.Aluno;
 import br.cefetmg.sicsec.Model.Usuario.Professor.Professor;
 import br.cefetmg.sicsec.Service.TurmaService;
+import br.cefetmg.sicsec.dto.TurmaDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -127,6 +129,12 @@ public class TurmaController {
 
         return ResponseEntity.ok(turmasMap);
         
+    }
+
+    @GetMapping("/professor/getAll")
+    public ResponseEntity<List<TurmaDTO>> getTurmasProfessor(HttpSession session) {
+        List<TurmaDTO> turmas = tService.listarTurmasPorProfessor(session);
+        return ResponseEntity.ok(turmas);
     }
 
     @PostMapping("/{id}")

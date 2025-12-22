@@ -1,18 +1,9 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package br.cefetmg.sicsec.Model.Usuario.Aluno;
 
 import br.cefetmg.sicsec.Model.Util.Enum.Situacao;
-import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import java.util.List;
 
-/**
- *
- * @author davig
- */
 @Entity
 public class Boletim {
     
@@ -20,17 +11,17 @@ public class Boletim {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "aluno_id", nullable = false)
     private Aluno aluno;
 
-    @JsonManagedReference
     @OneToMany(mappedBy = "boletim", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ComponenteCurricular> componentes;
 
     @Enumerated(EnumType.STRING)
     private Situacao situacaoDoAno;
+
+    private int anoLetivo;
 
     public Long getId() {
         return id;
@@ -66,7 +57,12 @@ public class Boletim {
     public void setSituacaoDoAno(Situacao situacaoDoAno) {
         this.situacaoDoAno = situacaoDoAno;
     }
-    
-    
 
+    public int getAnoLetivo() {
+        return anoLetivo;
+    }
+
+    public void setAnoLetivo(int anoLetivo) {
+        this.anoLetivo = anoLetivo;
+    }
 }

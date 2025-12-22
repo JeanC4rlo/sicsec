@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -14,14 +12,20 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import br.cefetmg.sicsec.Model.Atividade;
-import br.cefetmg.sicsec.Repository.AtividadeRepository;
-import br.cefetmg.sicsec.Service.ArquivoService;
-import br.cefetmg.sicsec.Service.ValidarArquivosService;
-import br.cefetmg.sicsec.dto.HomeAtividadesDTO;
+import br.cefetmg.sicsec.Model.Usuario.Usuario;
+import br.cefetmg.sicsec.Service.AtividadeService;
+import br.cefetmg.sicsec.dto.Perfil;
+import br.cefetmg.sicsec.dto.atividade.FazerAtividadeDTO;
+import br.cefetmg.sicsec.dto.atividade.AtividadeCreateDTO;
+import br.cefetmg.sicsec.dto.atividade.AtividadeEmTelaAtividadesDTO;
+import br.cefetmg.sicsec.dto.atividade.AtividadeResumoDTO;
+import br.cefetmg.sicsec.dto.atividade.AtividadeEmTelaHomepageDTO;
+import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/api/atividade")
@@ -29,71 +33,47 @@ import br.cefetmg.sicsec.dto.HomeAtividadesDTO;
 
 public class AtividadeController {
     @Autowired
-    private AtividadeRepository atividadesRepository;
+    private AtividadeService atividadeService;
 
-    @Autowired
-    private ArquivoService arquivoService;
-
-    @Autowired
-    private ValidarArquivosService validarArquivosService;
-
-    @Autowired
-    private GlobalExceptionHandler globalExceptionHandler;
-
-    @PostMapping("/salvar")
-    public ResponseEntity<?> salvarAtividade(
-            @RequestPart("atividade") Atividade atividade,
-            @RequestPart(value = "arquivos", required = false) MultipartFile[] arquivos) {
-
-        try {
-            Atividade nova = validarArquivosService.validarListaArquivos(atividade, arquivos);
-            return ResponseEntity.status(HttpStatus.CREATED).body(nova);
-        } catch (IOException e) {
-            return globalExceptionHandler.handleGeneric(e);
-        }
+    @GetMapping("/{atividadeId}")
+    public ResponseEntity<Atividade> getAtividade(@PathVariable Long atividadeId) {
+        Atividade atividade = atividadeService.getAtividade(atividadeId);
+        return ResponseEntity.ok(atividade);
     }
 
-    @GetMapping("/{atividadeId}/arquivos")
-    public ResponseEntity<List<String>> listarArquivos(@PathVariable Long atividadeId) {
-        return atividadesRepository.findById(atividadeId)
-                .map(atividade -> {
-                    List<String> arquivos = atividade.getNomesArquivos();
-                    if (arquivos == null)
-                        arquivos = List.of();
-                    return ResponseEntity.ok(arquivos);
-                })
-                .orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    @GetMapping("/download/{nomeArquivo}")
-    public ResponseEntity<?> downloadArquivo(@PathVariable String nomeArquivo) throws IOException {
-        try {
-            Resource resource = arquivoService.carregarArquivo(nomeArquivo);
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
-                    .body(resource);
-        } catch (IOException e) {
-            return globalExceptionHandler.handleGeneric(e);
-        }
+    @GetMapping("/completa/{atividadeId}")
+    public ResponseEntity<FazerAtividadeDTO> getAtividadeCompleta(@PathVariable Long atividadeId) {
+        FazerAtividadeDTO dto = atividadeService.getAtividadeDTO(atividadeId);
+        return ResponseEntity.ok(dto);
     }
 
     @GetMapping("/atividades")
-    public List<Atividade> ListarAtividades() {
-        return atividadesRepository.findAll();
+    public ResponseEntity<List<AtividadeResumoDTO>> ListarAtividades() {
+        List<AtividadeResumoDTO> listaAtividades = atividadeService.ListarAtividades();
+        return ResponseEntity.ok(listaAtividades);
     }
 
     @GetMapping("/home-atividades")
-    public List<HomeAtividadesDTO> ListarHomeAtividades() {
-        return atividadesRepository.findAll().stream()
-                .map(a -> new HomeAtividadesDTO(a.getId(), a.getNome(), a.getTipo(), a.getValor(),
-                        a.getDataEncerramento(), a.getHoraEncerramento()))
-                .toList();
+    public ResponseEntity<List<AtividadeEmTelaHomepageDTO>> ListarHomeAtividades(HttpSession session) {
+        Usuario usuario = ((Perfil) session.getAttribute("perfilSelecionado")).getUsuario();
+        List<AtividadeEmTelaHomepageDTO> listaAtividadesDTO = atividadeService.ListarAtividadesHomeAtividadeDTO(usuario);
+        return ResponseEntity.ok(listaAtividadesDTO);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Atividade> buscarAtividade(@PathVariable Long id) {
-        return atividadesRepository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    @GetMapping("/atividades-dto")
+    public ResponseEntity<List<AtividadeEmTelaAtividadesDTO>> listarAtividadesDTO(HttpSession session) {
+        Usuario usuario = ((Perfil) session.getAttribute("perfilSelecionado")).getUsuario();
+        return ResponseEntity.ok(atividadeService.ListarAtividadesDTO(usuario));
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PostMapping("/salvar")
+    public void salvarAtividade(
+            @RequestPart("atividade") AtividadeCreateDTO dto,
+            @RequestPart(value = "arquivos", required = false) MultipartFile[] arquivos,
+            HttpSession session) throws IOException {
+
+        Usuario usuario = ((Perfil) session.getAttribute("perfilSelecionado")).getUsuario();
+        atividadeService.salvarAtividade(dto, arquivos, usuario);
     }
 }

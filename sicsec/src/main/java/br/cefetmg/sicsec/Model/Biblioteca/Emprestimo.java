@@ -7,7 +7,6 @@ package br.cefetmg.sicsec.Model.Biblioteca;
 import br.cefetmg.sicsec.Model.Util.Enum.Reserva;
 import br.cefetmg.sicsec.Model.Usuario.Usuario;
 import java.util.Date;
-import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 
 /**
@@ -32,12 +31,10 @@ public class Emprestimo {
     @Enumerated(EnumType.STRING)
     private Reserva reserva;
     
-    @JsonManagedReference
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_usuario", nullable = false)
     private Usuario mortuario; //Quem fez o emprestimo
 
-    @JsonManagedReference
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_livro", nullable = false)
     private Livro livro;

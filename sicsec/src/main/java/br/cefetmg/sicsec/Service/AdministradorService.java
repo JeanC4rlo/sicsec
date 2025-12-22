@@ -12,7 +12,6 @@ import br.cefetmg.sicsec.Model.Usuario.Usuario;
 import br.cefetmg.sicsec.Model.Usuario.Administrador.Administrador;
 import br.cefetmg.sicsec.Model.Usuario.Administrador.ChefeDepartamento;
 import br.cefetmg.sicsec.Model.Usuario.Administrador.Coordenador;
-import br.cefetmg.sicsec.Model.Util.Enum.CargoAdministrador;
 import br.cefetmg.sicsec.Model.Util.Enum.Cargo;
 import br.cefetmg.sicsec.Repository.Usuarios.*;
 import br.cefetmg.sicsec.dto.Perfil;
