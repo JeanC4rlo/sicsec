@@ -15,9 +15,6 @@ function initSectionTurmas() {
             </tr>
         </thead>
         <tbody>
-        <tr id="msg-sem-atividade">
-                        <td colspan="6"><p><i>Nenhuma atividade criada</i></p></td>
-                    </tr>
         </tbody>
     </table>
     `
