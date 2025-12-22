@@ -1,6 +1,8 @@
-package br.cefetmg.sicsec.dto;
+package br.cefetmg.sicsec.dto.atividade;
 
-public record AtividadeDTO(
+import br.cefetmg.sicsec.dto.DisciplinaDTO;
+
+public record AtividadeEmTelaAtividadesDTO(
         Long id,
         String nome,
         String tipo,
@@ -8,7 +10,7 @@ public record AtividadeDTO(
         Double nota,
         String dataEncerramento,
         String horaEncerramento,
-        String disciplina,
+        DisciplinaDTO disciplina,
         String nomeProfessor,
         Integer numTentativasRestantes) {
 }

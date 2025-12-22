@@ -6,7 +6,6 @@ package br.cefetmg.sicsec.Model.Curso;
 
 import br.cefetmg.sicsec.Model.Curso.Turma.Turma;
 import br.cefetmg.sicsec.Model.Util.Enum.Area;
-import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import java.util.List;
 
@@ -29,16 +28,14 @@ public class Disciplina {
     private String nome;
     private int cargaHoraria; //Número de horários da aula por semana.
     
-    @JsonBackReference
     @OneToMany(fetch = FetchType.LAZY, mappedBy="disciplina")
     private List<Turma> turmas;
     
-    @JsonBackReference
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "curso_id", nullable = false)
     private Curso curso;
     
-    @JsonBackReference(value = "disciplinaDepartamento")
+    //@JsonBackReference(value = "disciplinaDepartamento")
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "departamento_id", nullable = false)
     private Departamento departamento;

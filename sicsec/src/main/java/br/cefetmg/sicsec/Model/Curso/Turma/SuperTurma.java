@@ -6,8 +6,6 @@ package br.cefetmg.sicsec.Model.Curso.Turma;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 import br.cefetmg.sicsec.Model.Curso.Curso;
 import br.cefetmg.sicsec.Model.Curso.Disciplina;
 import br.cefetmg.sicsec.Model.Usuario.Aluno.Aluno;
@@ -25,7 +23,6 @@ import jakarta.persistence.OneToMany;
 public class SuperTurma extends Turma {
 
     @OneToMany(mappedBy = "superTurma", cascade = CascadeType.ALL)
-    @JsonManagedReference
     private List<SubTurma> subTurmas;
 
     public SuperTurma() {

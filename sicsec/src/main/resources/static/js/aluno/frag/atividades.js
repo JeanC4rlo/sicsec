@@ -19,18 +19,13 @@
         return mensagem;
     }
 
-    function irParaFazerAtividades(id) {
-        fetch(`/api/atividade/${id}`)
-            .then(r => r.json())
-            .then(atividade => {
-                localStorage.setItem("atividade", JSON.stringify(atividade));
-                window.location.href = "/html/aluno/fazer-atividades.html";
-            });
+    function irParaFazerAtividades(atividadeId, disciplinaId) {
+        localStorage.setItem("atividadeId", atividadeId);
+        localStorage.setItem("disciplinaId", disciplinaId)
+        window.location.href = "/html/aluno/fazer-atividades.html";
     }
 
     async function definirEstado(atividadeDTO) {
-        const img = document.createElement("img");
-        let caminho = "/images/icons/";
         let distanciaEmMinutos = calcularDistanciaData(
             atividadeDTO.dataEncerramento,
             atividadeDTO.horaEncerramento,
@@ -38,9 +33,7 @@
         );
 
         if (distanciaEmMinutos <= 0) {
-            img.src = caminho + "encerrado.svg";
-            img.title = "Atividade fechada";
-            return img;
+            return "fechada";
         }
 
         try {
@@ -50,22 +43,44 @@
             const numTentativasFeitas = await resp.json();
 
             if (numTentativasFeitas > 0) {
-                img.src = caminho + "concluido.svg";
-                img.title = "Você já fez essa atividade";
+                return "concluida";
             }
             else if (distanciaEmMinutos > 60 * 24) {
-                img.src = caminho + "atencao.svg";
-                img.title = "Você ainda não fez essa atividade";
+                return "aberta";
             }
             else {
-                img.src = caminho + "alerta.svg";
-                img.title = "Atividade ainda não feita e será fechada hoje";
+                return "fechando";
             }
-            return img;
 
         } catch (e) {
             console.error(e);
         }
+    }
+
+    async function getImgEstado(atividadeDTO) {
+        const estado = await definirEstado(atividadeDTO);
+        console.log(estado);
+        const img = document.createElement("img");
+        let caminho = "/images/icons/";
+        switch (estado) {
+            case "concluida":
+                img.src = caminho + "concluido.svg";
+                img.title = "Você já fez essa atividade";
+                break;
+            case "aberta":
+                img.src = caminho + "atencao.svg";
+                img.title = "Você ainda não fez essa atividade";
+                break;
+            case "fechando":
+                img.src = caminho + "alerta.svg";
+                img.title = "Atividade ainda não feita e será fechada hoje";
+                break;
+            default:
+                img.src = caminho + "encerrado.svg";
+                img.title = "Atividade fechada";
+                break;
+        }
+        return img;
     }
 
     function criarDOMElement(tipo, classe = null, id = null) {
@@ -92,7 +107,7 @@
         const estado = criarDOMElement("td", "estado");
 
         if (calcularDistanciaData(atividadeDTO.dataEncerramento, atividadeDTO.horaEncerramento, "minutos") > 0) {
-            linha.addEventListener('click', () => irParaFazerAtividades(atividadeDTO.id));
+            linha.addEventListener('click', () => irParaFazerAtividades(atividadeDTO.id, atividadeDTO.disciplina.id));
         }
         else
             linha.classList.add("atividade-fechada");
@@ -108,7 +123,7 @@
         tipo.innerHTML = atividadeDTO.tipo;
         infoAtividade.append(nomeAtividade, tipo);
 
-        disciplina.innerHTML = "DISCIPLINA";
+        disciplina.innerHTML = atividadeDTO.disciplina.nome;
 
         professor.innerHTML = atividadeDTO.nomeProfessor;
 
@@ -122,11 +137,11 @@
             if (atividadeDTO.numTentativasRestantes == 0 && atividadeDTO.tipo != "Questionário")
                 nota.innerHTML = "Sua resposta está sendo avaliada";
             else {
-                nota.innerHTML = "Você ainda não fez a atividade";
+                nota.innerHTML = "Atividade ainda não feita";
             }
         }
 
-        const imgEstado = await definirEstado(atividadeDTO);
+        const imgEstado = await getImgEstado(atividadeDTO);
         imgEstado.classList.add("img-estado");
         estado.append(imgEstado);
 
@@ -161,26 +176,44 @@
         });
     }
 
-    function carregarAtividades() {
-        fetch("/api/atividade/atividades-dto")
-            .then(response => {
-                if (!response.ok) throw new Error("Falha ao carregar as atividades");
-                return response.json();
-            })
-            .then(async dados => {
-                const msg = document.getElementById("msg-sem-atividade");
-                msg.classList.toggle("inativo", dados.length > 0);
-                dados.sort((a, b) => {
-                    if(calcularDistanciaData(a.dataEncerramento) <= 0) return 1;
-                    if(calcularDistanciaData(b.dataEncerramento) <= 0) return -1;
-                    return calcularDistanciaData(a.dataEncerramento) - calcularDistanciaData(b.dataEncerramento);
-                });
-                for (const atividadeDTO of dados) {
-                    await atualizarTabelaAtividades(atividadeDTO);
-                }
-            })
-            .catch(err => console.log("Erro:", err));
+    async function carregarAtividades() {
+        try {
+            const response = await fetch("/api/atividade/atividades-dto");
+
+            if (!response.ok) {
+                throw new Error("Falha ao carregar as atividades");
+            }
+
+            const dados = await response.json();
+
+            const msg = document.getElementById("msg-sem-atividade");
+            msg.classList.toggle("inativo", dados.length > 0);
+
+            console.log(dados);
+
+            const ORDEM_ESTADO = {
+                fechando: 0,
+                aberta: 1,
+                concluida: 2,
+                fechada: 3
+            };
+            await Promise.all(
+                dados.map(async d => {
+                    d._estado = await definirEstado(d);
+                })
+            );
+            dados.sort((a, b) => {
+                return ORDEM_ESTADO[a._estado] - ORDEM_ESTADO[b._estado];
+            });
+            for (const atividadeDTO of dados) {
+                await atualizarTabelaAtividades(atividadeDTO);
+            }
+
+        } catch (err) {
+            console.log("Erro:", err);
+        }
     }
+
 
     function initAtivdades() {
         pesquisarPorAtividade();

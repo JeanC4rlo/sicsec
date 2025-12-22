@@ -369,7 +369,7 @@ main>section.ativo {
 
 .minhas-atividades .avaliacao,
 .minhas-atividades .questionario,
-.tipo {
+.tipo:not(td) {
     font-size: 0.85rem;
     color: #666;
 }
