@@ -65,13 +65,10 @@
         return mensagem;
     }
 
-    function irParaFazerAtividades(id) {
-        fetch(`/api/atividade/${id}`)
-            .then(r => r.json())
-            .then(atividade => {
-                localStorage.setItem("atividade", JSON.stringify(atividade));
-                window.location.href = "/html/aluno/fazer-atividades.html";
-            });
+    function irParaFazerAtividades(atividadeId, disciplinaId) {
+        localStorage.setItem("atividadeId", atividadeId);
+        localStorage.setItem("disciplinaId", disciplinaId)
+        window.location.href = "/html/aluno/fazer-atividades.html";
     }
 
     async function definirEstado(atividadeDTO) {
@@ -149,7 +146,7 @@
         estado.classList.add("estado");
 
         if (calcularDistanciaData(atividadeDTO.dataEncerramento, atividadeDTO.horaEncerramento, "minutos") > 0) {
-            linha.addEventListener('click', () => irParaFazerAtividades(atividadeDTO.id));
+            linha.addEventListener('click', () => irParaFazerAtividades(atividadeDTO.id, atividadeDTO.disciplina.id));
         }
         else
             linha.classList.add("atividade-fechada");
@@ -161,7 +158,7 @@
 
         const disciplina = document.createElement("span");
         disciplina.classList.add("disciplina");
-        disciplina.innerHTML = "DISCIPLINA";
+        disciplina.innerHTML = atividadeDTO.disciplina.nome;
 
         const avaliacao = document.createElement("span");
         avaliacao.classList.add("avaliacao");
@@ -187,7 +184,7 @@
             .then(async dados => {
                 const msg = document.getElementById("msg-sem-atividade-homepage");
                 msg.classList.toggle("inativo", dados.length > 0);
-                
+
                 const ORDEM_ESTADO = {
                     fechando: 0,
                     aberta: 1,

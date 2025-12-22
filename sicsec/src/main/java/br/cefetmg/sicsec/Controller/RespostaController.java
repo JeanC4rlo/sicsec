@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,13 +13,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import br.cefetmg.sicsec.Exceptions.CorrecaoException;
 import br.cefetmg.sicsec.Model.Resposta;
+import br.cefetmg.sicsec.Model.Usuario.Usuario;
 import br.cefetmg.sicsec.Service.RespostaService;
 import br.cefetmg.sicsec.dto.DesempenhoDTO;
+import br.cefetmg.sicsec.dto.Perfil;
+import br.cefetmg.sicsec.dto.resposta.RespostaCreateDTO;
 import jakarta.servlet.http.HttpSession;
 
 @RestController
@@ -45,17 +50,20 @@ public class RespostaController {
     }
 
     @PostMapping("/enviar")
-    public ResponseEntity<?> salvarResposta(@RequestBody Resposta resposta, HttpSession session)
-            throws CorrecaoException {
-        Resposta nova = respostaService.salvarResposta(resposta, session);
-        return ResponseEntity.ok(nova);
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void salvarResposta(@RequestBody RespostaCreateDTO dto, HttpSession session)
+            throws CorrecaoException, IOException {
+        Usuario usuario = ((Perfil) session.getAttribute("perfilSelecionado")).getUsuario();
+        respostaService.salvarOuAtualizarResposta(dto, usuario, null);
+        System.out.println("Teste 5");
     }
 
     @PostMapping("/enviar/arquivo")
-    public ResponseEntity<Resposta> salvarRespostaComArquivo(
-            @RequestPart("resposta") Resposta resposta,
+    public void salvarRespostaComArquivo(
+            @RequestPart("resposta") RespostaCreateDTO dto,
             @RequestPart("arquivo") MultipartFile arquivo,
             HttpSession session) throws IOException {
-        return ResponseEntity.ok(respostaService.salvarRespostaComArquivo(resposta, arquivo, session));
+        Usuario usuario = ((Perfil) session.getAttribute("perfilSelecionado")).getUsuario();
+        respostaService.salvarOuAtualizarResposta(dto, usuario, arquivo);
     }
 }

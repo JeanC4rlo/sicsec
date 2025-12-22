@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package br.cefetmg.sicsec.Model.Usuario.Aluno;
 
 import br.cefetmg.sicsec.Model.Curso.Disciplina;
@@ -10,12 +6,8 @@ import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import java.util.List;
 
-/**
- *
- * @author davig
- */
 @Entity
-class ComponenteCurricular {
+public class ComponenteCurricular {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -98,7 +90,4 @@ class ComponenteCurricular {
     public void setSituacao(Aprovacao situacao) {
         this.situacao = situacao;
     }
-
-    
-    
 }

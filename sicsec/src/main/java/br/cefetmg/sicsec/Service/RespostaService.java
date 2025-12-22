@@ -2,11 +2,12 @@ package br.cefetmg.sicsec.Service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
+import br.cefetmg.sicsec.Model.AlternativaMarcada;
 import br.cefetmg.sicsec.Model.Arquivo;
 import br.cefetmg.sicsec.Model.Atividade;
 import br.cefetmg.sicsec.Model.Desempenho;
@@ -16,17 +17,23 @@ import br.cefetmg.sicsec.Model.Usuario.Usuario;
 import br.cefetmg.sicsec.Model.Usuario.Aluno.Aluno;
 import br.cefetmg.sicsec.Repository.RespostaRepository;
 import br.cefetmg.sicsec.Repository.Usuarios.AlunoRepo;
+import br.cefetmg.sicsec.dto.AlternativaMarcadaDTO;
 import br.cefetmg.sicsec.dto.DesempenhoDTO;
-import br.cefetmg.sicsec.dto.Perfil;
-import jakarta.servlet.http.HttpSession;
+import br.cefetmg.sicsec.dto.resposta.RespostaCreateDTO;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 
 @Service
 public class RespostaService {
+
     @Autowired
     RespostaRepository respostaRepository;
 
     @Autowired
     DesempenhoService desempenhoService;
+
+    @Autowired
+    DisciplinaService disciplinaService;
 
     @Autowired
     CorrecaoService correcaoService;
@@ -51,42 +58,70 @@ public class RespostaService {
         return respostaRepository.findAll();
     }
 
-    public Resposta salvarResposta(Resposta resposta, HttpSession session) {
-        Usuario usuario = ((Perfil) session.getAttribute("perfilSelecionado")).getUsuario();
-        Aluno aluno = alunoRepository.findById(usuario.getMatricula().getId()).get();
-        resposta.setAluno(aluno);
-
-        Atividade atividade = atividadeService.getAtividade(resposta.getAtividade().getId());
-        resposta.setAtividade(atividade);
-
-        Tentativa tentativa = tentativaService.getTentativa(resposta.getTentativa().getId());
-        resposta.setTentativa(tentativa);
-
-        Resposta nova = respostaRepository.save(resposta);
-        if (nova.getAtividade().getTipo().equals("Questionário")) {
-            double nota = correcaoService.corrigir(nova);
-            desempenhoService.salvarDesempenho(nova, nota, aluno);
-            return respostaRepository.save(nova);
-        }
-        desempenhoService.salvarDesempenho(nova, aluno);
-        return respostaRepository.save(nova);
-    }
-
-    public Resposta salvarRespostaComArquivo(Resposta resposta, MultipartFile arquivo, HttpSession session)
+    @Transactional
+    public Resposta salvarOuAtualizarResposta(RespostaCreateDTO dto, Usuario usuario, MultipartFile arquivo)
             throws IOException {
-        if (arquivo == null || !arquivoService.validarArquivo(arquivo))
+        if (arquivo != null && !arquivoService.validarArquivo(arquivo))
             throw new IOException();
-        Usuario usuario = ((Perfil) session.getAttribute("perfilSelecionado")).getUsuario();
-        Aluno aluno = alunoRepository.findById(usuario.getMatricula().getId()).get();
-        resposta.setAluno(aluno);
+
+        Aluno aluno = alunoRepository.findById(usuario.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Aluno não encontrado"));
+        Atividade atividade = atividadeService.getAtividade(dto.atividadeId());
+        Tentativa tentativa = tentativaService.getTentativa(dto.tentativaId());
+
+        Optional<Resposta> opt = respostaRepository
+                .findByAlunoIdAndAtividadeIdAndTentativaId(aluno.getId(), atividade.getId(),
+                        tentativa.getId());
+
+        Resposta resposta;
+        if (opt.isPresent()) {
+            System.out.println("achou existente");
+            resposta = opt.get();
+        } else {
+            System.out.println("Criou");
+            resposta = toEntity(dto);
+            resposta.setAluno(aluno);
+            System.out.println("DTO: " + dto.toString());
+        }
 
         Resposta nova = respostaRepository.save(resposta);
 
-        Arquivo arquivoEntidade = arquivoService.salvarArquivo(nova, arquivo);
-        nova.setArquivoId(arquivoEntidade.getId());
-        desempenhoService.salvarDesempenho(nova, aluno);
-        return respostaRepository.save(nova);
+        System.out.println("salvou");
+        if (arquivo != null) {
+            Arquivo arquivoEntidade = arquivoService.salvarArquivo(nova, arquivo);
+            nova.setArquivoId(arquivoEntidade.getId());
+            nova = respostaRepository.save(nova);
+        }
+        
+        Double nota = null;
+        if (nova.getAtividade().getTipo().equals("Questionário"))
+            nota = correcaoService.corrigir(nova);
+
+        desempenhoService.salvarDesempenho(nova, nota, aluno);
+
+        return nova;
     }
+
+    /*
+     * @Transactional
+     * public void salvarRespostaComArquivo(RespostaCreateDTO dto, MultipartFile
+     * arquivo, Usuario usuario)
+     * throws IOException {
+     * if (arquivo == null || !arquivoService.validarArquivo(arquivo))
+     * throw new IOException();
+     * Resposta resposta = toEntity(dto);
+     * 
+     * Aluno aluno = alunoRepository.findById(usuario.getMatricula().getId()).get();
+     * resposta.setAluno(aluno);
+     * 
+     * Resposta nova = respostaRepository.save(resposta);
+     * 
+     * Arquivo arquivoEntidade = arquivoService.salvarArquivo(nova, arquivo);
+     * nova.setArquivoId(arquivoEntidade.getId());
+     * desempenhoService.salvarDesempenho(nova, null, aluno);
+     * respostaRepository.save(nova);
+     * }
+     */
 
     public DesempenhoDTO getDesempenhoDTO(Long desempenhoId) {
         Desempenho desempenho = desempenhoService.getDesempenho(desempenhoId);
@@ -108,4 +143,28 @@ public class RespostaService {
 
         return dadosRespostaAlunoDTO;
     }
+
+    private Resposta toEntity(RespostaCreateDTO dto) {
+        Resposta resposta = new Resposta();
+        resposta.setAtividade(atividadeService.getAtividade(dto.atividadeId()));
+        resposta.setTentativa(tentativaService.getTentativa(dto.tentativaId()));
+        resposta.setDisciplina(disciplinaService.getDisciplina(dto.disciplinaId()));
+        resposta.setAlternativasMarcadas(toEntity(dto.alternativasMarcadas()));
+        resposta.setTextoRedacao(dto.textoRedacao());
+        resposta.setArquivoId(null);
+        return resposta;
+    }
+
+    private List<AlternativaMarcada> toEntity(List<AlternativaMarcadaDTO> dtoList) {
+        if (dtoList == null)
+            return List.of();
+
+        return dtoList.stream()
+                .map(dto -> new AlternativaMarcada(
+                        dto.numQuestao(),
+                        dto.alternativa(),
+                        dto.estaCorreta()))
+                .toList();
+    }
+
 }

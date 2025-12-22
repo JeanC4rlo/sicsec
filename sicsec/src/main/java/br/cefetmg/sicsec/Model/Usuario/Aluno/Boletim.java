@@ -21,6 +21,8 @@ public class Boletim {
     @Enumerated(EnumType.STRING)
     private Situacao situacaoDoAno;
 
+    private int anoLetivo;
+
     public Long getId() {
         return id;
     }
@@ -55,7 +57,12 @@ public class Boletim {
     public void setSituacaoDoAno(Situacao situacaoDoAno) {
         this.situacaoDoAno = situacaoDoAno;
     }
-    
-    
 
+    public int getAnoLetivo() {
+        return anoLetivo;
+    }
+
+    public void setAnoLetivo(int anoLetivo) {
+        this.anoLetivo = anoLetivo;
+    }
 }
