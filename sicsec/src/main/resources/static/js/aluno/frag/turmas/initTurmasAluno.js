@@ -14,6 +14,7 @@ async function initTurmas() {
         botao.textContent = turma.nome;
         botao.classList.add("botao-turma");
         botao.addEventListener("click", () => selecionarTurma(turma.id, botao));
+        if(turma.tipo == "SUBTURMA") botao.classList += " sub-turma"
         listaTurmas.appendChild(botao);
     });
 

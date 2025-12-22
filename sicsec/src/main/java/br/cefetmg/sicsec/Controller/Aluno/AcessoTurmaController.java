@@ -47,7 +47,8 @@ public class AcessoTurmaController {
 
                 turmasMap.add(Map.of(
                     "id", turma.getId(),
-                    "nome", turma.getNome()
+                    "nome", turma.getNome(),
+                    "tipo", turma.getTipo()
                 ));
 
             }
@@ -121,7 +122,11 @@ public class AcessoTurmaController {
             Cronograma proximoCronograma = null;
 
             for (Cronograma cronograma : cronogramas) {
-                if (proximoCronograma == null || (cronograma.getData().before(proximoCronograma.getData()) && cronograma.getData().after(new java.util.Date())))
+                if (proximoCronograma == null || 
+                        (cronograma.getData().after(new java.util.Date()) && 
+                            cronograma.getData().before(proximoCronograma.getData())) ||
+                        (proximoCronograma.getData().before(new java.util.Date()) &&
+                            cronograma.getData().after(proximoCronograma.getData())))
                     proximoCronograma = cronograma;
                 
             }
@@ -140,8 +145,6 @@ public class AcessoTurmaController {
             }
 
         }
-
-        
 
         return ResponseEntity.ok(turmaMap);
 

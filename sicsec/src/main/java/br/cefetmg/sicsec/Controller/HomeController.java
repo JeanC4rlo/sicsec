@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -63,7 +64,7 @@ public class HomeController {
         Perfil perfil = (Perfil) session.getAttribute("perfilSelecionado");
 
         if (perfil == null || !perfil.getLogado()) {
-            return ResponseEntity.status(403)
+            return ResponseEntity.status(403).cacheControl(CacheControl.noStore())
                 .body(Map.of("error", "Acesso negado."));
         }
 
@@ -72,18 +73,18 @@ public class HomeController {
         try {
             Map<String, Object> data = homeService.getSecaoData(usuario, id);
             if (data.isEmpty()) {
-                return ResponseEntity.status(404)
+                return ResponseEntity.status(404).cacheControl(CacheControl.noStore())
                         .body(Map.of("error", "Seção não encontrada ou não permitida."));
             }
             return ResponseEntity
-                .ok()
+                .ok().cacheControl(CacheControl.noStore())
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(data);
         } catch (IllegalAccessException e) {
-            return ResponseEntity.status(403)
+            return ResponseEntity.status(403).cacheControl(CacheControl.noStore())
                     .body(Map.of("error", e.getMessage()));
         } catch (IOException e) {
-            return ResponseEntity.status(500)
+            return ResponseEntity.status(500).cacheControl(CacheControl.noStore())
                     .body(Map.of("error", "Erro ao carregar seção."));
         }
     }

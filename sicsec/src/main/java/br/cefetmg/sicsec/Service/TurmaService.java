@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import br.cefetmg.sicsec.Model.Curso.Aula;
 import br.cefetmg.sicsec.Model.Curso.Curso;
 import br.cefetmg.sicsec.Model.Curso.Disciplina;
+import br.cefetmg.sicsec.Model.Curso.Turma.SubTurma;
+import br.cefetmg.sicsec.Model.Curso.Turma.SuperTurma;
 import br.cefetmg.sicsec.Model.Curso.Turma.Turma;
 import br.cefetmg.sicsec.Model.Usuario.Aluno.Aluno;
 import br.cefetmg.sicsec.Model.Usuario.Professor.Professor;
@@ -51,7 +53,6 @@ public class TurmaService {
     @Autowired
     private AulaRepo aulaRepo;
     
-    
     public Turma registrarTurma(Turma turma) {
         
         turmaRepo.save(turma);
@@ -60,11 +61,26 @@ public class TurmaService {
         
     }
     
-    public Turma registrarTurma(String nome, int anoLetivo, Long disciplinaId, Long cursoId, List<Long> discentesId, List<Long> doscentesId) {
+    public SuperTurma registrarSuperTurma(SuperTurma turma) {
+
+        turmaRepo.save(turma);
+        
+        return turma;
+
+    }
+
+    public SubTurma registrarSubTurma(SubTurma turma) {
+
+        turmaRepo.save(turma);
+        
+        return turma;
+
+    }
+
+    public Turma registrarTurma(String nome, int anoLetivo, Long disciplinaId, Long cursoId, List<Long> discentesId, List<Long> doscentesId, boolean turmaUnica) {
         
         Disciplina disciplina = disciplinaRepo.findById(disciplinaId).orElseThrow(() -> new IllegalStateException("Disciplina Invalida"));
         Curso curso = cursoRepo.findById(cursoId).orElseThrow(() -> new IllegalStateException("Curso Invalido"));
-        
         List<Aluno> discentes = new ArrayList<>();
         List<Professor> doscentes = new ArrayList<>();
         
@@ -82,21 +98,58 @@ public class TurmaService {
                 else throw new IllegalStateException("Id de Professor Invalido");
             }
         
+        if (!turmaUnica) {
+            SuperTurma turma = new SuperTurma(nome, anoLetivo, true, disciplina, curso, discentes, doscentes);
+            
+            return registrarSuperTurma(turma);
+        }
+        
         Turma turma = new Turma(nome, anoLetivo, true, disciplina, curso, discentes, doscentes);
+
         
         return registrarTurma(turma);
         
     }
     
-    public Turma registrarTurma(String nome, int anoLetivo, Long disciplinaId, Long cursoId) {
+    public Turma registrarTurma(String nome, int anoLetivo, Long disciplinaId, Long cursoId, boolean turmaUnica) {
         
         Disciplina disciplina = disciplinaRepo.findById(disciplinaId).orElseThrow(() -> new IllegalStateException("Disciplina Invalida"));
         Curso curso = cursoRepo.findById(cursoId).orElseThrow(() -> new IllegalStateException("Curso Invalido"));
+
+        if (!turmaUnica) {
+            SuperTurma turma = new SuperTurma(nome, anoLetivo, true, disciplina, curso);
+            return registrarSuperTurma(turma);
+        }
         
         Turma turma = new Turma(nome, anoLetivo, true, disciplina, curso);
-        
         return registrarTurma(turma);
         
+    }
+
+    public Turma registrarSubturma(SuperTurma superTurma, List<Long> discentesId, List<Long> doscentesId, int t) {
+        
+        List<Aluno> discentes = new ArrayList<>();
+        List<Professor> doscentes = new ArrayList<>();
+        
+        if (discentesId != null)
+            for(Long id : discentesId) {
+                Usuario u = (Usuario) usuarioRepo.findById(id).orElseThrow(() -> new IllegalStateException("Usuario Invalido"));
+                if (u instanceof Aluno a) discentes.add(a);
+                else throw new IllegalStateException("Id de Aluno Invalido");
+            }
+        
+        if (doscentesId != null)
+            for(Long id : doscentesId) {
+                Usuario u = (Usuario) usuarioRepo.findById(id).orElseThrow(() -> new IllegalStateException("Usuario Invalido"));
+                if (u instanceof Professor p) doscentes.add(p);
+                else throw new IllegalStateException("Id de Professor Invalido");
+            }
+    
+        SubTurma turma = new SubTurma(superTurma.getNome() + " T" + (t+1), discentes, doscentes, superTurma);
+        
+        registrarSubTurma(turma);
+
+        return turma;
     }
     
     public Turma atualizarTurma(Long turmaId, String turmaNome, List<Long> discentesId, List<Long> doscentesId, boolean ativo) {
@@ -332,7 +385,7 @@ public class TurmaService {
         Usuario usuario = perfil.getUsuario();
         
         if (usuario == null || (usuario.getCargo() != Cargo.ALUNO)) {
-            System.out.println("Acesso negado. " + usuario.toString());
+            
             throw new IllegalStateException("Acesso negado.");
         }
         

@@ -1,17 +1,8 @@
-const baseChoicesConfig = {
-	searchEnabled: true,
-	noResultsText: "Nenhum resultado encontrado",
-	noChoicesText: "Carregando opções...",
-	itemSelectText: "Selecionar",
-	removeItemButton: true,
-	shouldSort: false,
-	duplicateItemsAllowed: false,
-	addItems: true,
-	addChoices: true,
-	addItemFilter: () => false,
-	paste: false,
-	editItems: false,
-	allowHTML: false
+let professoresArray = [];
+let alunosArray = [];
+let choices = {
+	professor: null,
+	aluno: null
 };
 
 function setupAbasTurmas(secao) {
@@ -35,8 +26,6 @@ function setupFormularioTurma(secao) {
 	const professorSelect = secao.querySelector("#professorSelect");
 	const alunoSelect = secao.querySelector("#alunoSelect");
 
-	if (!cursoSelect || !disciplinaSelect || !professorSelect || !alunoSelect) return;
-
 	const choicesProfessor = new Choices(professorSelect, {
 		...baseChoicesConfig,
 		placeholderValue: "Selecione professores...",
@@ -48,6 +37,9 @@ function setupFormularioTurma(secao) {
 		placeholderValue: "Selecione alunos...",
 		searchPlaceholderValue: "Buscar aluno..."
 	});
+
+	professorSelect._choicesInstance = choicesProfessor;
+	alunoSelect._choicesInstance = choicesAluno;
 
 	carregarCursos(cursoSelect);
 
@@ -62,6 +54,7 @@ function setupFormularioTurma(secao) {
 		const disciplinaId = disciplinaSelect.value;
 		if (disciplinaId) carregarProfessores(disciplinaId, choicesProfessor);
 	});
+
 }
 
 function setupFormularioEditarTurma(secao) {
@@ -71,7 +64,7 @@ function setupFormularioEditarTurma(secao) {
 
 	const choicesBuscar = new Choices(selectBuscar, {
 		...baseChoicesConfig,
-		searchPlaceholderValue: "Digite parte do nome da turma...",
+		searchPlaceholderValue: "Buscar turma...",
 		removeItemButton: false
 	});
 
@@ -81,7 +74,7 @@ function setupFormularioEditarTurma(secao) {
 		e.preventDefault();
 		const turmaId = selectBuscar.value;
 		if (!turmaId) return alert("Selecione uma turma para editar");
-
+		
 		try {
 			const turma = await fetchJSON(`/api/turma/${turmaId}`);
 			preencherFormularioEdicao(editarForm, turma);
@@ -95,6 +88,7 @@ function setupFormularioEditarTurma(secao) {
 async function carregarCursos(select) {
 	try {
 		const usuario = await fetchJSON("/api/usuarios/atual/admin");
+
 		const endpoint = {
 			ROOT: "/api/curso/getAll",
 			CHEFE_DE_DEPARTAMENTO: `/api/curso/departamento/${usuario.departamento}`,
@@ -120,16 +114,26 @@ function carregarDisciplinas(cursoId, select, choicesProfessor) {
 		.catch(() => preencherSelect(select, [], "Erro ao carregar disciplinas"));
 }
 
-function carregarProfessores(disciplinaId, choices) {
-	return fetchJSON(`/api/professor/disciplina/${disciplinaId}`)
-		.then(profs => preencherSelect(choices, profs.map(p => ({ id: p.id, nome: `${p.numeroMatricula} - ${p.nome}` }))))
-		.catch(() => preencherSelect(choices, [], "Erro ao carregar professores"));
+async function carregarProfessores(disciplinaId, choices) {
+
+	professoresArray = await fetchJSON(`/api/professor/disciplina/${disciplinaId}`)
+	.catch(() => preencherSelect(choices, [], "Erro ao carregar professores"));
+
+	preencherSelect(choices, professoresArray.map(p => ({ id: p.id, nome: `${p.numeroMatricula} - ${p.nome}` })));
+
+	return professoresArray;
+
 }
 
-function carregarAlunos(cursoId, choices) {
-	return fetchJSON(`/api/aluno/curso/${cursoId}`)
-		.then(alunos => preencherSelect(choices, alunos.map(a => ({ id: a.id, nome: `${a.numeroMatricula} - ${a.nome}` }))))
+async function carregarAlunos(cursoId, choices) {
+
+	alunosArray = await fetchJSON(`/api/aluno/curso/${cursoId}`)
 		.catch(() => preencherSelect(choices, [], "Erro ao carregar alunos"));
+	
+	preencherSelect(choices, alunosArray.map(a => ({ id: a.id, nome: `${a.numeroMatricula} - ${a.nome}` })))
+
+	return alunosArray
+
 }
 
 async function carregarTurmasDoUsuario(choicesBuscar) {
@@ -158,24 +162,27 @@ async function fetchJSON(url, options = { method: "POST" }) {
 	return res.json();
 }
 
-function preencherSelect(selectOuChoices, dados, placeholder = null) {
-	const isChoices = typeof selectOuChoices.setChoices === "function";
+function preencherSelect(select, dados, placeholder = null) {
+
+	const isChoices = typeof select.setChoices === "function";
 
 	if (isChoices) {
-		selectOuChoices.clearStore();
+		select.clearStore();
 		const choices = dados.map(item => ({ value: item.id, label: item.nome }));
-		selectOuChoices.setChoices(choices, "value", "label", true);
-	} else {
-		const select = selectOuChoices;
-		select.innerHTML = "";
-		if (placeholder) select.innerHTML = `<option value="">${placeholder}</option>`;
-		dados.forEach(d => {
-			const opt = document.createElement("option");
-			opt.value = d.id;
-			opt.textContent = d.nome;
-			select.append(opt);
-		});
+		select.setChoices(choices, "value", "label", true);
+		return;
 	}
+	
+	select.innerHTML = "";
+
+	if (placeholder) select.innerHTML = `<option value="">${placeholder}</option>`;
+	dados.forEach(d => {
+		const opt = document.createElement("option");
+		opt.value = d.id;
+		opt.textContent = d.nome;
+		select.append(opt);
+	});
+
 }
 
 function preencherSelectCursos(select, cursos, usuario) {
@@ -236,6 +243,7 @@ function initTurmas() {
 	setupAbasTurmas(secao);
 	setupFormularioTurma(secao);
 	setupFormularioEditarTurma(secao);
+	initSubTurmas(secao);
 
 }
 

@@ -93,6 +93,7 @@ public class Turma {
     }
     
     public Turma(String nome, int anoLetivo, boolean ativo, Disciplina disciplina, Curso curso, List<Aluno> discentes, List<Professor> doscentes) {
+        
         this.setNome(nome);
         this.setAnoLetivo(anoLetivo);
         this.setAtivo(ativo);
@@ -101,6 +102,7 @@ public class Turma {
         this.setDiscentes(discentes);
         this.setDoscentes(doscentes);
         this.setTipo(TipoTurma.TURMA_UNICA);
+        
     }
     
     public Turma(String nome, int anoLetivo, boolean ativo, Disciplina disciplina, Curso curso) {

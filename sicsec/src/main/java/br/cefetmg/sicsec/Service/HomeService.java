@@ -31,7 +31,7 @@ public class HomeService {
 						"/images/icons/boletim.svg",
 						"/html/aluno/sections/boletim.html",
 						"Boletim",
-						Arrays.asList(),
+						Arrays.asList("/css/homeAluno/boletim.css"),
 						Arrays.asList("/js/aluno/frag/boletim.js"),
 						"boletim",
 						false),
@@ -114,7 +114,7 @@ public class HomeService {
 						Arrays.asList("https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css",
 											"/css/admin/turmas.css"),
 						Arrays.asList("https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js",
-											"/js/admin/frag/turmas.js"),
+											"/js/admin/frag/subturmas.js", "/js/admin/frag/turmas.js"),
 						"turmas",
 						false),
 				new Secao(

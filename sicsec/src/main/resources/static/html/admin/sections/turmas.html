@@ -6,7 +6,7 @@
 
 <section class="criar-turma tab">
     <form action="/api/turma/registrar" method="post">
-        <input type="text"  placeholder="Nome da Turma" name="nome" required />
+        <input type="text"  placeholder="Nome da Turma" name="nome" id="nome-turma" required />
 
         <div class="curso-section">
             <label>Curso:</label>
@@ -37,6 +37,27 @@
             </select>
         </div>
 
+        <div class="subturmas-config-section">
+            <div id="toggleSubturmas-wrapper">
+            <label>
+                Permitir Subturmas?
+                <input type="checkbox" id="toggleSubturmas" name="permitirSubturmas" />
+            </label>
+            </div>
+            <div id="quantSubturmas-wrapper">
+            <label>
+                Quantidade:
+                <input type="number" min="1" step="1" value="1" max="4" id="quantSubturmas" name="quantSubturmas" />
+            </label>
+            </div>
+        </div>
+
+        <div class="subturmas-section" hidden="true">
+
+            <!-- Adicionar dinamicamente subturmas aqui -->
+
+        </div>
+    
         <button type="submit">Cadastrar Turma</button>
     </form>
 </section>

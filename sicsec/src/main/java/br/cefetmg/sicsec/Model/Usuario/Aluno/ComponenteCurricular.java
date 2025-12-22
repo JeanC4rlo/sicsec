@@ -15,7 +15,7 @@ import java.util.List;
  * @author davig
  */
 @Entity
-class ComponenteCurricular {
+public class ComponenteCurricular {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

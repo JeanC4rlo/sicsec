@@ -103,7 +103,7 @@ function criarCard(pessoa) {
     const email = document.createElement("p");
 
     if(pessoa.foto === null || pessoa.foto === "") foto.src = fotoPadrao;
-    else foto.src = "/.." + pessoa.foto;
+    else foto.src = "/images" + pessoa.foto;
     div.appendChild(foto);
 
     nome.textContent = pessoa.nome;

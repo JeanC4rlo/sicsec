@@ -77,7 +77,7 @@
   gap: 1.5rem;
   transition: 200ms ease all;
   background: white;
-  border: 2px solid var(--secondary);
+  border: 2px solid var(--primary);
   border-radius: 0.75rem;
   padding: 2rem;
 }
@@ -132,6 +132,42 @@
 /* ---------- [ Choices.js — estilo base ] ---------- */
 .choices {
   width: 100%;
+}
+
+.choices__inner {
+
+  background-color: var(--bg-secondary);
+
+}
+
+.subturmas-section > div  {
+
+  padding: 2em;
+  border-radius: 5px;
+  border: 1px solid var(--secondary);
+  background-color: var(--bg-secondary);
+  margin-bottom: 2em;
+
+}
+
+.subturmas-section > div > h2, 
+#turmas-content .subturmas-section > div > div > label {
+
+  color: var(--secondary);
+
+}
+
+#turmas-content .subturmas-section > div > div {
+
+  margin-top: 1em;
+  padding: 0em 1em;
+
+}
+
+.subturmas-section .choices__inner {
+  
+  background-color: var(--bg-primary);
+
 }
 
 .choices__input--cloned {
@@ -233,7 +269,7 @@
   gap: 0.6rem;
 }
 
-#turmas-content .ativo-section label {
+#turmas-content .ativo-section label, #turmas-content .subturmas-config-section label {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -242,7 +278,7 @@
   cursor: pointer;
 }
 
-#turmas-content .ativo-section input[type="checkbox"] {
+#turmas-content input[type="checkbox"] {
   width: 1.2rem;
   height: 1.2rem;
   accent-color: var(--primary);
@@ -251,6 +287,10 @@
   transition: transform 0.15s ease;
 }
 
-#turmas-content .ativo-section input[type="checkbox"]:hover {
+#turmas-content input[type="checkbox"]:hover {
   transform: scale(1.1);
+}
+
+#quantSubturmas-wrapper {
+  display: none;
 }

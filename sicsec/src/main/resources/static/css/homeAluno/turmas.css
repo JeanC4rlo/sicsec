@@ -4,17 +4,22 @@ html {
 }
 
 .pessoa img {
-    width: 60px;
+    width: 75px;
     height: 75px;
-    aspect-ratio: auto 60 / 75;
+    object-fit: cover;
+    object-position: center;
+    overflow: hidden;
+    border-radius: 3px;
+    border: 1px solid var(--secondary);
 }
 
 .pessoa {
-    border: 1px solid black;
+    border: 1px solid var(--primary);
+    background-color: var(--bg-secondary);
     padding: 5px;
     border-radius: 5px;
     gap: 10px;
-    width: 280px;
+    width: 240px;
     height: 120px;
     font-size: 14px;
     display: flex;
@@ -60,20 +65,20 @@ html {
     border: 1px solid var(--primary);
     width: 40vw;
     height: 20vh;
-    font-size: 10px;
+    font-size: 16px;
     border-radius: 5px;
 
 }
 
 .principal .info-turma > div > * {
 
-    padding: 1em;
+    padding: 0.5em 1.5em;
 
 }
 
 .principal .info-turma > div > div {
     
-    font-size: 10px;
+    font-size: 14px;
 
 }
 
@@ -81,7 +86,7 @@ html {
 
     background-color: var(--secondary);
     color: white;
-    font-size: 12px;
+    font-size: 20px;
 
 }
 
@@ -89,7 +94,7 @@ html {
 
     background-color: var(--secondary);
     color: white;
-    font-size: 16px;
+    font-size: 22px;
     height: 50%;
 
 }

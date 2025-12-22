@@ -33,14 +33,17 @@ public class SubTurma extends Turma {
         
     }
     
-    public SubTurma(String nome, List<Aluno> discentes, List<Professor> doscentes, SuperTurma turma) {
+    public SubTurma(String nome, List<Aluno> discentes, List<Professor> doscentes, SuperTurma superTurma) {
 
-        super(nome, turma.getAnoLetivo(), turma.isAtivo(), turma.getDisciplina(), turma.getCurso(), discentes, doscentes);
-
+        super(nome, superTurma.getAnoLetivo(), superTurma.isAtivo(), superTurma.getDisciplina(), superTurma.getCurso());
+        
         this.setTipo(TipoTurma.SUBTURMA);
-        this.setSuperTurma(turma);
+        this.setSuperTurma(superTurma);
+        this.setDiscentes(discentes);
+        this.setDoscentes(doscentes);
+
     }
-    
+
     public SubTurma(String nome, SuperTurma turma) {
 
         super(nome, turma.getAnoLetivo(), turma.isAtivo(), turma.getDisciplina(), turma.getCurso());
@@ -56,10 +59,6 @@ public class SubTurma extends Turma {
 
     @Override
     public void setDiscentes(List<Aluno> discentes) {
-
-        if (discentes == null || discentes.isEmpty()) {
-            throw new IllegalArgumentException("Toda SubTurma deve ter pelo menos um Aluno associado.");
-        }
 
         for (Aluno aluno : discentes) {
             if (!this.getSuperTurma().getDiscentes().contains(aluno)) {
@@ -78,10 +77,6 @@ public class SubTurma extends Turma {
     @Override
     public void setDoscentes(List<Professor> doscentes) {
 
-        if (doscentes == null || doscentes.isEmpty()) {
-            throw new IllegalArgumentException("Toda SubTurma deve ter pelo menos um Professor associado.");
-        }
-
         for (Professor professor : doscentes) {
             if (!this.getSuperTurma().getDoscentes().contains(professor)) {
                 throw new IllegalArgumentException("O Professor " + professor.getMatricula().getNome() + " não está associado à Turma.");
@@ -96,9 +91,6 @@ public class SubTurma extends Turma {
     }
 
     public void setSuperTurma(SuperTurma superTurma) {
-        if (superTurma == null) {
-            throw new IllegalArgumentException("Toda SubTurma deve ter uma SuperTurma associada.");
-        }
         this.superTurma = superTurma;
     }
 
