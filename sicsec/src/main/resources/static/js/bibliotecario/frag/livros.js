@@ -39,7 +39,7 @@ class GerenciadorCriacaoLivros {
             return;
         }
 
-        if (isNaN(ano) || ano.length < 1 || !Number.isInteger(ano)) {
+        if (isNaN(ano) || ano.length > 4 || !Number.isInteger(Number(ano))) {
             this.mostrarMensagem('Ano inválido', 'erro');
             return;
         }
