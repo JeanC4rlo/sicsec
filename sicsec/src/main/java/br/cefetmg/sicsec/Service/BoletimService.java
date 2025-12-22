@@ -16,7 +16,6 @@ import br.cefetmg.sicsec.dto.Perfil;
 import jakarta.servlet.http.HttpSession;
 import java.util.Optional;
 import br.cefetmg.sicsec.Model.Util.Enum.Situacao;
-import br.cefetmg.sicsec.Repository.BoletimRepository;
 
 @Service
 public class BoletimService {

@@ -6,6 +6,8 @@ import br.cefetmg.sicsec.Model.Usuario.*;
 import jakarta.persistence.*;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 @Entity
 public class Professor extends Usuario {
     

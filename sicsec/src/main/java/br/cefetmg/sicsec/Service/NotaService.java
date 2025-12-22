@@ -15,7 +15,7 @@ import br.cefetmg.sicsec.Model.Usuario.Aluno.Nota;
 import br.cefetmg.sicsec.Model.Util.Enum.Aprovacao;
 import br.cefetmg.sicsec.Model.Util.Enum.Bimestre;
 import br.cefetmg.sicsec.Model.Util.Enum.Situacao;
-import br.cefetmg.sicsec.Repository.BoletimRepository;
+import br.cefetmg.sicsec.Repository.BoletimRepo;
 import br.cefetmg.sicsec.Repository.ComponenteCurricularRepository;
 import br.cefetmg.sicsec.Repository.NotaRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -36,7 +36,7 @@ public class NotaService {
     ComponenteCurricularService componenteCurricularService;
 
     @Autowired
-    BoletimRepository boletimRepository;
+    BoletimRepo boletimRepository;
 
     @Transactional
     public void salvarNota(Desempenho desempenho, Aluno aluno) {
