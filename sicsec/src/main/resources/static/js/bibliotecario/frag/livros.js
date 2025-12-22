@@ -200,10 +200,19 @@ class GerenciadorEdicaoLivros {
         document.getElementById('editarISBN').value = livro.isbn;
         document.getElementById('editarAno').value = livro.ano;
         
-        if(livro.status == "DISPONIVEL" || livro.status == "EMPRESTADO")
-            document.getElementById("editarDisponivel").checked = true;
-        else
-            document.getElementById("editarDisponivel").checked = false;
+        switch(livro.status) {
+            case "DISPONIVEL":
+                document.getElementById("editarDisponivel").checked = true;
+                document.querySelector(".checkbox-disponivel").style.display = "flex";
+                break;
+            case "EMPRESTADO":
+                document.querySelector(".checkbox-disponivel").style.display = "none";
+                break;
+            default:
+                document.getElementById("editarDisponivel").checked = false;
+                document.querySelector(".checkbox-disponivel").style.display = "flex";
+                break;
+        }
     }
 
     async salvarEdicao() {

@@ -17,7 +17,7 @@ import jakarta.transaction.Transactional;
 public class LivroService {
 
     @Autowired
-    private LivroRepository livroRepo;
+    private LivroRepository livroRepository;
 
     @Autowired
     private BibliotecaRepository bibliotecaRepository;
@@ -31,7 +31,7 @@ public class LivroService {
             Integer ano,
             Biblioteca biblioteca) {
 
-        Optional<Livro> livroOptional = livroRepo.findSimilar(titulo, autor, editora, isbn, ano);
+        Optional<Livro> livroOptional = livroRepository.findSimilar(titulo, autor, editora, isbn, ano);
         Livro livro;
 
         if (livroOptional.isEmpty()) {
@@ -55,7 +55,7 @@ public class LivroService {
             livro.getBibliotecas().add(biblioteca);
         }
 
-        Livro livroRetornado = livroRepo.save(livro);
+        Livro livroRetornado = livroRepository.save(livro);
 
         if(!biblioteca.getAcervo().contains(livroRetornado)) {
             biblioteca.getAcervo().add(livroRetornado);
@@ -72,7 +72,7 @@ public class LivroService {
         String codigoBase = String.format("1%08d", hash);
 
         Long codigoLong = Long.parseLong(codigoBase);
-        while (livroRepo.existsByCodigo(codigoLong)) {
+        while (livroRepository.existsByCodigo(codigoLong)) {
             hash = (hash + 1) % (10 * 8);
             codigoLong = Long.parseLong(String.format("%s%05d", ano, hash));
         }
@@ -98,18 +98,26 @@ public class LivroService {
         livro.setAno(ano);
         livro.setStatus(status);
 
-        return livroRepo.save(livro);
+        return livroRepository.save(livro);
     }
 
 	public Optional<Livro> findById(Long id) {
-        return livroRepo.findById(id);
+        return livroRepository.findById(id);
+    }
+
+    public Optional<Livro> findByCodigoAndBiblioteca(Long codigo, Biblioteca biblioteca) {
+        return livroRepository.findByCodigoAndBiblioteca(codigo, biblioteca);
     }
 
 	public Object listarLivrosPorBiblioteca(String busca, Biblioteca biblioteca) {
-		return livroRepo.findAllByTituloBiblioteca(busca, biblioteca);
+		return livroRepository.findAllByTituloBiblioteca(busca, biblioteca);
 	}
 
     public Object listarLivrosPorBibliotecaEStatus(String busca, Biblioteca biblioteca, StatusLivro status) {
-		return livroRepo.findAllByTituloBibliotecaStatus(busca, biblioteca, status);
+		return livroRepository.findAllByTituloBibliotecaStatus(busca, biblioteca, status);
 	}
+
+    public Livro save(Livro livro) {
+        return livroRepository.save(livro);
+    }
 }
