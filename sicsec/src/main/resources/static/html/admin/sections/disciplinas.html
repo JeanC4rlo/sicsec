@@ -1,0 +1,89 @@
+<section class="disciplinas">
+    <div class="wrapper">
+        <header>
+            <h2>Gerenciar Disciplinas</h2>
+            <button data-tab="cadastrar-disciplina" class="ativo">Cadastrar Disciplina</button>
+            <button data-tab="editar-disciplina">Editar Disciplina</button>
+        </header>
+
+        <section class="cadastrar-disciplina tab ativo">
+            <form id="cadastrarDisciplinaForm">
+                <input type="text" placeholder="Nome da Disciplina" id="nomeDisciplina" required />
+
+                <div style="display: flex; gap: 1rem;">
+                    <input type="text" placeholder="Código da Disciplina" id="codigoDisciplina" required />
+                    <input type="number" placeholder="Carga Horária (horas)" id="cargaHoraria" required />
+                </div>
+
+                <div class="disciplina-section">
+                    <label>Base Curricular:</label>
+                    <select id="baseCurricular" required>
+                        <option value="">Selecione</option>
+                        <option value="Integrado">Técnico Integrado</option>
+                        <option value="Subsequente">Técnico Subsequente</option>
+                        <option value="Concomitante">Técnico Concomitante</option>
+                        <option value="Superior">Ensino Superior</option>
+                    </select>
+                </div>
+
+                <div class="professor-section">
+                    <label>Professor(es):</label>
+                    <input type="text" id="buscarProfessor" placeholder="Buscar..." class="buscar-input">
+                    <div id="resultadosProfessores" class="resultados-busca"></div>
+                </div>
+
+                <div class="aluno-section">
+                    <label>Aluno(s):</label>
+                    <input type="text" id="buscarAluno" placeholder="Buscar..." class="buscar-input">
+                    <div id="resultadosAlunos" class="resultados-busca"></div>
+                </div>
+
+                <button type="submit">Cadastrar Disciplina</button>
+            </form>
+        </section>
+
+        <section class="editar-disciplina tab">
+            <form id="buscarDisciplinaForm">
+                <select id="buscaDisciplina" required>
+                    <option value="">Digite para buscar...</option>
+                </select>
+                <button type="submit">Buscar</button>
+            </form>
+
+            <form id="editarDisciplinaForm" style="display:none;">
+                <input type="hidden" id="disciplinaId" />
+
+                <input type="text" id="editNome" required />
+
+                <div style="display: flex; gap: 1rem;">
+                    <input type="text" id="editCodigo" readonly />
+                    <input type="number" id="editCarga" required />
+                </div>
+
+                <div class="disciplina-section">
+                    <label>Base Curricular:</label>
+                    <select id="editBase">
+                        <option value="Integrado">Técnico Integrado</option>
+                        <option value="Subsequente">Técnico Subsequente</option>
+                        <option value="Concomitante">Técnico Concomitante</option>
+                        <option value="Superior">Ensino Superior</option>
+                    </select>
+                </div>
+
+                <div class="professor-section">
+                    <label>Professor(es):</label>
+                    <input type="text" id="buscarProfessor" placeholder="Buscar..." class="buscar-input">
+                    <div id="resultadosProfessores" class="resultados-busca"></div>
+                </div>
+
+                <div class="aluno-section">
+                    <label>Aluno(s):</label>
+                    <input type="text" id="buscarAluno" placeholder="Buscar..." class="buscar-input">
+                    <div id="resultadosAlunos" class="resultados-busca"></div>
+                </div>
+
+                <button type="submit">Atualizar Disciplina</button>
+            </form>
+        </section>
+    </div>
+</section>

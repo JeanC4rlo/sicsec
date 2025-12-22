@@ -118,7 +118,7 @@ public class HomeService {
 						Arrays.asList("/css/admin/matriculas.css"),
 						Arrays.asList("/js/admin/frag/matriculas.js"),
 						"matriculas",
-						false),
+						true),
 				new Secao(
 						"/images/icons/turmas.svg",
 						"/html/admin/sections/turmas.html",
@@ -134,6 +134,14 @@ public class HomeService {
 						Arrays.asList("/css/admin/documentos.css"),
 						Arrays.asList("/js/admin/frag/usuarios.js", "/js/admin/frag/documentos.js"),
 						"documentos",
+						false),
+                                new Secao(
+						"/images/icons/disciplinas.svg",
+						"/html/admin/sections/disciplinas.html",
+						"Gestão de disciplinas",
+						Arrays.asList("/css/admin/disciplinas.css"),
+						Arrays.asList("/js/admin/frag/initDisciplinas.js"),
+						"disciplinas",
 						false)));
 	}
 
