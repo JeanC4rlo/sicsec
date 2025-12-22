@@ -56,12 +56,13 @@ public class BoletimController {
 
                 Map<String, Object> componenteMap = new HashMap<String, Object>();
                 componenteMap.put("faltas", componente.getFaltas());
-                componenteMap.put("disciplina", componente.getDisciplina());
+                componenteMap.put("disciplina", componente.getDisciplina().getNome());
                 componenteMap.put("situacao", componente.getSituacao());
                 componenteMap.put("notaFinal", componente.getNotaFinal());
 
                 List<Map<String, Object>> notasMap = new ArrayList<Map<String, Object>>();
                 for(Nota nota : componente.getNotas()) {
+                    
                     Map<String, Object> notaMap = new HashMap<String, Object>();
                     notaMap.put("avaliacao", nota.getAvaliacao());
                     notaMap.put("bimestre", nota.getBimestre());
@@ -69,12 +70,15 @@ public class BoletimController {
                     notasMap.add(notaMap);
                 }
                 componenteMap.put("notas", notasMap);
-                boletinsMap.add(componenteMap);
+                componentesMaps.add(componenteMap);
 
             }
             boletimMap.put("componentes", componentesMaps);
+            boletinsMap.add(boletimMap);
 
         }
+
+        System.out.println(boletinsMap);
 
         return ResponseEntity.ok(boletinsMap);
 

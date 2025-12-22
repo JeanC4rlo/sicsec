@@ -52,11 +52,11 @@ async function initSectionBoletim() {
 
         tbody.innerHTML = "";
 
-        notas.forEach(nota => {
+        notas[0].componentes.forEach(componente => {
             const tr = document.createElement("tr");
 
             const tdDisciplina = document.createElement("td");
-            tdDisciplina.textContent = nota.disciplina.nome;
+            tdDisciplina.textContent = componente.disciplina;
             tr.appendChild(tdDisciplina);
 
             let [td1Bi, td2Bi, td3Bi, td4Bi] = [null, null, null, null];
@@ -71,24 +71,24 @@ async function initSectionBoletim() {
                 tdBis[i].notas = [];
             });
             
-            nota.notas.forEach(n => {
-                switch(n.bimestre) {
+            componente.notas.forEach(nota => {
+                switch(nota.bimestre) {
 
                     case "PRIMEIRO":
-                        tdBis[0].nota += n.valor;
-                        tdBis[0].notas.push(n);
+                        tdBis[0].nota += nota.valor;
+                        tdBis[0].notas.push(nota);
                         break;
                     case "SEGUNDO":
-                        tdBis[1].nota += n.valor;
-                        tdBis[1].notas.push(n);
+                        tdBis[1].nota += nota.valor;
+                        tdBis[1].notas.push(nota);
                         break;
                     case "TERCEIRO":
-                        tdBis[2].nota += n.valor;
-                        tdBis[2].notas.push(n);
+                        tdBis[2].nota += nota.valor;
+                        tdBis[2].notas.push(nota);
                         break;
                     case "QUARTO":
-                        tdBis[3].nota += n.valor;
-                        tdBis[3].notas.push(n);
+                        tdBis[3].nota += nota.valor;
+                        tdBis[3].notas.push(nota);
                         break;
 
                 }
@@ -107,18 +107,19 @@ async function initSectionBoletim() {
             console.log(tdBis);
 
             const tdFaltas = document.createElement("td");
-            tdFaltas.textContent = nota.faltas;
+            tdFaltas.textContent = componente.faltas;
             tr.appendChild(tdFaltas);
 
             const tdNotaFinal = document.createElement("td");
-            tdNotaFinal.textContent = nota.notaFinal;
+            tdNotaFinal.textContent = componente.notaFinal;
             tr.appendChild(tdNotaFinal);
 
             const tdSituacao = document.createElement("td");
-            tdSituacao.textContent = nota.situacao;
+            tdSituacao.textContent = componente.situacao;
             tr.appendChild(tdSituacao);
 
             tbody.appendChild(tr);
+            
         });
     }
 

@@ -1053,19 +1053,24 @@ tr > th#th-cabecalho-flex {
     gap: 2rem;
     width: 25%;
     direction: rtl;
+    align-items: start;
+    justify-items: left;
+}
+
+#turmas-content header > div {
+    background-color: var(--secondary);
 }
 
 #turmas-content header > * {
-    padding-left: 3rem;
     direction: ltr;
 }
 
 #turmas-content header .lista-turmas-wrapper {
-    height: 45%;
+    max-height: 55%;
 }
 
 #turmas-content header .acoes {
-    height: 55%;
+    max-height: 45%;
 }
 
 #turmas-content section {
@@ -1076,6 +1081,11 @@ tr > th#th-cabecalho-flex {
     display: flex;
     flex-direction: column;
     width: 75%;
+}
+
+#turmas-content button {
+    justify-self: left;
+    justify-content: left;
 }
 
 .info-turma {
