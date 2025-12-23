@@ -55,4 +55,15 @@ public interface LivroRepository extends JpaRepository<Livro, Long> {
         @Param("biblioteca") Biblioteca biblioteca,
         @Param("status") StatusLivro status
     );
+
+    @Query("""
+        SELECT l FROM Livro l
+        JOIN l.bibliotecas b
+        WHERE l.codigo = :codigo
+            AND b = :biblioteca
+    """)
+    Optional<Livro> findByCodigoAndBiblioteca(
+        @Param("codigo") Long codigo,
+        @Param("biblioteca") Biblioteca biblioteca
+    );
 }

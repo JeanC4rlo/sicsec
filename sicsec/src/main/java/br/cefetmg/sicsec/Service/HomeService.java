@@ -136,7 +136,7 @@ public class HomeService {
 						"documentos",
 						false)));
 
-			ROLE_SECTIONS.put(Cargo.BIBLIOTECARIO, Arrays.asList(
+		ROLE_SECTIONS.put(Cargo.BIBLIOTECARIO, Arrays.asList(
 				new Secao(
 						"/images/icons/livros.svg",
 						"/html/bibliotecario/sections/livros.html",
@@ -144,6 +144,14 @@ public class HomeService {
 						Arrays.asList("/css/bibliotecario/livros.css"),
 						Arrays.asList("/js/bibliotecario/frag/livros.js"),
 						"livros",
+						false),
+				new Secao(
+						"/images/icons/emprestimos.svg",
+						"/html/bibliotecario/sections/emprestimos.html",
+						"Gestão de empréstimos e reservas",
+						Arrays.asList("/css/bibliotecario/emprestimos.css"),
+						Arrays.asList("/js/bibliotecario/frag/emprestimos.js"),
+						"emprestimos",
 						false)));
 	}
 
