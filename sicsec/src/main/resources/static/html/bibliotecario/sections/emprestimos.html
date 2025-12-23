@@ -1,0 +1,95 @@
+<header>
+    <h2>Gerenciar Empréstimos e Reservas</h2>
+    <button data-tab="criar" class="ativo">Criar</button>
+    <button data-tab="editar">Editar</button>
+</header>
+
+<div class="criar tab">
+    <form id="criarEmprestimoForm">
+        <div class="form-group">
+            <label for="codigo">Código</label>
+            <input type="text" name="codigo" id="codigo" placeholder="Código do livro" required />
+        </div>
+
+        <div class="form-group">
+            <label for="tipo">Empréstimo ou Reserva</label>
+            <select id="tipo">
+                <option value="EMPRESTIMO">Empréstimo</option>
+                <option value="RESERVA">Reserva</option>
+                <option value="HISTORICO">Histórico</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="data">Data de Início</label>
+            <input type="datetime-local" name="data" id="data" required>
+        </div>
+
+        <div class="form-group">
+            <label for="duracao">Duração</label>
+            <input type="number" name="duracao" id="duracao" required>
+        </div>
+
+        <div class="form-group">
+            <label for="matricula">Número de matrícula do mortuário</label>
+            <input type="number" min="0" max="999999999" name="matricula" id="matricula" placeholder="Número de matrícula">
+        </div>
+
+        <button type="submit">Criar Empréstimo ou Reserva</button>
+    </form>
+</div>
+
+<div class="editar tab">
+    <div class="lista-emprestimos">
+        <h3>Empréstimos e reservas dessa biblioteca</h3>
+
+        <div class="filtro-group">
+            <input type="text" id="buscarMatricula" placeholder="Buscar por número de matrícula..." class="buscar-input">
+            <select id="filtroReserva">
+                <option value="TODOS">Todos os status</option>
+                <option value="EMPRESTIMO">Empréstimo</option>
+                <option value="RESERVA">Reserva</option>
+                <option value="HISTORICO">Histótrico</option>
+            </select>
+        </div>
+
+        <div id="listaEmprestimos" class="emprestimos-lista">
+            <!-- Empréstimos e reservas carregados via JavaScript -->
+            <div class="emprestimos-vazio">
+                <p>Nenhum empréstimo ou reserva encontrado</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Edição de Empréstimo e Reserva -->
+    <div id="modalEditarEmprestimo" class="modal">
+        <div class="modal-conteudo">
+            <form id="formEditarEmprestimo">
+                <input type="hidden" id="editarEmprestimoId">
+
+                <div class="form-group">
+                    <label for="duracao">Duração</label>
+                    <input type="number" name="duracao" id="editarDuracao" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="matricula">Número de matrícula do mortuário</label>
+                    <input type="number" min="0" max="99999999999" name="matricula" id="editarMatricula" placeholder="Número de matrícula">
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="editarReserva">
+                        <span>Modo histórico</span>
+                    </label>
+                    <small>Empréstimos e reservas são invalidados e se tornam parte do histórico. Não será possível editar após a ativação dessa opção.</small>
+                </div>
+
+                <div class="modal-rodape">
+                    <button type="button" class="btn-cancelar">Cancelar</button>
+                    <button type="submit" class="btn-salvar">Salvar Alterações</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

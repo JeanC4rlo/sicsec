@@ -14,12 +14,6 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 import java.util.List;
 
-
-/**
- *
- * @author davig
- */
-
 @Repository
 public interface AlunoRepo extends JpaRepository<Aluno, Long> {
     

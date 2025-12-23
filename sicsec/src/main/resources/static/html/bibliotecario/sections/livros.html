@@ -1,0 +1,113 @@
+<header>
+    <h2>Gerenciar Livros</h2>
+    <button data-tab="criar" class="ativo">Criar</button>
+    <button data-tab="editar">Editar</button>
+</header>
+
+<div class="criar tab">
+    <form id="criarLivrosForm">
+        <div class="form-group">
+            <label for="titulo">Título</label>
+            <input type="text" name="titulo" id="titulo" placeholder="Título do livro" required />
+        </div>
+
+        <div class="form-group">
+            <label for="autor">Autor(a)</label>
+            <input type="text" name="autor" id="autor" placeholder="Autor" required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="editor">Editora</label>
+            <input type="text" name="editor" id="editor" placeholder="Editora" required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="isbn">ISBN</label>
+            <input type="text" name="isbn" id="isbn" placeholder="9788533302273" inputmode="numeric"
+                pattern="[0-9]{10}|[0-9]{13}" maxlength="13" required
+                title="Digite apenas números (ISBN com 10 ou 13 dígitos)"
+                oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+        </div>
+
+
+        <div class="form-group">
+            <label for="ano">Ano</label>
+            <input type="number" min="0" max="9999" step="1" name="ano" id="ano" placeholder="Ano de publicação"
+                required></textarea>
+        </div>
+
+        <button type="submit">Criar Livro</button>
+    </form>
+</div>
+
+<div class="editar tab">
+    <div class="lista-livros">
+        <h3>Livros dessa biblioteca</h3>
+
+        <div class="filtro-group">
+            <input type="text" id="buscarLivro" placeholder="Buscar por título..." class="buscar-input">
+            <select id="filtroStatus">
+                <option value="TODOS">Todos os status</option>
+                <option value="DISPONIVEL">Disponível</option>
+                <option value="EMPRESTADO">Emprestado</option>
+                <option value="INDISPONIVEL">Indisponível</option>
+            </select>
+        </div>
+
+        <div id="listaLivros" class="livros-lista">
+            <!-- Livros carregados via JavaScript -->
+            <div class="livro-vazio">
+                <p>Nenhum livro encontrado</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Edição de Livro -->
+    <div id="modalEditarLivro" class="modal">
+        <div class="modal-conteudo">
+            <form id="formEditarLivro">
+                <input type="hidden" id="editarLivroId">
+
+                <div class="form-group">
+                    <label for="editarTitulo">Título</label>
+                    <input type="text" id="editarTitulo" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="editarAutor">Autor(a)</label>
+                    <input type="text" id="editarAutor" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="editarEditor">Editora</label>
+                    <input type="text" id="editarEditor" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="editarISBN">ISBN</label>
+                    <input type="text" id="editarISBN" inputmode="numeric" pattern="[0-9]{10}|[0-9]{13}" maxlength="13"
+                        required title="Digite apenas números (ISBN com 10 ou 13 dígitos)"
+                        oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                </div>
+
+                <div class="form-group">
+                    <label for="editarAno">Ano</label>
+                    <input type="number" min="0" max="9999" step="1" id="editarAno" required>
+                </div>
+
+                <div class="form-group checkbox-disponivel">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="editarDisponivel">
+                        <span>Livro disponível</span>
+                    </label>
+                    <small>Livros indisponíveis não podem ser reservados ou emprestados</small>
+                </div>
+
+                <div class="modal-rodape">
+                    <button type="button" class="btn-cancelar">Cancelar</button>
+                    <button type="submit" class="btn-salvar">Salvar Alterações</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

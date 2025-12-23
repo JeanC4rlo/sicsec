@@ -11,6 +11,7 @@ import br.cefetmg.sicsec.Model.Curso.Turma.Turma;
 import br.cefetmg.sicsec.Model.Curso.Turma.presenca.Presenca;
 import br.cefetmg.sicsec.Model.Usuario.Usuario;
 import br.cefetmg.sicsec.Model.Usuario.Aluno.Aluno;
+import br.cefetmg.sicsec.Model.Usuario.Bibliotecario.Bibliotecario;
 import br.cefetmg.sicsec.Model.Usuario.Professor.Professor;
 
 import br.cefetmg.sicsec.Repository.CursoRepo;
@@ -110,5 +111,9 @@ public class UsuarioService {
 
     public List<Usuario> findAllById(List<Long> ids) {
         return usuarioRepo.findAllById(ids);
+    }
+
+    public Optional<Usuario> findByNumeroMatricula(Long matriculaLong) {
+        return usuarioRepo.findByMatricula_NumeroMatricula(matriculaLong);
     }
 }

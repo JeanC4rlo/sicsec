@@ -1,15 +1,17 @@
 class GerenciadorUsuarios {
-    constructor() {
+    constructor(baseDiv = document.querySelector(".usuarios-section"), tipoCargo = null) {
         this.usuariosSelecionados = new Map();
         this.debounceTimeout = null;
+        this.baseDiv = baseDiv;
+        this.tipoCargo = tipoCargo;
         this.init();
     }
 
     init() {
-        this.buscarInput = document.getElementById('buscarUsuario');
-        this.resultadosDiv = document.getElementById('resultadosUsuarios');
-        this.selecionadosDiv = document.getElementById('usuariosSelecionados');
-        this.hiddenInput = document.getElementById('usuariosIds');
+        this.buscarInput = this.baseDiv.querySelector('#buscarUsuario');
+        this.resultadosDiv = this.baseDiv.querySelector('#resultadosUsuarios');
+        this.selecionadosDiv = this.baseDiv.querySelector('#usuariosSelecionados');
+        this.hiddenInput = this.baseDiv.querySelector('#usuariosIds');
 
         this.setupEventListeners();
         this.atualizarInterface();
@@ -55,7 +57,7 @@ class GerenciadorUsuarios {
 
     async buscarUsuarios(termo) {
         try {
-            const response = await fetch(`/api/usuarios/buscar?query=${encodeURIComponent(termo)}`);
+            const response = await fetch(`/api/usuarios/buscar?query=${encodeURIComponent(termo)}&cargo=${this.tipoCargo || ''}`);
             const usuarios = await response.json();
             this.mostrarResultados(usuarios);
         } catch (error) {
@@ -151,5 +153,3 @@ class GerenciadorUsuarios {
         this.atualizarInterface();
     }
 }
-
-new GerenciadorUsuarios();

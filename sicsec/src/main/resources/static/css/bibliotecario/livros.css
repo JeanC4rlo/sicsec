@@ -1,10 +1,10 @@
-#documentos-content {
+#livros-content {
     display: flex;
     width: 100%;
     height: 100%;
 }
 
-#documentos-content header {
+#livros-content header {
     display: flex;
     flex-direction: column;
     gap: 1rem;
@@ -14,12 +14,12 @@
     justify-content: center;
 }
 
-#documentos-content header h2 {
+#livros-content header h2 {
     text-wrap: nowrap;
     margin-bottom: 1rem;
 }
 
-#documentos-content header button {
+#livros-content header button {
     display: flex;
     gap: 1rem;
     align-items: center;
@@ -31,38 +31,37 @@
     transition: 200ms ease all;
 }
 
-#documentos-content header button:hover {
+#livros-content header button:hover {
     margin-left: 1rem;
     cursor: pointer;
 }
 
-#documentos-content header button.ativo {
+#livros-content header button.ativo {
     font-weight: bold;
 }
 
-#documentos-content header button::before {
+#livros-content header button::before {
     content: "▶";
     opacity: 0;
     transition: 200ms ease all;
 }
 
-#documentos-content header button.ativo::before {
+#livros-content header button.ativo::before {
     opacity: 1;
 }
 
-#documentos-content .tab {
+#livros-content .tab {
     display: none;
     padding: 2rem;
     flex: 1;
 }
 
-#documentos-content .tab.ativo {
+#livros-content .tab.ativo {
     display: block;
 }
 
-/* Formulários */
-#criarDocumentoForm,
-#formEditarDocumento {
+#criarlivroForm,
+#formEditarlivro {
     max-width: 600px;
     margin: 0 auto;
 }
@@ -93,150 +92,7 @@
 .form-group textarea:focus,
 .form-group select:focus {
     outline: none;
-    background-color: var(--primary);
     border-color: var(--secondary);
-}
-
-/* Seção de usuários */
-.usuarios-section {
-    margin-bottom: 1.5rem;
-    padding: 1rem;
-    border: 1px solid #e0e0e0;
-    border-radius: 4px;
-    background: var(--bg-secondary);
-}
-
-.usuarios-section label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 600;
-    color: var(--primary);
-}
-
-.usuarios-section p {
-    margin: 0.5rem 0 1rem 0;
-    color: #666;
-    font-size: 0.9rem;
-}
-
-.buscar-input {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 1rem;
-    margin-bottom: 0.5rem;
-    background: var(--bg-primary);
-}
-
-.usuarios-selecionados {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    align-items: center;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    min-height: 45px;
-    background: var(--bg-primary);
-}
-
-.chip {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: var(--bg-secondary);
-    border: 1px solid var(--secondary);
-    border-radius: 16px;
-    padding: 4px 12px;
-    font-size: 14px;
-}
-
-.chip-texto {
-    color: var(--primary);
-}
-
-.chip-remover {
-    background: none;
-    border: none;
-    color: #f44336;
-    cursor: pointer;
-    font-size: 16px;
-    padding: 0;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.chip-remover:hover {
-    background: #f44336;
-    color: white;
-}
-
-.chip-input-container {
-    flex: 1;
-    min-width: 150px;
-}
-
-.chip-input {
-    width: 100%;
-    border: none;
-    outline: none;
-    padding: 8px;
-    font-size: 14px;
-    background: var(--bg-primary);
-}
-
-.resultados-busca {
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    max-height: 200px;
-    overflow-y: auto;
-    display: none;
-    background: var(--bg-primary);
-    width: 100%;
-    margin-top: 4px;
-}
-
-.resultado-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    border-bottom: 1px solid #eee;
-    cursor: pointer;
-}
-
-.resultado-item:hover {
-    background: var(--bg-secondary);
-}
-
-.info-usuario strong {
-    display: block;
-    margin-bottom: 2px;
-    color: var(--primary);
-}
-
-.info-usuario small {
-    color: #666;
-    font-size: 12px;
-}
-
-.btn-adicionar {
-    background: var(--secondary);
-    color: white;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 12px;
-}
-
-.btn-adicionar:hover {
-    background: var(--primary);
 }
 
 /* Botões */
@@ -280,8 +136,8 @@ button:disabled {
     color: #c62828;
 }
 
-/* Lista de documentos */
-.filtros-documentos {
+/* Lista de livros */
+.filtros-livros {
     display: flex;
     gap: 1rem;
     margin-bottom: 2rem;
@@ -289,13 +145,16 @@ button:disabled {
 }
 
 .filtro-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
     flex: 1;
     min-width: 200px;
+    margin: .5rem 0 1.5rem 0;
 }
 
 .filtro-group label {
     display: block;
-    margin-bottom: 0.5rem;
     font-weight: 600;
     color: var(--primary);
 }
@@ -310,13 +169,18 @@ button:disabled {
     background: var(--bg-primary);
 }
 
-.lista-documentos {
+.filtro-group input:focus,
+.filtro-group select:focus {
+    background: var(--primary);
+}
+
+#listaLivros {
     display: flex;
     flex-direction: column;
     gap: 1rem;
 }
 
-.documento-item {
+.livro-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -327,26 +191,26 @@ button:disabled {
     transition: all 0.3s ease;
 }
 
-.documento-item:hover {
+.livro-item:hover {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     border-color: var(--secondary);
 }
 
-.documento-info h4 {
-    margin: 0 0 0.5rem 0;
+.livro-info h4 {
     color: var(--primary);
     font-size: 1.1rem;
 }
 
-.documento-meta {
+.livro-meta {
     display: flex;
+    align-items: center;
     gap: 1rem;
     flex-wrap: wrap;
     font-size: 0.9rem;
     color: #666;
 }
 
-.documento-status {
+.livro-status {
     padding: 0.25rem 0.75rem;
     border-radius: 20px;
     font-size: 0.8rem;
@@ -354,27 +218,22 @@ button:disabled {
     text-transform: uppercase;
 }
 
-.status-ativo {
+.status-disponivel {
     background: #e8f5e8;
     color: #2e7d32;
 }
 
-.status-pendente {
+.status-emprestado {
     background: #fff3e0;
     color: #ef6c00;
 }
 
-.status-arquivado {
-    background: #f5f5f5;
-    color: #666;
-}
-
-.status-expirado {
+.status-indisponivel {
     background: #ffebee;
     color: #c62828;
 }
 
-.documento-acoes {
+.livro-acoes {
     display: flex;
     gap: 0.5rem;
 }
@@ -394,7 +253,7 @@ button:disabled {
     background: var(--primary);
 }
 
-.documento-vazio {
+.livro-vazio {
     text-align: center;
     padding: 3rem;
     color: #666;
@@ -562,77 +421,39 @@ button:disabled {
 }
 
 /* Formulário de edição melhorado */
-.form-edicao {
+.editar form {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
 }
 
-.form-group-edicao {
+.editar form .form-group {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
 }
 
-.form-group-edicao label {
+.editar form .form-group label {
     font-weight: 600;
     color: var(--primary);
     font-size: 0.95rem;
 }
 
-.form-group-edicao input,
-.form-group-edicao textarea {
+.editar form .form-group input,
+.editar form .form-group textarea {
     padding: 0.75rem 1rem;
-    border: 2px solid var(--border-color);
+    border: 2px solid var(--primary);
     border-radius: 8px;
     font-size: 1rem;
     background: var(--bg-primary);
     transition: all 0.3s ease;
 }
 
-.form-group-edicao input:focus,
-.form-group-edicao textarea:focus {
+.editar form .form-group input:focus,
+.editar form .form-group textarea:focus {
     outline: none;
+    background-color: var(--primary);
     border-color: var(--secondary);
     box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
     transform: translateY(-1px);
-}
-
-/* Checkbox moderno */
-.checkbox-moderno {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1rem;
-    background: var(--bg-secondary);
-    border-radius: 8px;
-    border: 2px solid transparent;
-    transition: all 0.3s ease;
-    cursor: pointer;
-}
-
-.checkbox-moderno:hover {
-    border-color: var(--secondary);
-    background: rgba(76, 175, 80, 0.05);
-}
-
-.checkbox-moderno input[type="checkbox"] {
-    width: 20px;
-    height: 20px;
-    border-radius: 4px;
-    border: 2px solid var(--border-color);
-    background: var(--bg-primary);
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.checkbox-moderno input[type="checkbox"]:checked {
-    background: var(--secondary);
-    border-color: var(--secondary);
-}
-
-.checkbox-label-text {
-    font-weight: 600;
-    color: var(--primary);
-    user-select: none;
 }

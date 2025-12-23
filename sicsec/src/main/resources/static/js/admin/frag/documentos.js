@@ -1,6 +1,6 @@
 class GerenciadorCriacaoDocumentos {
     constructor() {
-        this.gerenciadorUsuarios = new GerenciadorUsuarios();
+        this.gerenciadorUsuarios = new GerenciadorUsuarios(document.querySelector("#documentos-content .usuarios-section"));
         this.form = document.getElementById('criarDocumentoForm');
         this.init();
     }
@@ -297,7 +297,6 @@ class GerenciadorEdicaoDocumentos {
                 }
             }
 
-            console.log('Arquivado:', dados.arquivado);
             formData.append('arquivado', dados.arquivado);
 
             const response = await fetch(`/api/documentos/${documentoId}`, {

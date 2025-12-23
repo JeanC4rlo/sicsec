@@ -122,6 +122,10 @@ nav button img {
     height: 2rem;
 }
 
+nav button span {
+    text-align: left;
+}
+
 nav button:hover {
     margin-left: 1rem;
     cursor: pointer;

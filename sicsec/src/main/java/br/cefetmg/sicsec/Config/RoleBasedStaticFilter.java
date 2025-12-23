@@ -38,6 +38,12 @@ public class RoleBasedStaticFilter extends OncePerRequestFilter {
                 "/css/admin/",
                 "/js/admin/"
         });
+
+        ROLE_PATHS.put(Cargo.BIBLIOTECARIO, new String[] {
+                "/html/bibliotecario/",
+                "/css/bibliotecario/",
+                "/js/bibliotecario/"
+        });
     }
 
     private static final String[] STATIC_PATHS = {

@@ -10,12 +10,6 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 import java.util.List;
 
-
-/**
- *
- * @author davig
- */
-
 @Repository
 public interface AdministradorRepo extends JpaRepository<Administrador, Long> {
     //Busca usuários por tipo de matrícula (ESTUDANTE, PROFESSOR, ADMIN)

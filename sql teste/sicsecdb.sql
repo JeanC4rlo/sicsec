@@ -434,14 +434,6 @@ CREATE TABLE `emprestimo` (
   `id_usuario` bigint(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Despejando dados para a tabela `emprestimo`
---
-
-INSERT INTO `emprestimo` (`id`, `data`, `duracao`, `reserva`, `id_livro`, `id_usuario`) VALUES
-(1, '2025-10-20', 15, 'EMPRESTIMO', 1, 1),
-(2, '2025-10-22', 10, 'EMPRESTIMO', 2, 8);
-
 -- --------------------------------------------------------
 
 --
