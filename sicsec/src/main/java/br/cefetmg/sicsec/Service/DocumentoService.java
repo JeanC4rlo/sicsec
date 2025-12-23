@@ -80,13 +80,13 @@ public class DocumentoService {
                 case CHEFE_DE_DEPARTAMENTO:
                     ChefeDepartamento chefe = (ChefeDepartamento) administrador;
                     if (chefe.getDepartamento() != null) {
-                        return documentoRepo.findByStatusAndDepartment(status, chefe.getDepartamento());
+                        return null; //documentoRepo.findByStatusAndDepartment(status, chefe.getDepartamento());
                     }
                     break;
                 case COORDENADOR:
                     Coordenador coordenador = (Coordenador) administrador;
                     if (coordenador.getCurso() != null) {
-                        return documentoRepo.findByStatusAndCourse(status, coordenador.getCurso());
+                        return null; //documentoRepo.findByStatusAndCourse(status, coordenador.getCurso());
                     }
                     break;
                 case ROOT:

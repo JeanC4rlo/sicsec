@@ -562,15 +562,14 @@ main>section.ativo {
 #boletim-content {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: top;
     justify-content: center;
     padding: 2rem 5vw;
     gap: 2rem;
     width: 100%;
-    max-width: 1000px;
 }
 
-#boletim table {
+table#tabelaBoletim {
     border: 2px solid var(--primary);
     border-collapse: collapse;
     width: 100%;
@@ -580,76 +579,45 @@ main>section.ativo {
     border-radius: 0.5rem;
 }
 
-#boletim caption {
-    font-size: 24pt;
-    font-weight: bold;
-    margin-bottom: 1rem;
-    color: var(--primary);
-}
-
-#boletim table th,
+table#tabelaBoletim th,
 td {
     padding: 10px;
     text-align: center;
     font-size: 1rem;
 }
 
-#boletim table th {
-    background-color: var(--primary);
-    border: 1px solid var(--bg-primary);
-    color: white;
+table#tabelaBoletim th {
+    background-color: var(--bg-secondary);
+    border: 1px solid black;
+    color: black;
 }
 
-#boletim table td {
+table#tabelaBoletim td {
     background-color: var(--bg-primary);
     border: 1px solid black;
 }
 
-#boletim table tr:nth-child(even) td {
+table#tabelaBoletim tr:nth-child(even) td {
     background-color: var(--bg-secondary);
 }
 
-#boletim table tr:hover {
-    background-color: var(--primary);
+table#tabelaBoletim tr:hover > td{
+    background-color: var(--secondary);
     color: white;
 }
 
-.cabecalho-flex {
-    display: flex;
-    justify-content: space-between;
+table#tabelaBoletim td:hover {
+    background-color: var(--primary) !important;
+    color: white;
+}
+
+tr > th#th-cabecalho-flex {
+    align-items: center;
+    justify-content: center;
     background-color: var(--primary);
     color: white;
     padding: 1rem 2rem;
     width: 100%;
-    border-radius: 0.5rem;
-}
-
-.cabecalho-flex button {
-    background-color: transparent;
-    border: none;
-    color: white;
-    font-size: 1.1rem;
-    font-weight: bold;
-    transition: 200ms ease all;
-    filter: brightness(0) invert(1);
-}
-
-.cabecalho-flex button:hover {
-    cursor: pointer;
-    color: var(--secondary);
-}
-
-.cabecalho-flex button:focus {
-    outline: none;
-}
-
-.cabecalho-flex button.desativado {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-#ano {
-    user-select: none;
 }
 
 #biblioteca-content {
@@ -1077,8 +1045,32 @@ td {
     display: flex;
     flex-direction: column;
     background-color: var(--secondary);
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
     color: white;
-    padding: 2rem;
+    padding: 3rem 2rem 3rem 4rem;
+    gap: 2rem;
+    width: 25%;
+    direction: rtl;
+    align-items: start;
+    justify-items: left;
+}
+
+#turmas-content header > div {
+    background-color: var(--secondary);
+}
+
+#turmas-content header > * {
+    direction: ltr;
+}
+
+#turmas-content header .lista-turmas-wrapper {
+    max-height: 55%;
+}
+
+#turmas-content header .acoes {
+    max-height: 45%;
 }
 
 #turmas-content section {
@@ -1088,6 +1080,12 @@ td {
 #turmas-content section.ativo {
     display: flex;
     flex-direction: column;
+    width: 75%;
+}
+
+#turmas-content button {
+    justify-self: left;
+    justify-content: left;
 }
 
 .info-turma {
@@ -1127,8 +1125,13 @@ td {
     gap: 1rem;
     margin-top: 1rem;
     height: 100%;
-    overflow-y: scroll;
+    overflow-y: auto;
     overflow-x: hidden;
+    direction: rtl;
+}
+
+.lista-turmas > * {
+  direction: ltr;
 }
 
 .lista-turmas button {
@@ -1138,8 +1141,14 @@ td {
     background-color: transparent;
     border: none;
     filter: brightness(0) invert(1);
-    font-size: 1.15rem;
+    font-size: 20px;
     transition: 200ms ease all;
+}
+
+.lista-turmas button.sub-turma {
+    font-size: 16px;
+    font-weight: bold;
+    padding-left: 5em;
 }
 
 .lista-turmas button:hover {
@@ -1213,7 +1222,6 @@ td {
 }
 
 .acoes h2 {
-    text-wrap: nowrap;
     margin-bottom: 1rem;
 }
 
@@ -1247,11 +1255,6 @@ td {
     transition: 200ms ease all;
 }
 
-.cronograma {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 20px;
-}
 
 .aula-bloco {
     margin-bottom: 30px;
@@ -1316,7 +1319,8 @@ td {
     width: 100%;
 }
 
-.frequencia table {
+.frequencia table,
+table#tabelaBoletim {
     border-collapse: collapse;
     background-color: white;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
@@ -1782,4 +1786,20 @@ td {
 .detalhes-bolsa .interesse-detalhes img {
     height: 1.5rem;
     filter: brightness(0) invert(1);
+}
+
+::-webkit-scrollbar {
+  background: var(--secondary);
+  border: 2px solid var(--primary);
+  width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #09487a;
+  border: 2px solid var(--primary);
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }

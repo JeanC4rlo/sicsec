@@ -7,12 +7,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import jakarta.servlet.http.HttpSession;
 import br.cefetmg.sicsec.Model.Curso.Curso;
+import br.cefetmg.sicsec.Model.Curso.Turma.Turma;
+import br.cefetmg.sicsec.Model.Curso.Turma.presenca.Presenca;
 import br.cefetmg.sicsec.Model.Usuario.Usuario;
 import br.cefetmg.sicsec.Model.Usuario.Aluno.Aluno;
 import br.cefetmg.sicsec.Model.Usuario.Professor.Professor;
 
 import br.cefetmg.sicsec.Repository.CursoRepo;
+import br.cefetmg.sicsec.Repository.PresencaRepo;
+import br.cefetmg.sicsec.Repository.TurmaRepo;
 import br.cefetmg.sicsec.Repository.Usuarios.*;
+import br.cefetmg.sicsec.dto.Perfil;
 
 /**
  *
@@ -34,12 +39,17 @@ public class UsuarioService {
     @Autowired
     private ProfessorRepo professorRepo;
 
+    @Autowired
+    private PresencaRepo presencaRepo;
+
+    @Autowired
+    private TurmaRepo turmaRepo;
+
     public Usuario getUsuarioFromSession(HttpSession session) {
 
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
         return usuario;
-
 
     }
 
@@ -50,11 +60,43 @@ public class UsuarioService {
 
     public List<Professor> getProfessoresByDisciplina(Long disciplinaId) {
 
-
         Curso curso = cursoRepo.findByDisciplina(disciplinaId);
-        List<Professor> professores = professorRepo.findAllByCurso(curso.getId());
+
+        List<Professor> professores = professorRepo.findAllByDepartamentoId(curso.getDepartamento().getId());
 
         return professores;
+
+    }
+
+    public List<Presenca> getFrequenciaAluno(HttpSession session) {
+
+        Perfil perfil = (Perfil) session.getAttribute("perfilSelecionado");
+        Usuario usuario = perfil.getUsuario();
+
+        if (usuario == null || !(usuario instanceof Aluno)) {
+            throw new IllegalStateException("Acesso negado.");
+        }
+        
+        Long alunoId = usuario.getId();
+
+        return presencaRepo.findByDiscenteId(alunoId);
+
+    }
+
+    public List<Presenca> getFrequenciaEmTurma(HttpSession session, Long turmaId) {
+
+        List<Presenca> presencas = getFrequenciaAluno(session);
+
+        Turma turma = turmaRepo.findById(turmaId).orElse(null);
+        if (turma == null) {
+            throw new IllegalArgumentException("Turma não encontrada.");
+        }
+
+        presencas = presencas.stream()
+            .filter(p -> p.getLista().getTurma().getId().equals(turmaId))
+            .toList();
+
+        return presencas;
 
     }
 

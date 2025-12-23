@@ -5,16 +5,12 @@ import java.time.Year;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import br.cefetmg.sicsec.Model.Curso.Curso;
 import br.cefetmg.sicsec.Model.Usuario.Matricula;
 import br.cefetmg.sicsec.Model.Util.CPF;
 import br.cefetmg.sicsec.Repository.MatriculaRepo;
 
 @Service
 public class MatriculaService {
-
-    @Autowired
-    private CursoService cursoService;
 
     @Autowired
     private MatriculaRepo matriculaRepository;
@@ -36,12 +32,6 @@ public class MatriculaService {
         matricula.setNome(nome);
         matricula.setEmail(email);
         matricula.setTelefone(telefone);
-
-        Curso curso = cursoService.getCursoById(cursoId);
-        if (curso == null) {
-            throw new IllegalArgumentException("Curso não encontrado");
-        }
-        matricula.setCurso(curso);
 
         Long numeroMatricula = gerarNumeroMatricula(nome, cpf, email, telefone);
         matricula.setNumeroMatricula(numeroMatricula);
@@ -71,7 +61,7 @@ public class MatriculaService {
         return matriculaRepository.findByNumeroMatricula(numeroMatriculaLong);
     }
 
-    public void atualizar(String cpf, String nome, String email, String telefone, String cursoId, String numeroMatriculaAnterior, String numeroMatriculaNovo) {
+    public void atualizar(String cpf, String nome, String email, String telefone, String numeroMatriculaAnterior, String numeroMatriculaNovo) {
         Matricula matricula = buscarPorNumero(numeroMatriculaAnterior);
         if (matricula == null) {
             throw new IllegalArgumentException("Matrícula inexistente!");
@@ -96,13 +86,6 @@ public class MatriculaService {
         matricula.setNome(nome);
         matricula.setEmail(email);
         matricula.setTelefone(telefone);
-
-        Long cursoIdLong = Long.parseLong(cursoId);
-        Curso curso = cursoService.getCursoById(cursoIdLong);
-        if (curso == null) {
-            throw new IllegalArgumentException("Curso não encontrado");
-        }
-        matricula.setCurso(curso);
 
         Long numeroMatriculaNovoLong = Long.parseLong(numeroMatriculaNovo);
         matricula.setNumeroMatricula(numeroMatriculaNovoLong);

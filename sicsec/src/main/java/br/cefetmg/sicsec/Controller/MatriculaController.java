@@ -48,8 +48,7 @@ public class MatriculaController {
                     "email", matricula.getEmail() != null ? matricula.getEmail() : "",
                     "nome", matricula.getNome() != null ? matricula.getNome() : "",
                     "numeroMatricula", matricula.getNumeroMatricula() != null ? matricula.getNumeroMatricula() : "",
-                    "telefone", matricula.getTelefone() != null ? matricula.getTelefone() : "",
-                    "cursoId", matricula.getCurso().getId());
+                    "telefone", matricula.getTelefone() != null ? matricula.getTelefone() : "");
 
             return ResponseEntity.ok(matriculaMap);
         } catch (Exception e) {
@@ -63,12 +62,11 @@ public class MatriculaController {
             @RequestParam String nome,
             @RequestParam String email,
             @RequestParam String telefone,
-            @RequestParam String cursoId,
+            @RequestParam String cursoId, //TO DO: remover cursoId
             @RequestParam String numeroMatriculaAnterior,
             @RequestParam String numeroMatriculaNovo) {
         try {
-            matriculaService.atualizar(cpf, nome, email, telefone, cursoId, numeroMatriculaAnterior,
-                    numeroMatriculaNovo);
+            matriculaService.atualizar(cpf, nome, email, telefone, numeroMatriculaAnterior, numeroMatriculaNovo);
             return ResponseEntity.ok("Matrícula atualizada com sucesso.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

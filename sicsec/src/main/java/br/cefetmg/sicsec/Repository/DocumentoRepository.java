@@ -33,9 +33,13 @@ public interface DocumentoRepository extends JpaRepository<Documento, Long> {
     @Query("SELECT d FROM Documento d WHERE d.status = :status ORDER BY d.dataCriacao DESC")
     List<Documento> findByStatus(@Param("status") StatusDocumento status);
     
+    /*
     @Query("SELECT d FROM Documento d WHERE d.status = :status AND d.criador.departamento = :departamento ORDER BY d.dataCriacao DESC")
     List<Documento> findByStatusAndDepartment(@Param("status") StatusDocumento status, @Param("departamento") Departamento departamento);
     
     @Query("SELECT d FROM Documento d WHERE d.status = :status AND d.criador.curso = :curso ORDER BY d.dataCriacao DESC")
     List<Documento> findByStatusAndCourse(@Param("status") StatusDocumento status, @Param("curso") Curso curso);
+    */
+
+
 }

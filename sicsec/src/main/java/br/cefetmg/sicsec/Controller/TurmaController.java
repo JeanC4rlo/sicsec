@@ -6,6 +6,7 @@ package br.cefetmg.sicsec.Controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import br.cefetmg.sicsec.Model.Curso.Turma.SuperTurma;
 import br.cefetmg.sicsec.Model.Curso.Turma.Turma;
 import br.cefetmg.sicsec.Model.Usuario.Aluno.Aluno;
 import br.cefetmg.sicsec.Model.Usuario.Professor.Professor;
@@ -60,16 +62,44 @@ public class TurmaController {
     public String registrarTurma(
             @RequestParam(required=false, name="alunos") List<Long> discentes,
             @RequestParam(required=false, name="professores") List<Long> doscentes,
+            @RequestParam(required=false, name="alunos-subturma0") List<Long> discentesSubturma0,
+            @RequestParam(required=false, name="professores-subturma0") List<Long> doscentesSubturma0,
+            @RequestParam(required=false, name="alunos-subturma1") List<Long> discentesSubturma1,
+            @RequestParam(required=false, name="professores-subturma1") List<Long> doscentesSubturma1,
+            @RequestParam(required=false, name="alunos-subturma2") List<Long> discentesSubturma2,
+            @RequestParam(required=false, name="professores-subturma2") List<Long> doscentesSubturma2,
+            @RequestParam(required=false, name="alunos-subturma3") List<Long> discentesSubturma3,
+            @RequestParam(required=false, name="professores-subturma3") List<Long> doscentesSubturma3,
+            @RequestParam(required=false) String permitirSubturmas,
+            @RequestParam int quantSubturmas,
             @RequestParam Long disciplina,
             @RequestParam Long curso,
             @RequestParam String nome,
             HttpServletRequest request) 
             throws IOException {
-        
-        tService.registrarTurma(nome, 2025, disciplina, curso, discentes, doscentes);
 
-        String referer = request.getHeader("Referer");
-        return "redirect:" + referer;
+        boolean turmaUnica = (permitirSubturmas == null);
+
+        Turma turma = tService.registrarTurma(nome, 2025, disciplina, curso, discentes, doscentes, turmaUnica);
+        
+        if(turmaUnica) quantSubturmas = 0;
+
+        switch (quantSubturmas) {
+            case 4:
+            tService.registrarSubturma((SuperTurma) turma, discentesSubturma3, doscentesSubturma3, 3);
+                    
+            case 3:
+            tService.registrarSubturma((SuperTurma) turma, discentesSubturma2, doscentesSubturma2, 2);
+                    
+            case 2:
+            tService.registrarSubturma((SuperTurma) turma, discentesSubturma1, doscentesSubturma1, 1);
+                    
+            case 1:
+            tService.registrarSubturma((SuperTurma) turma, discentesSubturma0, doscentesSubturma0, 0);
+                    
+        }
+
+        return "redirect:" + request.getHeader("Referer");
 
     }
 
@@ -238,4 +268,45 @@ public class TurmaController {
         
     }
     
+    @PostMapping("/participantes/{id}")
+    public ResponseEntity<Map<String, List<Map<String, Object>>>> getParticipantesTurma(HttpSession session, @PathVariable Long id) {
+        
+        Turma turma = tService.obterTurmaPorId(id);
+
+        if (turma != null) {
+            List<Map<String, Object>> alunos = new ArrayList<>();
+
+            for (Aluno aluno : turma.getDiscentes()) {
+                Map<String, Object> m = new HashMap<>();
+                m.put("id", aluno.getId());
+                m.put("nome", aluno.getMatricula() != null ? aluno.getMatricula().getNome() : null);
+                m.put("email", aluno.getMatricula() != null ? aluno.getMatricula().getEmail() : null);
+                m.put("curso", aluno.getCurso() != null ? aluno.getCurso().getNome() : null);
+                m.put("matricula", aluno.getMatricula() != null ? aluno.getMatricula().getNumeroMatricula() : null);
+                m.put("foto", aluno.getFotoPerfil()); // pode ser null
+                alunos.add(m);
+            }
+
+            List<Map<String, Object>> professores = new ArrayList<>();
+
+            for (Professor professor : turma.getDoscentes()) {
+                Map<String, Object> m = new HashMap<>();
+                m.put("id", professor.getId());
+                m.put("departamento", professor.getDepartamento() != null ? professor.getDepartamento().getNome() : null);
+                m.put("formacao", professor.getFormacao());
+                m.put("nome", professor.getMatricula() != null ? professor.getMatricula().getNome() : null);
+                m.put("email", professor.getMatricula() != null ? professor.getMatricula().getEmail() : null);
+                m.put("foto", professor.getFotoPerfil()); // pode ser null
+                professores.add(m);
+            }
+            
+            Map<String, List<Map<String, Object>>> result = new HashMap<>();
+            result.put("docentes", professores);
+            result.put("discentes", alunos);
+            return ResponseEntity.ok(result);
+        }
+        
+        return ResponseEntity.badRequest().body(null);
+    }
+
 }

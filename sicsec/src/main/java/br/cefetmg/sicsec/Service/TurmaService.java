@@ -13,9 +13,12 @@ import org.springframework.stereotype.Service;
 import br.cefetmg.sicsec.Model.Curso.Aula;
 import br.cefetmg.sicsec.Model.Curso.Curso;
 import br.cefetmg.sicsec.Model.Curso.Disciplina;
+import br.cefetmg.sicsec.Model.Curso.Turma.SubTurma;
+import br.cefetmg.sicsec.Model.Curso.Turma.SuperTurma;
 import br.cefetmg.sicsec.Model.Curso.Turma.Turma;
 import br.cefetmg.sicsec.Model.Usuario.Aluno.Aluno;
 import br.cefetmg.sicsec.Model.Usuario.Professor.Professor;
+import br.cefetmg.sicsec.Model.Util.Enum.Cargo;
 import br.cefetmg.sicsec.Model.Usuario.Usuario;
 import br.cefetmg.sicsec.Repository.AulaRepo;
 import br.cefetmg.sicsec.Repository.CursoRepo;
@@ -53,7 +56,7 @@ public class TurmaService {
 
     @Autowired
     private AulaRepo aulaRepo;
-
+    
     public Turma registrarTurma(Turma turma) {
 
         turmaRepo.save(turma);
@@ -61,14 +64,27 @@ public class TurmaService {
         return turma;
 
     }
+    
+    public SuperTurma registrarSuperTurma(SuperTurma turma) {
 
-    public Turma registrarTurma(String nome, int anoLetivo, Long disciplinaId, Long cursoId, List<Long> discentesId,
-            List<Long> doscentesId) {
+        turmaRepo.save(turma);
+        
+        return turma;
 
-        Disciplina disciplina = disciplinaRepo.findById(disciplinaId)
-                .orElseThrow(() -> new IllegalStateException("Disciplina Invalida"));
+    }
+
+    public SubTurma registrarSubTurma(SubTurma turma) {
+
+        turmaRepo.save(turma);
+        
+        return turma;
+
+    }
+
+    public Turma registrarTurma(String nome, int anoLetivo, Long disciplinaId, Long cursoId, List<Long> discentesId, List<Long> doscentesId, boolean turmaUnica) {
+        
+        Disciplina disciplina = disciplinaRepo.findById(disciplinaId).orElseThrow(() -> new IllegalStateException("Disciplina Invalida"));
         Curso curso = cursoRepo.findById(cursoId).orElseThrow(() -> new IllegalStateException("Curso Invalido"));
-
         List<Aluno> discentes = new ArrayList<>();
         List<Professor> doscentes = new ArrayList<>();
 
@@ -91,31 +107,65 @@ public class TurmaService {
                 else
                     throw new IllegalStateException("Id de Professor Invalido");
             }
-
+        
+        if (!turmaUnica) {
+            SuperTurma turma = new SuperTurma(nome, anoLetivo, true, disciplina, curso, discentes, doscentes);
+            
+            return registrarSuperTurma(turma);
+        }
+        
         Turma turma = new Turma(nome, anoLetivo, true, disciplina, curso, discentes, doscentes);
 
+        
         return registrarTurma(turma);
 
     }
-
-    public Turma registrarTurma(String nome, int anoLetivo, Long disciplinaId, Long cursoId) {
-
-        Disciplina disciplina = disciplinaRepo.findById(disciplinaId)
-                .orElseThrow(() -> new IllegalStateException("Disciplina Invalida"));
+    
+    public Turma registrarTurma(String nome, int anoLetivo, Long disciplinaId, Long cursoId, boolean turmaUnica) {
+        
+        Disciplina disciplina = disciplinaRepo.findById(disciplinaId).orElseThrow(() -> new IllegalStateException("Disciplina Invalida"));
         Curso curso = cursoRepo.findById(cursoId).orElseThrow(() -> new IllegalStateException("Curso Invalido"));
 
+        if (!turmaUnica) {
+            SuperTurma turma = new SuperTurma(nome, anoLetivo, true, disciplina, curso);
+            return registrarSuperTurma(turma);
+        }
+        
         Turma turma = new Turma(nome, anoLetivo, true, disciplina, curso);
-
         return registrarTurma(turma);
 
     }
 
-    public Turma atualizarTurma(Long turmaId, String turmaNome, List<Long> discentesId, List<Long> doscentesId,
-            boolean ativo) {
+    public Turma registrarSubturma(SuperTurma superTurma, List<Long> discentesId, List<Long> doscentesId, int t) {
+        
+        List<Aluno> discentes = new ArrayList<>();
+        List<Professor> doscentes = new ArrayList<>();
+        
+        if (discentesId != null)
+            for(Long id : discentesId) {
+                Usuario u = (Usuario) usuarioRepo.findById(id).orElseThrow(() -> new IllegalStateException("Usuario Invalido"));
+                if (u instanceof Aluno a) discentes.add(a);
+                else throw new IllegalStateException("Id de Aluno Invalido");
+            }
+        
+        if (doscentesId != null)
+            for(Long id : doscentesId) {
+                Usuario u = (Usuario) usuarioRepo.findById(id).orElseThrow(() -> new IllegalStateException("Usuario Invalido"));
+                if (u instanceof Professor p) doscentes.add(p);
+                else throw new IllegalStateException("Id de Professor Invalido");
+            }
+    
+        SubTurma turma = new SubTurma(superTurma.getNome() + " T" + (t+1), discentes, doscentes, superTurma);
+        
+        registrarSubTurma(turma);
 
-        Turma turmaExistente = turmaRepo.findById(turmaId)
-                .orElseThrow(() -> new IllegalStateException("Turma Invalida"));
-
+        return turma;
+    }
+    
+    public Turma atualizarTurma(Long turmaId, String turmaNome, List<Long> discentesId, List<Long> doscentesId, boolean ativo) {
+        
+        Turma turmaExistente = turmaRepo.findById(turmaId).orElseThrow(() -> new IllegalStateException("Turma Invalida"));
+        
         turmaExistente.setNome(turmaNome);
         turmaExistente.setAtivo(ativo);
         turmaExistente.getDiscentes().clear();
@@ -358,4 +408,23 @@ public class TurmaService {
         .toList();
         return listarTurmasPorId(ids);
     }
+
+    public List<Turma> listarTurmasDeAluno(HttpSession session) {
+        
+        Perfil perfil = (Perfil) session.getAttribute("perfilSelecionado");
+        Usuario usuario = perfil.getUsuario();
+        
+        if (usuario == null || (usuario.getCargo() != Cargo.ALUNO)) {
+            
+            throw new IllegalStateException("Acesso negado.");
+        }
+        
+        Aluno aluno = (Aluno) usuario;
+        
+        List<Turma> turmas = turmaRepo.findByDiscentesContaining(aluno);
+        
+        return turmas;
+        
+    }
+    
 }

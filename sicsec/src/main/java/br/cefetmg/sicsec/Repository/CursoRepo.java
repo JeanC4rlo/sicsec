@@ -16,7 +16,8 @@ import org.springframework.stereotype.Repository;
 /**
  *
  * @author davig
- */
+*/
+
 @Repository
 public interface CursoRepo extends JpaRepository<Curso, Long> {
     

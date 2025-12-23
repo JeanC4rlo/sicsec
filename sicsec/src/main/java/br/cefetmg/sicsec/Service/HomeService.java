@@ -39,16 +39,20 @@ public class HomeService {
 						"/images/icons/boletim.svg",
 						"/html/aluno/sections/boletim.html",
 						"Boletim",
-						Arrays.asList(),
+						Arrays.asList("/css/homeAluno/boletim.css"),
 						Arrays.asList("/js/aluno/frag/boletim.js"),
 						"boletim",
 						false),
 				new Secao(
 						"/images/icons/turmas.svg",
-						"/html/aluno/sections/turmas.html",
+						"/html/aluno/sections/acesso-turmas.html",
 						"Turmas",
-						Arrays.asList(),
-						Arrays.asList("/js/aluno/frag/turmas.js"),
+						Arrays.asList("/css/homeAluno/turmas.css"),
+						Arrays.asList(
+							"/js/aluno/frag/turmas/turmaSections.js", 
+							"/js/aluno/frag/turmas/turmasVinculadas.js",
+							"/js/aluno/frag/turmas/initTurmasAluno.js"
+						),
 						"turmas",
 						false),
 				new Secao(
@@ -123,8 +127,10 @@ public class HomeService {
 						"/images/icons/turmas.svg",
 						"/html/admin/sections/turmas.html",
 						"Gestão de turmas",
-						Arrays.asList("/css/admin/turmas.css"),
-						Arrays.asList("/js/admin/frag/initTurmas.js"),
+						Arrays.asList("https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css",
+											"/css/admin/turmas.css"),
+						Arrays.asList("https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js",
+											"/js/admin/frag/subturmas.js", "/js/admin/frag/turmas.js"),
 						"turmas",
 						false),
 				new Secao(
