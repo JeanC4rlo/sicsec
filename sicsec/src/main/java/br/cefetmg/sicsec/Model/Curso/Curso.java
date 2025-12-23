@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import br.cefetmg.sicsec.Model.Curso.Turma.Turma;
 import br.cefetmg.sicsec.Model.Usuario.Matricula;
 import br.cefetmg.sicsec.Model.Usuario.Administrador.Coordenador;
+import br.cefetmg.sicsec.Model.Usuario.Aluno.Aluno;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -50,7 +51,7 @@ public class Curso {
     private Departamento departamento;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "curso")
-    private List<Matricula> matriculasVinculadas;
+    private List<Aluno> alunosVinculados;
 
     public Long getId() {
         return id;
@@ -108,6 +109,12 @@ public class Curso {
         this.departamento = departamento;
     }
     
-                    
+    public List<Aluno> getAlunosVinculados() {
+        return alunosVinculados;
+    }
+
+    public void setAlunosVinculados(List<Aluno> alunosVinculados) {
+        this.alunosVinculados = alunosVinculados;
+    }
     
 }

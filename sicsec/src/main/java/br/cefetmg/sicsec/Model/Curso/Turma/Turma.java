@@ -19,13 +19,10 @@ import java.util.List;
  *
  * @author davig
  */
+
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Turma {
-    
-    // TO DO
-    // BOOLEAN ATIVO/INATIVO PARA DESATIVAR TURMAS ANTIGAS
-    // ANO LETIVO
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -65,6 +62,16 @@ public class Turma {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "turma")
     private List<Aula> aulas;
 
+    @JsonManagedReference
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "turma")
+    private List<Cronograma> cronogramas;
+    
+    /*
+    @JsonManagedReference
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "turma")
+    private List<Avaliacao> avaliacoes;
+    */
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "turma")
     private List<MaterialDidatico> materialDidatico;
     
@@ -83,6 +90,7 @@ public class Turma {
     }
     
     public Turma(String nome, int anoLetivo, boolean ativo, Disciplina disciplina, Curso curso, List<Aluno> discentes, List<Professor> doscentes) {
+        
         this.setNome(nome);
         this.setAnoLetivo(anoLetivo);
         this.setAtivo(ativo);
@@ -91,6 +99,7 @@ public class Turma {
         this.setDiscentes(discentes);
         this.setDoscentes(doscentes);
         this.setTipo(TipoTurma.TURMA_UNICA);
+        
     }
     
     public Turma(String nome, int anoLetivo, boolean ativo, Disciplina disciplina, Curso curso) {
@@ -182,6 +191,14 @@ public class Turma {
 
     public void setAulas(List<Aula> aulas) {
         this.aulas = aulas;
+    }
+
+    public List<Cronograma> getCronogramas() {
+        return cronogramas;
+    }
+
+    public void setCronogramas(List<Cronograma> cronogramas) {
+        this.cronogramas = cronogramas;
     }
 
     public List<MaterialDidatico> getMaterialDidatico() {

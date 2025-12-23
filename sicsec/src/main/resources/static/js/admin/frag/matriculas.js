@@ -15,7 +15,6 @@ class GerenciadorMatriculas {
     setupTabChangeListener() {
         this.container.addEventListener('tabChange', (e) => {
             const tabId = e.detail.tabId;
-
             if (tabId === 'criar') {
                 this.inicializarCriacao();
             } else if (tabId === 'editar') {

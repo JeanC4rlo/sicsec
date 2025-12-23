@@ -93,6 +93,39 @@ CREATE TABLE `assinaturas` (
 -- --------------------------------------------------------
 
 --
+-- Estrutura para tabela `atividade`
+--
+
+CREATE TABLE `atividade` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `professor_id` bigint(20) NOT NULL,
+  `nome` varchar(255) DEFAULT NULL,
+  `tipo` varchar(255) DEFAULT NULL,
+  `valor` double DEFAULT NULL,
+  `data_encerramento` varchar(255) DEFAULT NULL,
+  `hora_encerramento` varchar(255) DEFAULT NULL,
+  `data_criacao` varchar(255) DEFAULT NULL,
+  `enunciado` longtext,
+  `questoes` longtext,
+  `tentativas` int(11) DEFAULT NULL,
+  `horas` int(11) DEFAULT NULL,
+  `minutos` int(11) DEFAULT NULL,
+  `tipo_timer` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_atividade_professor` (`professor_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Despejando dados para a tabela `atividade`
+--
+
+INSERT INTO `atividade` (`id`, `professor_id`, `nome`, `tipo`, `valor`, `data_encerramento`, `hora_encerramento`, `data_criacao`, `enunciado`, `questoes`, `tentativas`, `horas`, `minutos`, `tipo_timer`) VALUES
+(1, 2, 'Resenha crítica Guerreiras do Kpop', 'Redação', 10, '2025-12-23', '08:00', '2025-12-20', 'Faça uma resenha crítica acerca do filme Guerreiras do Kpop', NULL, 1, 1, 10, 'continuo'),
+(2, 2, 'Competição do PDF mais insado', 'Envio de Arquivo', 5, '2025-12-25', '08:00', '2025-12-20', 'Envie um PDF super insano. Quanto mais maneiro, melhor!', NULL, 1, 1, 10, 'interrompivel');
+
+-- --------------------------------------------------------
+
+--
 -- Estrutura para tabela `aula`
 --
 
@@ -738,7 +771,8 @@ CREATE TABLE `turma_aluno` (
 --
 
 INSERT INTO `turma_aluno` (`turma_id`, `aluno_id`) VALUES
-(1, 1);
+(1, 1),
+(2, 4);
 
 -- --------------------------------------------------------
 
@@ -757,6 +791,27 @@ CREATE TABLE `turma_professor` (
 
 INSERT INTO `turma_professor` (`turma_id`, `professor_id`) VALUES
 (1, 2);
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `atividade_turma`
+--
+
+CREATE TABLE `atividade_turma` (
+  `atividade_id` bigint(20) NOT NULL,
+  `turma_id` bigint(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Despejando dados para a tabela `atividade`
+--
+
+INSERT INTO `atividade_turma` (`atividade_id`, `turma_id`) VALUES
+(1, 1),
+(1, 2),
+(2, 1);
+
 
 -- --------------------------------------------------------
 

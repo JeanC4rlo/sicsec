@@ -51,7 +51,7 @@ public class UsuarioController {
     @PostMapping("/atual/admin")
     public ResponseEntity<Object> getAdminAtual(HttpSession session) {
 
-        Object adm = admService.GetAdministrador((Usuario) session.getAttribute("usuario"));
+        Object adm = admService.GetAdministrador(session);
 
         return ResponseEntity.ok(adm);
 

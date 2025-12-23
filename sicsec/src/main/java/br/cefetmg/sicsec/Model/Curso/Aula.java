@@ -21,7 +21,7 @@ public class Aula {
     private Long id;
     
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_turma", nullable = false)
+    @JoinColumn(name = "turma_id", nullable = false)
     private Turma turma;
     
     @Enumerated(EnumType.STRING)
@@ -31,7 +31,7 @@ public class Aula {
     private Horario horario;
     
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_disciplina", nullable = false)
+    @JoinColumn(name = "disciplina_id", nullable = false)
     private Disciplina disciplina;
     
     private String sala;

@@ -1,106 +1,145 @@
-function initSectionBoletim() {
+const bimestres = ["primeiro", "segundo", "terceiro", "quarto"];
+const tooltip = document.querySelector(`#tooltip`);
 
-    let idx = 0;
-    const notasBD = [
-        {
-            "ano": "2023",
-            "materias": [["Português", "2", "2", "2", "2"], ["Matemática", "2", "2", "2", "2"]],
-            "faltas": ["0", "0"],
-        },
-        {
-            "ano": "2024",
-            "materias": [["Português", "10", "10", "10", "10"], ["Matemática", "10", "10", "10", "10"]],
-            "faltas": ["0", "0"],
-        },
-        {
-            "ano": "2025",
-            "materias": [["Português", "20", "20", "20", "20"], ["Matemática", "20", "20", "20", "20"]],
-            "faltas": ["0", "0"],
-        }
-    ];
+async function mostrarTooltip(event, bimestreEl) {
 
-    function passarAno(incremento) {
-        let novoidx = idx + incremento;
+    const alvo = event.target.closest(".bimestre-td");
+    if (!alvo) return;
 
-        if (novoidx >= 0 && novoidx < notasBD.length) {
-            idx = novoidx;
-        }
+    if (tooltip.classList.contains("invisivel"))
+        tooltip.classList.remove("invisivel");
 
-        preencherTabela();
+    // posição do mouse
+    tooltip.style.left = event.pageX + 10 + "px";
+    tooltip.style.top = event.pageY + 10 + "px";
+
+    tooltip.innerHTML = "";
+    
+    bimestreEl.notas.forEach(nota => {
+        
+        let p = document.createElement("p");
+        p.innerHTML = "<b>" + nota.avaliacao + "</b><br/>Nota: " + nota.valor + (nota.valor > 1 ? " pontos." : " ponto.");
+        tooltip.appendChild(p);
+
+    });
+
+}
+
+async function moverTooltip(event, bimestreEl) {
+    
+    if (!tooltip.classList.contains("escondido")) {
+        tooltip.style.left = event.pageX + 10 + "px";
+        tooltip.style.top = event.pageY + 10 + "px";
     }
+}
+
+async function esconderTooltip(event, bimestreEl) {
+    
+    const alvo = event.target.closest(".bimestre-td")
+        tooltip.classList.add("invisivel");
+
+}
+
+async function initSectionBoletim() {
+
+    const notas = await fetchJSON("/api/boletim/aluno/acesso");
+    console.log(notas);
 
     function preencherTabela() {
+
         const tabela = document.getElementById("tabelaBoletim");
         const tbody = tabela.querySelector("tbody");
-        const ano = tabela.querySelector("div > p");
-        const botaoEsq = document.querySelector("#botaoEsq");
-        const botaoDir = document.querySelector("#botaoDir");
-
-        let notas = notasBD[idx];
 
         tbody.innerHTML = "";
-        ano.textContent = notas.ano;
 
-        if (idx === 0) {
-            botaoEsq.classList.add("desativado");
-        } else {
-            botaoEsq.classList.remove("desativado");
-        }
-
-        if (idx === notasBD.length - 1) {
-            botaoDir.classList.add("desativado");
-        } else {
-            botaoDir.classList.remove("desativado");
-        }
-
-        for (let i = 0; i < notas.materias.length; i++) {
+        notas[0].componentes.forEach(componente => {
             const tr = document.createElement("tr");
 
-            let soma = 0;
-            notas.materias[i].forEach((v, j) => {
-                const td = document.createElement("td");
-                td.textContent = v;
-                tr.appendChild(td);
+            const tdDisciplina = document.createElement("td");
+            tdDisciplina.textContent = componente.disciplina;
+            tr.appendChild(tdDisciplina);
 
-                if (j !== 0) {
-                    soma += Number(v);
+            let [td1Bi, td2Bi, td3Bi, td4Bi] = [null, null, null, null];
+            let tdBis = [td1Bi, td2Bi, td3Bi, td4Bi];
+
+            tdBis.forEach((_, i) => {
+                tdBis[i] = document.createElement("td");
+                tdBis[i].classList = "bimestre-td";
+                tdBis[i].id = bimestres[i]+"-bimestre-td";
+                tdBis[i].nota = 0;
+                tdBis[i].bimestre = i+1;
+                tdBis[i].notas = [];
+            });
+            
+            componente.notas.forEach(nota => {
+                switch(nota.bimestre) {
+
+                    case "PRIMEIRO":
+                        tdBis[0].nota += nota.valor;
+                        tdBis[0].notas.push(nota);
+                        break;
+                    case "SEGUNDO":
+                        tdBis[1].nota += nota.valor;
+                        tdBis[1].notas.push(nota);
+                        break;
+                    case "TERCEIRO":
+                        tdBis[2].nota += nota.valor;
+                        tdBis[2].notas.push(nota);
+                        break;
+                    case "QUARTO":
+                        tdBis[3].nota += nota.valor;
+                        tdBis[3].notas.push(nota);
+                        break;
+
                 }
             });
 
+            tdBis.forEach((_, i) => {
+
+                tdBis[i].textContent = tdBis[i].nota;
+                tdBis[i].addEventListener("mouseover", async (e) => mostrarTooltip(e, tdBis[i]));
+                tdBis[i].addEventListener("mousemove", async (e) => moverTooltip(e, tdBis[i]));
+                tdBis[i].addEventListener("mouseout", async (e) => esconderTooltip(e, tdBis[i]));
+                tr.appendChild(tdBis[i]);
+
+            });
+
+            console.log(tdBis);
+
             const tdFaltas = document.createElement("td");
-            tdFaltas.textContent = notas.faltas[i];
+            tdFaltas.textContent = componente.faltas;
             tr.appendChild(tdFaltas);
 
             const tdNotaFinal = document.createElement("td");
-            tdNotaFinal.textContent = soma;
+            tdNotaFinal.textContent = componente.notaFinal;
             tr.appendChild(tdNotaFinal);
 
             const tdSituacao = document.createElement("td");
-            tdSituacao.textContent = soma >= 60 ? "APROV" : "REPRV";
+            tdSituacao.textContent = componente.situacao;
             tr.appendChild(tdSituacao);
 
             tbody.appendChild(tr);
-        }
+            
+        });
     }
 
     function initTabela() {
         const botaoBoletim = document.querySelector("button[data-id='boletim']");
-        const botaoEsq = document.querySelector("#botaoEsq");
-        const botaoDir = document.querySelector("#botaoDir");
 
         let anoAtual = new Date().getFullYear();
-        idx = notasBD.findIndex(nota => nota.ano === String(anoAtual));
-
-        if (idx === -1) idx = notasBD.length - 1;
 
         botaoBoletim.addEventListener('click', () => preencherTabela());
-        botaoEsq.addEventListener('click', () => passarAno(-1));
-        botaoDir.addEventListener('click', () => passarAno(1));
         preencherTabela();
     }
 
     initTabela();
 
+}
+
+async function fetchJSON(url, options = { method: "POST" }) {
+  const res = await fetch(url, options);
+  if (!res.ok) throw new Error(`Erro HTTP ${res.status} em ${url}`);
+  return res.json();
 }
 
 initSectionBoletim();

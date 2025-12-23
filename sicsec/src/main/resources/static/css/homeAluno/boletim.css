@@ -1,0 +1,16 @@
+#tooltip {
+
+    width: 250px;
+    min-height: 100px;
+    background-color: var(--bg-secondary);
+    position: absolute;
+    padding: 8px 12px;
+    border: 1px solid var(--secondary);
+    border-radius: 6px;
+    font-size: 16px;
+    max-width: 250px;
+    max-height: 400px;
+    z-index: 1000;
+    overflow: hidden;
+
+}

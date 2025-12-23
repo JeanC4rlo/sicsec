@@ -4,10 +4,14 @@
  */
 package br.cefetmg.sicsec.Model.Usuario.Aluno;
 
+import br.cefetmg.sicsec.Model.Curso.Curso;
 import br.cefetmg.sicsec.Model.Curso.Turma.Turma;
 import br.cefetmg.sicsec.Model.Usuario.*;
 import jakarta.persistence.*;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 /**
  *
@@ -21,10 +25,21 @@ public class Aluno extends Usuario {
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "bolsistas")
     private List<Bolsa> bolsas;
-
+    
+    @JsonManagedReference
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "aluno")
-    @OrderBy("anoLetivo DESC")
     private List<Boletim> anosEscolares;
+
+    @JsonBackReference
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "curso_id", nullable = true)
+    private Curso curso;
+    
+    /*
+    @JsonIgnore
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "usuario")
+    private List<Matricula> historicoMatricula;
+    */
 
     /*
      * @JsonIgnore
@@ -59,6 +74,14 @@ public class Aluno extends Usuario {
 
     public void setAnosEscolares(List<Boletim> anosEscolares) {
         this.anosEscolares = anosEscolares;
+    }
+    
+    public Curso getCurso() {
+        return curso;
+    }
+
+    public void setCurso(Curso curso) {
+        this.curso = curso;
     }
 
     public List<NescessidadeEspecial> getNescessidadesEspeciais() {

@@ -6,6 +6,7 @@ package br.cefetmg.sicsec.Repository;
 
 import br.cefetmg.sicsec.Model.Curso.Curso;
 import br.cefetmg.sicsec.Model.Curso.Turma.Turma;
+import br.cefetmg.sicsec.Model.Usuario.Aluno.Aluno;
 
 import java.util.List;
 
@@ -22,5 +23,7 @@ public interface TurmaRepo extends JpaRepository<Turma, Long>{
     List<Turma> findByNomeContainingIgnoreCase(String nome);
 
     List<Turma> findByCurso(Curso curso);
+
+    List<Turma> findByDiscentesContaining(Aluno aluno);
 
 }

@@ -1,11 +1,11 @@
 /* ---------- [ Layout geral ] ---------- */
-.turmas .wrapper {
+#turmas-content .wrapper {
   display: flex;
   width: 100%;
   height: 100%;
 }
 
-.turmas header {
+#turmas-content header {
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -15,12 +15,12 @@
   justify-content: center;
 }
 
-.turmas header h2 {
+#turmas-content header h2 {
   text-wrap: nowrap;
   margin-bottom: 1rem;
 }
 
-.turmas header button {
+#turmas-content header button {
   display: flex;
   gap: 1rem;
   align-items: center;
@@ -32,26 +32,26 @@
   transition: 200ms ease all;
 }
 
-.turmas header button:hover {
+#turmas-content header button:hover {
   margin-left: 1rem;
   cursor: pointer;
 }
 
-.turmas header button.ativo {
+#turmas-content header button.ativo {
   font-weight: bold;
 }
 
-.turmas header button::before {
+#turmas-content header button::before {
   content: "▶";
   opacity: 0;
   transition: 200ms ease all;
 }
 
-.turmas header button.ativo::before {
+#turmas-content header button.ativo::before {
   opacity: 1;
 }
 
-.turmas .tab {
+#turmas-content .tab {
   flex-direction: column;
   gap: 2rem;
   padding: 2rem 5vw;
@@ -65,25 +65,25 @@
   transition: opacity 0.2s ease;
 }
 
-.turmas .tab.ativo {
+#turmas-content .tab.ativo {
   opacity: 1;
   pointer-events: auto;
   position: relative;
 }
 
-.turmas form {
+#turmas-content form {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
   transition: 200ms ease all;
   background: white;
-  border: 2px solid var(--secondary);
+  border: 2px solid var(--primary);
   border-radius: 0.75rem;
   padding: 2rem;
 }
 
-.turmas input,
-.turmas select {
+#turmas-content input,
+#turmas-content select {
   padding: 0.75rem;
   border: 1px solid #ccc;
   border-radius: 0.5rem;
@@ -93,14 +93,14 @@
   box-sizing: border-box;
 }
 
-.turmas input:focus,
-.turmas select:focus {
+#turmas-content input:focus,
+#turmas-content select:focus {
   outline: none;
   border-color: var(--primary);
   box-shadow: 0 0 0 2px rgba(0, 58, 105, 0.2);
 }
 
-.turmas button[type="submit"] {
+#turmas-content button[type="submit"] {
   background-color: var(--primary);
   color: white;
   border: none;
@@ -111,20 +111,20 @@
   transition: 200ms ease all;
 }
 
-.turmas button[type="submit"]:hover {
+#turmas-content button[type="submit"]:hover {
   background-color: var(--secondary);
 }
 
-.turmas .curso-section,
-.turmas .disciplina-section,
-.turmas .professor-section,
-.turmas .aluno-section {
+#turmas-content .curso-section,
+#turmas-content .disciplina-section,
+#turmas-content .professor-section,
+#turmas-content .aluno-section {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
-.turmas label {
+#turmas-content label {
   font-weight: 600;
   color: var(--primary);
 }
@@ -132,6 +132,42 @@
 /* ---------- [ Choices.js — estilo base ] ---------- */
 .choices {
   width: 100%;
+}
+
+.choices__inner {
+
+  background-color: var(--bg-secondary);
+
+}
+
+.subturmas-section > div  {
+
+  padding: 2em;
+  border-radius: 5px;
+  border: 1px solid var(--secondary);
+  background-color: var(--bg-secondary);
+  margin-bottom: 2em;
+
+}
+
+.subturmas-section > div > h2, 
+#turmas-content .subturmas-section > div > div > label {
+
+  color: var(--secondary);
+
+}
+
+#turmas-content .subturmas-section > div > div {
+
+  margin-top: 1em;
+  padding: 0em 1em;
+
+}
+
+.subturmas-section .choices__inner {
+  
+  background-color: var(--bg-primary);
+
 }
 
 .choices__input--cloned {
@@ -227,13 +263,13 @@
 }
 
 /* ---------- [ Checkbox: Turma ativa ] ---------- */
-.turmas .ativo-section {
+#turmas-content .ativo-section {
   display: flex;
   align-items: center;
   gap: 0.6rem;
 }
 
-.turmas .ativo-section label {
+#turmas-content .ativo-section label, #turmas-content .subturmas-config-section label {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -242,7 +278,7 @@
   cursor: pointer;
 }
 
-.turmas .ativo-section input[type="checkbox"] {
+#turmas-content input[type="checkbox"] {
   width: 1.2rem;
   height: 1.2rem;
   accent-color: var(--primary);
@@ -251,6 +287,10 @@
   transition: transform 0.15s ease;
 }
 
-.turmas .ativo-section input[type="checkbox"]:hover {
+#turmas-content input[type="checkbox"]:hover {
   transform: scale(1.1);
+}
+
+#quantSubturmas-wrapper {
+  display: none;
 }

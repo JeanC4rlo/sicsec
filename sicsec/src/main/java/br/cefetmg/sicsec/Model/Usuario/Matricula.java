@@ -33,11 +33,6 @@ public class Matricula {
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "matricula")
     private Usuario usuario;
 
-    @JsonBackReference
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "curso_id", nullable = true)
-    private Curso curso;
-
     public Long getId() {
         return id;
     }
@@ -92,14 +87,6 @@ public class Matricula {
 
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
-    }
-
-    public Curso getCurso() {
-        return curso;
-    }
-
-    public void setCurso(Curso curso) {
-        this.curso = curso;
     }
     
 }
